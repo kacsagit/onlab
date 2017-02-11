@@ -8,6 +8,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -32,24 +34,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadData(){
-        NetworkManager.getInstance().getData().enqueue(new Callback<Data>() {
+        NetworkManager.getInstance().getData().enqueue(new Callback<List<Data>>() {
             @Override
-            public void onResponse(Call<Data> call, Response<Data> response) {
+            public void onResponse(Call<List<Data>> call, Response<List<Data>> response) {
                 Log.d(TAG, "onResponse: " + response.code());
                 if (response.isSuccessful()) {
-                    tv.setText(response.body().item[0].ertek);
+                    tv.setText(response.body().get(0).Name);
                 } else {
                     Toast.makeText(MainActivity.this, "Error: " + response.message(), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
-            public void onFailure(Call<Data> call, Throwable t) {
-
-                t.printStackTrace();
-                Toast.makeText(MainActivity.this, "Error in network request, check LOG", Toast.LENGTH_SHORT).show();
+            public void onFailure(Call<List<Data>> call, Throwable t) {
 
             }
+
+
         });
     }
 

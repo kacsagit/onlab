@@ -1,5 +1,7 @@
 package com.example.kata.onlab;
 
+import java.util.List;
+
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Retrofit;
@@ -10,7 +12,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 public class NetworkManager {
 
-        private static final String ENDPOINT_ADDRESS = "http://onlab.j.layershift.co.uk";
+        private static final String ENDPOINT_ADDRESS = "http://192.168.0.138:8081";
 
         private static NetworkManager instance;
 
@@ -29,7 +31,7 @@ public class NetworkManager {
             netApi = retrofit.create(NetApi.class);
         }
 
-        public Call<Data> getData() {
+        public Call<List<Data>> getData() {
             return netApi.getData();
         }
 
