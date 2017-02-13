@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call<List<Data>> call, Response<List<Data>> response) {
                 Log.d(TAG, "onResponse: " + response.code());
                 if (response.isSuccessful()) {
-                    tv.setText(response.body().get(0).Name);
+                    tv.setText(response.body().get(0).Name+" "+response.body().get(1).Name);
                 } else {
                     Toast.makeText(MainActivity.this, "Error: " + response.message(), Toast.LENGTH_SHORT).show();
                 }
