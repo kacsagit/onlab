@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="24dip">
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp">
+
+
+        <EditText
+            android:id="@+id/PlaceEditText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:hint="@string/place"
+            />
+
+    </android.support.design.widget.TextInputLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_weight="0.5"
+            android:layout_marginTop="4dp">
+
+            <EditText
+                android:id="@+id/LongitudeEditText"
+                android:layout_width="match_parent"
+
+                android:layout_height="match_parent"
+                android:hint="@string/longitude"
+                android:inputType="numberDecimal"/>
+
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:layout_marginTop="4dp">
+
+            <EditText
+                android:id="@+id/LatitudeEditText"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="0.5"
+                android:hint="@string/latitude"
+                android:inputType="numberDecimal"/>
+
+        </android.support.design.widget.TextInputLayout>
+    </LinearLayout>
+
+
+</LinearLayout>

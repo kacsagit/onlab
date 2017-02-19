@@ -1,4 +1,6 @@
-package com.example.kata.onlab;
+package com.example.kata.onlab.network;
+
+import com.example.kata.onlab.Data;
 
 import java.util.List;
 
@@ -34,5 +36,7 @@ public class NetworkManager {
         public Call<List<Data>> getData() {
             return netApi.getData();
         }
+
+        public Call<String> postData(Data d){return netApi.postData(d);}
 
 }
