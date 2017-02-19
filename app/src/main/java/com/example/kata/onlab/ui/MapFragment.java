@@ -87,11 +87,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, MyLocat
 
         myLocationManager = new MyLocationManager(this, getContext());
         requestNeededPermission();
-        buildGoogleApiClient();
-        mLocationRequest = LocationRequest.create()
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(100 * 1000)        // 10 seconds, in milliseconds
-                .setFastestInterval(10 * 1000); // 1 second, in milliseconds
+
 
 
     }
@@ -102,7 +98,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, MyLocat
         // Inflate the layout for this fragment
 
         View view = inflater.inflate(R.layout.fragment_map, container, false);
-
+        buildGoogleApiClient();
+        mLocationRequest = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setInterval(100 * 1000)        // 10 seconds, in milliseconds
+                .setFastestInterval(10 * 1000); // 1 second, in milliseconds
         mapView = (MapView) view.findViewById(R.id.map);
         mapView.onCreate(savedInstanceState);
 
