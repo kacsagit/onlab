@@ -92,8 +92,9 @@ public class ListGetFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        EventBus.getDefault().register(this);
         loadData();
+        EventBus.getDefault().register(this);
+
     }
 
     @Override

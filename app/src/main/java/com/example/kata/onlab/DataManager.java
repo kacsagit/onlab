@@ -2,8 +2,6 @@ package com.example.kata.onlab;
 
 import android.content.Context;
 import android.os.Handler;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.example.kata.onlab.event.ErrorEvent;
 import com.example.kata.onlab.event.GetDataEvent;
@@ -15,8 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
  * Created by Kata on 2017. 02. 19..
@@ -72,27 +68,6 @@ public class DataManager {
         runCallOnBackgroundThread(uploadPhotoRequest);
     }
 
-
-
-    public void postData(){
-        NetworkManager.getInstance().postData(new Data("dfhgfgg")).enqueue(new Callback<String>() {
-
-            @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                Log.d(TAG, "onResponse: " + response.code());
-                if (response.isSuccessful()) {
-                    response.body();
-                } else {
-                    Toast.makeText(context, "Error: " + response.message(), Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-
-            }
-        });
-    }
 
 
     public interface ResponseListener<T> {

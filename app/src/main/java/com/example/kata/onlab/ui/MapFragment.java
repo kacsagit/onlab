@@ -4,6 +4,8 @@ package com.example.kata.onlab.ui;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -39,6 +41,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
@@ -83,7 +86,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, MyLocat
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        buildGoogleApiClient();
+        mLocationRequest = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setInterval(100 * 1000)        // 10 seconds, in milliseconds
+                .setFastestInterval(10 * 1000); // 1 second, in milliseconds
 
         myLocationManager = new MyLocationManager(this, getContext());
         requestNeededPermission();
@@ -98,11 +105,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, MyLocat
         // Inflate the layout for this fragment
 
         View view = inflater.inflate(R.layout.fragment_map, container, false);
-        buildGoogleApiClient();
-        mLocationRequest = LocationRequest.create()
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(100 * 1000)        // 10 seconds, in milliseconds
-                .setFastestInterval(10 * 1000); // 1 second, in milliseconds
+
         mapView = (MapView) view.findViewById(R.id.map);
         mapView.onCreate(savedInstanceState);
 
@@ -120,6 +123,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, MyLocat
                 DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.ROOT);
                 otherSymbols.setGroupingSeparator('.');
                 DecimalFormat df = new DecimalFormat("#.0000",otherSymbols);
+                bundle.putString("place",revGeoCode(point));
                 bundle.putString("longitude",df.format(point.longitude));
                 bundle.putString("latitude",df.format(point.latitude));
                 anf.setArguments(bundle);
@@ -135,8 +139,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, MyLocat
         mapView.onResume();
         mapView.getMapAsync(this);
         mGoogleApiClient.connect();
-        EventBus.getDefault().register(this);
         loadData();
+        EventBus.getDefault().register(this);
+
 
 
     }
@@ -156,22 +161,25 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, MyLocat
         }*/
     }
 
-    private void revGeoCode() {
-      /*  if (prevLoc != null) {
-            double latitude = prevLoc.getLatitude();
-            double longitude = prevLoc.getLongitude();
-            Geocoder gc = new Geocoder(this, Locale.getDefault());
+    private String revGeoCode(LatLng loc ) {
+            double latitude = loc.latitude;
+            double longitude = loc.longitude;
+            Geocoder gc = new Geocoder(this.getContext(), Locale.getDefault());
             List<Address> addrs = null;
             try {
                 addrs = gc.getFromLocation(latitude, longitude, 10);
-                Toast.makeText(this, addrs.get(0).getAddressLine(0)+"\n"+
+                Toast.makeText(this.getContext(), addrs.get(0).getAddressLine(0)+"\n"+
                                 addrs.get(0).getAddressLine(1)+"\n"+
                                 addrs.get(0).getAddressLine(2),
                         Toast.LENGTH_SHORT).show();
+                return addrs.get(0).getAddressLine(0)+" "+
+                        addrs.get(0).getAddressLine(1)+" "+
+                        addrs.get(0).getAddressLine(2);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }*/
+        return "";
+
     }
 
     public void showPlacePicker() {

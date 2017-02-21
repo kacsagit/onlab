@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements AddPlaceFragment.
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onGetData(GetDataEvent<List<Data>> event) {
-        listGetFragment.loadData();
+        //listGetFragment.loadData();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

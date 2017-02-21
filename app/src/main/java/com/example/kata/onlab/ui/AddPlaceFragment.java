@@ -47,6 +47,7 @@ public class AddPlaceFragment extends AppCompatDialogFragment {
                 .setNegativeButton(R.string.cancel, null)
                 .create();
         if (getArguments()!=null) {
+            place.setText((getArguments().getString("place")));
             longitude.setText((getArguments().getString("longitude")));
             latitude.setText((getArguments().getString("latitude")));
         }
