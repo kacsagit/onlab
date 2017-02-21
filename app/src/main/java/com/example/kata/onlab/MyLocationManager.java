@@ -54,6 +54,7 @@ public class MyLocationManager implements LocationListener {
             locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
                     0, 0, this);
 
+
         }catch (Throwable e) {
             e.printStackTrace();
         }

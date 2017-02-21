@@ -64,6 +64,7 @@ public class ListGetFragment extends Fragment {
 
 
     public void loadData() {
+        swipeRefresh.setRefreshing(true);
         DataManager.getInstance(this.getContext()).getData();
     }
 

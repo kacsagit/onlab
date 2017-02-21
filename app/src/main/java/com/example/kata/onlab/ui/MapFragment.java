@@ -2,6 +2,7 @@ package com.example.kata.onlab.ui;
 
 
 import android.Manifest;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -12,6 +13,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,12 +21,17 @@ import android.widget.Toast;
 
 import com.example.kata.onlab.Data;
 import com.example.kata.onlab.DataManager;
+import com.example.kata.onlab.GeofenceTransitionsIntentService;
 import com.example.kata.onlab.MyLocationManager;
 import com.example.kata.onlab.R;
 import com.example.kata.onlab.event.ErrorEvent;
 import com.example.kata.onlab.event.GetDataEvent;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.Geofence;
+import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -47,6 +54,7 @@ import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 
 
 /**
@@ -54,18 +62,20 @@ import java.util.Locale;
  */
 public class MapFragment extends Fragment implements OnMapReadyCallback, MyLocationManager.OnLocChanged,GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
-
+    private static final String TAG = "MapFragment";
     private MyLocationManager myLocationManager = null;
 
     private Location prevLoc = null;
     private MapView mapView;
     private static GoogleMap googleMap;
 
+    private List<Geofence> mGeofenceList;
     LocationRequest mLocationRequest;
     GoogleApiClient mGoogleApiClient;
+    PendingIntent mGeofencePendingIntent;
     LatLng latLng;
     Marker currLocationMarker;
-
+    double currentLatitude = 8.5565795, currentLongitude = 76.8810227;
     List<Marker> markers = new ArrayList<>();
     Location mLastLocation = null;
 
@@ -86,12 +96,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, MyLocat
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        buildGoogleApiClient();
-        mLocationRequest = LocationRequest.create()
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(100 * 1000)        // 10 seconds, in milliseconds
-                .setFastestInterval(10 * 1000); // 1 second, in milliseconds
 
+        mGeofenceList = new ArrayList<Geofence>();
         myLocationManager = new MyLocationManager(this, getContext());
         requestNeededPermission();
 
@@ -105,9 +111,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, MyLocat
         // Inflate the layout for this fragment
 
         View view = inflater.inflate(R.layout.fragment_map, container, false);
+        buildGoogleApiClient();
+        mLocationRequest = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setInterval(10 * 1000)        // 10 seconds, in milliseconds
+                .setFastestInterval(1 * 1000); // 1 second, in milliseconds
 
         mapView = (MapView) view.findViewById(R.id.map);
         mapView.onCreate(savedInstanceState);
+
+        createGeofences(currentLatitude, currentLongitude);
 
         return view;
 
@@ -182,18 +195,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, MyLocat
 
     }
 
-    public void showPlacePicker() {
-       /* PlacePicker.IntentBuilder builder =
-                new PlacePicker.IntentBuilder();
-
-        try {
-            startActivityForResult(builder.build(MainActivity.this), 101);
-        } catch (GooglePlayServicesRepairableException e) {
-            e.printStackTrace();
-        } catch (GooglePlayServicesNotAvailableException e) {
-            e.printStackTrace();
-        }*/
-    }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 101) {
@@ -270,9 +271,22 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, MyLocat
 
     @Override
     public void locationChanged(Location location) {
+        if (ActivityCompat.checkSelfPermission(this.getContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this.getContext(),
+                        Manifest.permission.ACCESS_COARSE_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+
+
         if (currLocationMarker != null) {
             currLocationMarker.remove();
         }
+        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                mGoogleApiClient);
+        googleMap.setMyLocationEnabled(true);
         latLng = new LatLng(location.getLatitude(), location.getLongitude());
         MarkerOptions markerOptions = new MarkerOptions()
                 .position(latLng).title("Current Position").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
@@ -285,7 +299,60 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, MyLocat
             googleMap.animateCamera(CameraUpdateFactory
                     .newCameraPosition(cameraPosition));
 
+        try {
+            LocationServices.GeofencingApi.addGeofences(
+                    mGoogleApiClient,
+                    getGeofencingRequest(),
+                    getGeofencePendingIntent()
+            ).setResultCallback(new ResultCallback<Status>() {
 
+                @Override
+                public void onResult(Status status) {
+                    if (status.isSuccess()) {
+                        Log.i(TAG, "Saving Geofence");
+
+                    } else {
+                        Log.e(TAG, "Registering geofence failed: " + status.getStatusMessage() +
+                                " : " + status.getStatusCode());
+                    }
+                }
+            });
+
+        } catch (SecurityException securityException) {
+            // Catch exception generated if the app does not use ACCESS_FINE_LOCATION permission.
+            Log.e(TAG, "Error");
+        }
+
+    }
+
+    public void createGeofences(double latitude, double longitude) {
+        String id = UUID.randomUUID().toString();
+        Geofence fence = new Geofence.Builder()
+                .setRequestId(id)
+                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_EXIT)
+                .setCircularRegion(latitude, longitude, 20000)
+                .setExpirationDuration(Geofence.NEVER_EXPIRE)
+                .build();
+        mGeofenceList.add(fence);
+    }
+
+    private GeofencingRequest getGeofencingRequest() {
+        GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
+        builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER);
+        builder.addGeofences(mGeofenceList);
+        return builder.build();
+    }
+
+    private PendingIntent getGeofencePendingIntent() {
+        // Reuse the PendingIntent if we already have it.
+        if (mGeofencePendingIntent != null) {
+            return mGeofencePendingIntent;
+        }
+        Intent intent = new Intent(this.getContext(), GeofenceTransitionsIntentService.class);
+        // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when
+        // calling addGeofences() and removeGeofences().
+        return PendingIntent.getService(this.getContext(), 0, intent, PendingIntent.
+                FLAG_UPDATE_CURRENT);
     }
 
     @Override
