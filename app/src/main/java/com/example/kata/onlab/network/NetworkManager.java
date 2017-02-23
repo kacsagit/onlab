@@ -53,7 +53,7 @@ public class NetworkManager {
                 public void onResponse(Call<List<Data>> call, Response<List<Data>> response) {
                     if (response.isSuccessful()) {
                         Log.d(TAG,response.body().toString());
-                        instance.items=new ArrayList<Data>((response.body()));
+                        items=new ArrayList<Data>((response.body()));
                     } else {
                         // Toast.makeText(MainActivity.this, "Error: " + response.message(), Toast.LENGTH_SHORT).show();
                     }
