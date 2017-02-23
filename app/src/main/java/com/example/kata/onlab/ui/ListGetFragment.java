@@ -48,18 +48,23 @@ public class ListGetFragment extends Fragment {
                 new AddPlaceFragment().show(getActivity().getSupportFragmentManager(), AddPlaceFragment.TAG);
             }
         });
-        updateData();
+        getData();
         return view;
 
     }
 
 
+    public void getData() {
+        swipeRefresh.setRefreshing(true);
+        adapter.update(NetworkManager.getInstance().items);
+        swipeRefresh.setRefreshing(false);
 
+
+    }
     public void updateData() {
         swipeRefresh.setRefreshing(true);
         NetworkManager.getInstance().getData();
-        adapter.update(NetworkManager.getInstance().items);
-        swipeRefresh.setRefreshing(false);
+        getData();
 
 
     }
