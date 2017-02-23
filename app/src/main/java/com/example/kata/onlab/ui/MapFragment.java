@@ -20,12 +20,10 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.kata.onlab.Data;
-import com.example.kata.onlab.DataManager;
 import com.example.kata.onlab.GeofenceTransitionsIntentService;
 import com.example.kata.onlab.MyLocationManager;
 import com.example.kata.onlab.R;
-import com.example.kata.onlab.event.ErrorEvent;
-import com.example.kata.onlab.event.GetDataEvent;
+import com.example.kata.onlab.network.NetworkManager;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
@@ -43,10 +41,6 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -149,11 +143,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, MyLocat
     @Override
     public void onResume() {
         super.onResume();
+        updateData();
         mapView.onResume();
         mapView.getMapAsync(this);
         mGoogleApiClient.connect();
-        loadData();
-        EventBus.getDefault().register(this);
 
 
 
@@ -262,6 +255,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, MyLocat
     }
 
 
+    public void updateData() {
+        NetworkManager.getInstance().getData();
+        setUpMap(NetworkManager.getInstance().items);
+
+
+    }
 
     @Override
     public void onStop() {
@@ -386,31 +385,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, MyLocat
 
     }
 
-    public void loadData() {
-        DataManager.getInstance(this.getContext()).getData();
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onGetData(GetDataEvent<List<Data>> event) {
-        setUpMap(event.getData());
-    }
-
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onError(ErrorEvent event) {
-        event.getE().printStackTrace();
-    }
 
 
 
-    @Override
-    public void onPause() {
 
-        EventBus.getDefault().unregister(this);
-        super.onPause();
-
-
-    }
     @Override
     public void onConnectionSuspended(int i) {
 

@@ -4,15 +4,13 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.example.kata.onlab.ui.ListGetFragment;
+import com.example.kata.onlab.ui.MapFragment;
 
 /**
  * Created by Kata on 2017. 02. 18..
  */
 public class TablayoutAdapter extends FragmentPagerAdapter {
-    private final List<Fragment> mFragmentList = new ArrayList<>();
-    private final List<String> mFragmentTitleList = new ArrayList<>();
 
     public TablayoutAdapter(FragmentManager manager) {
         super(manager);
@@ -20,22 +18,32 @@ public class TablayoutAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        return mFragmentList.get(position);
+        switch (position) {
+            case 0:
+                return new ListGetFragment();
+            case 1:
+                return new MapFragment();
+            default:
+                return new ListGetFragment();
+        }
     }
 
     @Override
     public int getCount() {
-        return mFragmentList.size();
+        return 2;
     }
 
-    public void addFragment(Fragment fragment, String title) {
-        mFragmentList.add(fragment);
-        mFragmentTitleList.add(title);
-    }
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return mFragmentTitleList.get(position);
+        switch (position) {
+            case 0:
+                return "List";
+            case 1:
+                return "Map";
+            default:
+                return "unknown";
+        }
     }
 }
 
