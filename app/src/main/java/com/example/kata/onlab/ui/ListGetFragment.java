@@ -11,9 +11,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.kata.onlab.Data;
 import com.example.kata.onlab.R;
 import com.example.kata.onlab.network.NetworkManager;
 import com.example.kata.onlab.recyclerview.ItemAdapter;
+
+import java.util.List;
 
 /**
  * Created by Kata on 2017. 02. 18..
@@ -58,14 +61,20 @@ public class ListGetFragment extends Fragment {
         swipeRefresh.setRefreshing(true);
         adapter.update(NetworkManager.getInstance().items);
         swipeRefresh.setRefreshing(false);
-
-
     }
+
     public void updateData() {
         swipeRefresh.setRefreshing(true);
         NetworkManager.getInstance().getData();
-        getData();
+    }
+    public void postDataCallback(Data item){
+        adapter.addItem(item);
+    }
 
+
+    public void updateDataCallback(List<Data> list) {
+        adapter.update(list);
+        swipeRefresh.setRefreshing(false);
 
     }
 

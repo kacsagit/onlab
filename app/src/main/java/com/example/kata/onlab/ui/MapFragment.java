@@ -143,11 +143,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, MyLocat
     @Override
     public void onResume() {
         super.onResume();
-        updateData();
         mapView.onResume();
         mapView.getMapAsync(this);
         mGoogleApiClient.connect();
-
+        getData();
 
 
     }
@@ -255,11 +254,21 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, MyLocat
     }
 
 
+    public void getData() {
+        setUpMap(NetworkManager.getInstance().items);
+    }
+
     public void updateData() {
         NetworkManager.getInstance().getData();
-        setUpMap(NetworkManager.getInstance().items);
 
+    }
 
+    public void updateDataCallback(List<Data> list) {
+        setUpMap(list);
+    }
+
+    public void postDataCallback(Data item){
+        addMarker(item);
     }
 
     @Override
@@ -371,16 +380,22 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, MyLocat
                 markers.clear();
             }
             for (Data item : items) {
-                LatLng latLng1 = new LatLng(item.latitude, item.longitude);
-
-                MarkerOptions markerOptions = new MarkerOptions()
-                        .position(latLng1).title(item.place);
-                //.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_pencil_grey600_48dp));
-             /*   MarkerOptions markerOptions = new MarkerOptions()
-                        .position(latLng1).title(item.place).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));*/
-                markers.add(googleMap.addMarker(markerOptions));
+                addMarker(item);
             }
         }
+
+
+    }
+
+    public void addMarker(Data item){
+        LatLng latLng1 = new LatLng(item.latitude, item.longitude);
+
+        MarkerOptions markerOptions = new MarkerOptions()
+                .position(latLng1).title(item.place);
+        //.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_pencil_grey600_48dp));
+             /*   MarkerOptions markerOptions = new MarkerOptions()
+                        .position(latLng1).title(item.place).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));*/
+        markers.add(googleMap.addMarker(markerOptions));
 
 
     }
