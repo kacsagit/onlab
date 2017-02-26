@@ -1,11 +1,11 @@
-package com.example.kata.onlab;
+package com.example.kata.onlab.ui.main;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.example.kata.onlab.ui.ListGetFragment;
-import com.example.kata.onlab.ui.MapFragment;
+import com.example.kata.onlab.ui.list.ListGetFragment;
+import com.example.kata.onlab.ui.map.MapFragment;
 
 /**
  * Created by Kata on 2017. 02. 18..

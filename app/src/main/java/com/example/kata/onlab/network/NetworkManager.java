@@ -2,7 +2,6 @@ package com.example.kata.onlab.network;
 
 import android.util.Log;
 
-import com.example.kata.onlab.Data;
 import com.example.kata.onlab.event.GetDataEvent;
 import com.example.kata.onlab.event.PostDataEvent;
 

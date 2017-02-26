@@ -1,4 +1,4 @@
-package com.example.kata.onlab.ui;
+package com.example.kata.onlab.ui.map;
 
 
 import android.Manifest;
@@ -19,11 +19,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.example.kata.onlab.Data;
-import com.example.kata.onlab.GeofenceTransitionsIntentService;
-import com.example.kata.onlab.MyLocationManager;
 import com.example.kata.onlab.R;
-import com.example.kata.onlab.network.NetworkManager;
+import com.example.kata.onlab.network.Data;
+import com.example.kata.onlab.ui.AddPlaceFragment;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
@@ -54,7 +52,7 @@ import java.util.UUID;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MapFragment extends Fragment implements OnMapReadyCallback, MyLocationManager.OnLocChanged,GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class MapFragment extends Fragment implements OnMapReadyCallback, MyLocationManager.OnLocChanged,GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, MapScreen {
 
     private static final String TAG = "MapFragment";
     private MyLocationManager myLocationManager = null;
@@ -125,16 +123,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, MyLocat
         googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(LatLng point) {
-                AddPlaceFragment anf=new AddPlaceFragment();
-                Bundle bundle = new Bundle();
-                DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.ROOT);
-                otherSymbols.setGroupingSeparator('.');
-                DecimalFormat df = new DecimalFormat("#.0000",otherSymbols);
-                bundle.putString("place",revGeoCode(point));
-                bundle.putString("longitude",df.format(point.longitude));
-                bundle.putString("latitude",df.format(point.latitude));
-                anf.setArguments(bundle);
-                anf.show(getActivity().getSupportFragmentManager(),AddPlaceFragment.TAG);
+                MapPresenter.getInstance().newItemView(point);
             }
         });
 
@@ -255,12 +244,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, MyLocat
 
 
     public void getData() {
-        setUpMap(NetworkManager.getInstance().items);
+        setUpMap(MapPresenter.getInstance().getNetworkData());
     }
 
     public void updateData() {
-        NetworkManager.getInstance().getData();
-
+        MapPresenter.getInstance().updateNetworkData();
     }
 
     public void updateDataCallback(List<Data> list) {
@@ -271,11 +259,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, MyLocat
         addMarker(item);
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        myLocationManager.stopLocationMonitoring();
-    }
+
 
     @Override
     public void locationChanged(Location location) {
@@ -401,11 +385,36 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, MyLocat
     }
 
 
-
+    @Override
+    public void onConnectionSuspended(int i) {
+    }
 
 
     @Override
-    public void onConnectionSuspended(int i) {
+    public void newItemView(LatLng point) {
+        AddPlaceFragment anf=new AddPlaceFragment();
+        Bundle bundle = new Bundle();
+        DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.ROOT);
+        otherSymbols.setGroupingSeparator('.');
+        DecimalFormat df = new DecimalFormat("#.0000",otherSymbols);
+        bundle.putString("place",revGeoCode(point));
+        bundle.putString("longitude",df.format(point.longitude));
+        bundle.putString("latitude",df.format(point.latitude));
+        anf.setArguments(bundle);
+        anf.show(getActivity().getSupportFragmentManager(),AddPlaceFragment.TAG);
+    }
 
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        MapPresenter.getInstance().attachScreen(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        MapPresenter.getInstance().detachScreen();
+        myLocationManager.stopLocationMonitoring();
     }
 }

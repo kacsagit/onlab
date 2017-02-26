@@ -1,4 +1,4 @@
-package com.example.kata.onlab.ui;
+package com.example.kata.onlab.ui.list;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -11,17 +11,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.kata.onlab.Data;
 import com.example.kata.onlab.R;
-import com.example.kata.onlab.network.NetworkManager;
-import com.example.kata.onlab.recyclerview.ItemAdapter;
+import com.example.kata.onlab.network.Data;
+import com.example.kata.onlab.ui.AddPlaceFragment;
+import com.example.kata.onlab.ui.main.MainPresenter;
 
 import java.util.List;
 
 /**
  * Created by Kata on 2017. 02. 18..
  */
-public class ListGetFragment extends Fragment {
+public class ListGetFragment extends Fragment implements ListScreen{
 
     private RecyclerView recyclerView;
     ItemAdapter adapter;
@@ -48,7 +48,8 @@ public class ListGetFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new AddPlaceFragment().show(getActivity().getSupportFragmentManager(), AddPlaceFragment.TAG);
+                ListPresenter.getInstance().newItemView();
+
             }
         });
         getData();
@@ -56,26 +57,29 @@ public class ListGetFragment extends Fragment {
 
     }
 
+    public void newItemView(){
+        new AddPlaceFragment().show(getActivity().getSupportFragmentManager(), AddPlaceFragment.TAG);
+    }
 
     public void getData() {
         swipeRefresh.setRefreshing(true);
-        adapter.update(NetworkManager.getInstance().items);
+        adapter.update(ListPresenter.getInstance().getNetworkData());
         swipeRefresh.setRefreshing(false);
     }
 
+
     public void updateData() {
         swipeRefresh.setRefreshing(true);
-        NetworkManager.getInstance().getData();
+        ListPresenter.getInstance().updateNetworkData();
     }
+
     public void postDataCallback(Data item){
         adapter.addItem(item);
     }
 
-
     public void updateDataCallback(List<Data> list) {
         adapter.update(list);
         swipeRefresh.setRefreshing(false);
-
     }
 
     private void initRecycleView() {
@@ -92,6 +96,7 @@ public class ListGetFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
+
     }
 
     @Override
@@ -99,6 +104,18 @@ public class ListGetFragment extends Fragment {
         super.onPause();
 
 
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        ListPresenter.getInstance().attachScreen(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        MainPresenter.getInstance().detachScreen();
     }
 
 }

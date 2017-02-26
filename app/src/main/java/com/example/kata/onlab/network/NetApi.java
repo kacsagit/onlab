@@ -1,7 +1,5 @@
 package com.example.kata.onlab.network;
 
-import com.example.kata.onlab.Data;
-
 import java.util.List;
 
 import retrofit2.Call;

@@ -12,7 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.example.kata.onlab.Data;
+import com.example.kata.onlab.network.Data;
 import com.example.kata.onlab.R;
 
 public class AddPlaceFragment extends AppCompatDialogFragment {

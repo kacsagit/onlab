@@ -1,4 +1,4 @@
-package com.example.kata.onlab.recyclerview;
+package com.example.kata.onlab.ui.list;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -6,7 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.kata.onlab.Data;
+import com.example.kata.onlab.network.Data;
 import com.example.kata.onlab.R;
 
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package com.example.kata.onlab;
+package com.example.kata.onlab.ui.map;
 
 import android.app.IntentService;
 import android.app.Notification;
@@ -9,7 +9,8 @@ import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-import com.example.kata.onlab.ui.MapFragment;
+import com.example.kata.onlab.R;
+import com.example.kata.onlab.ui.map.MapFragment;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
 
