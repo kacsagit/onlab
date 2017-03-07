@@ -25,11 +25,11 @@ public class ListPresenter  extends Presenter<ListScreen> {
     }
 
     public List<Data> getNetworkData(){
-        return NetworkManager.getInstance().items;
+        return NetworkManager.getInstance().getData();
     }
 
     public void updateNetworkData(){
-        NetworkManager.getInstance().getData();
+        NetworkManager.getInstance().updateData();
     }
 
 

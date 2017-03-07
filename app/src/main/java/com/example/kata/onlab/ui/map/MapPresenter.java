@@ -26,11 +26,11 @@ public class MapPresenter extends Presenter<MapScreen> {
     }
 
     public List<Data> getNetworkData(){
-        return NetworkManager.getInstance().items;
+        return NetworkManager.getInstance().getData();
     }
 
     public void updateNetworkData(){
-        NetworkManager.getInstance().getData();
+        NetworkManager.getInstance().updateData();
     }
 
 

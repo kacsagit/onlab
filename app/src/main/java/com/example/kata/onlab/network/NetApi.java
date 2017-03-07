@@ -15,5 +15,5 @@ public interface NetApi {
     Call<List<Data>> getData();
 
     @POST("/")
-    Call<String> postData(@Body Data dat);
+    Call<Integer> postData(@Body Data dat);
 }

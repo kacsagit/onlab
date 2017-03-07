@@ -7,9 +7,11 @@ import com.example.kata.onlab.event.PostDataEvent;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
+import io.realm.RealmResults;
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -39,25 +41,32 @@ public class NetworkManager {
 
     private Retrofit retrofit;
     private NetApi netApi;
-    public List<Data> items = new ArrayList<Data>();
+    Realm realm;
 
     private NetworkManager() {
 
         retrofit = new Retrofit.Builder().baseUrl(ENDPOINT_ADDRESS).client(new OkHttpClient.Builder().build()).addConverterFactory(GsonConverterFactory.create()).build();
         netApi = retrofit.create(NetApi.class);
-        getData();
+        updateData();
+        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder().build();
+        //Realm.deleteRealm(realmConfiguration);
+        realm = Realm.getInstance(realmConfiguration);
 
     }
 
-    public void getData() {
+    public void updateData() {
         netApi.getData().enqueue(new Callback<List<Data>>() {
             @Override
             public void onResponse(Call<List<Data>> call, Response<List<Data>> response) {
                 if (response.isSuccessful()) {
                     Log.d(TAG, response.body().toString());
-                    items = new ArrayList<Data>((response.body()));
-                    GetDataEvent getDataEvent=new GetDataEvent();
-                    getDataEvent.setData(items);
+                    GetDataEvent getDataEvent = new GetDataEvent();
+                    List<Data> resp = response.body();
+                    realm.beginTransaction();
+                    realm.copyToRealmOrUpdate(resp);
+                    realm.commitTransaction();
+                    RealmResults<Data> results = realm.where(Data.class).findAll();
+                    getDataEvent.setData(results);
                     EventBus.getDefault().post(getDataEvent);
                 } else {
                     // Toast.makeText(MainActivity.this, "Error: " + response.message(), Toast.LENGTH_SHORT).show();
@@ -71,31 +80,45 @@ public class NetworkManager {
         });
     }
 
+    public List<Data> getData() {
+
+        RealmResults<Data> results = realm.where(Data.class).findAll();
+        return results;
+    }
+
     public void postData(final Data d) {
-        netApi.postData(d).enqueue(new Callback<String>() {
+        netApi.postData(d).enqueue(new Callback<Integer>() {
             @Override
-            public void onResponse(Call<String> call, Response<String> response) {
+            public void onResponse(Call<Integer> call, Response<Integer> response) {
                 if (response.isSuccessful()) {
-                    Log.d(TAG, response.body());
-                    items.add(d);
-                    PostDataEvent postDataEvent=new PostDataEvent();
+                    Log.d(TAG, response.body().toString());
+                    d.id = response.body();
+
+                    realm.beginTransaction();
+                    realm.copyToRealmOrUpdate(d);
+                    realm.commitTransaction();
+
+                    PostDataEvent postDataEvent = new PostDataEvent();
                     postDataEvent.setData(d);
                     EventBus.getDefault().post(postDataEvent);
+
                 } else {
                     //     Toast.makeText(MainActivity.this, "Error: " + response.message(), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
-            public void onFailure(Call<String> call, Throwable t) {
+            public void onFailure(Call<Integer> call, Throwable t) {
 
             }
         });
     }
 
 
+
     public interface ResponseListener<T> {
         void onResponse(T t);
+
         void onError(Exception e);
     }
 
