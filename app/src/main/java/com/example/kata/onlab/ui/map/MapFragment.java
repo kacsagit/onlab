@@ -69,6 +69,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, MyLocat
     Marker currLocationMarker;
     double currentLatitude = 8.5565795, currentLongitude = 76.8810227;
     List<Marker> markers = new ArrayList<>();
+    List<Data> markersData =new ArrayList<>();
     Location mLastLocation = null;
 
     private GoogleApiClient googleApiClient;
@@ -126,6 +127,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, MyLocat
                 MapPresenter.getInstance().newItemView(point);
             }
         });
+        setUpMap(markersData);
 
     }
 
@@ -359,11 +361,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, MyLocat
     }
 
     public  void setUpMap(List<Data> items) {
+        markersData= new ArrayList<>(items);
         if (googleMap != null) {
             if (markers != null) {
                 markers.clear();
             }
-            for (Data item : items) {
+            for (Data item : markersData) {
                 addMarker(item);
             }
         }

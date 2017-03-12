@@ -52,7 +52,6 @@ public class ListGetFragment extends Fragment implements ListScreen{
 
             }
         });
-        getData();
         return view;
 
     }

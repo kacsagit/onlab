@@ -29,7 +29,7 @@ public class LoginActivity extends AppCompatActivity implements LoginScreen {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        Realm.init(this);
+
         callbackManager = CallbackManager.Factory.create();
         LoginButton loginButton = (LoginButton) findViewById(R.id.login_button);
         loginButton.setReadPermissions("email");
@@ -99,7 +99,9 @@ public class LoginActivity extends AppCompatActivity implements LoginScreen {
 
     @Override
     public void logedIn(LoginData data) {
+        Toast.makeText(this,data.mail,Toast.LENGTH_LONG).show();
         Intent intent=new Intent(this, MainActivity.class);
         startActivity(intent);
+
     }
 }

@@ -19,6 +19,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements AddPlaceFragment.IAddPlaceFragment, MainScreen {
 
     private ViewPager viewPager;
+    private TablayoutAdapter tablayoutAdapter;
 
     private static final String TAG = "MainActivity";
 
@@ -33,10 +34,11 @@ public class MainActivity extends AppCompatActivity implements AddPlaceFragment.
 
         setupViewPager(viewPager);
         tabs.setupWithViewPager(viewPager);
-           }
+        NetworkManager.getInstance().updateData();
+    }
 
     private void setupViewPager(ViewPager viewPager) {
-        TablayoutAdapter tablayoutAdapter = new TablayoutAdapter(getSupportFragmentManager());
+        tablayoutAdapter = new TablayoutAdapter(getSupportFragmentManager());
         viewPager.setAdapter(tablayoutAdapter);
     }
 
@@ -47,8 +49,8 @@ public class MainActivity extends AppCompatActivity implements AddPlaceFragment.
     }
 
 
-    public Fragment getFragment() {
-        return getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.viewpager + ":" + viewPager.getCurrentItem());
+    public Fragment getFragment(int id) {
+        return getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.viewpager + ":" + id);
     }
 
 
@@ -66,27 +68,29 @@ public class MainActivity extends AppCompatActivity implements AddPlaceFragment.
 
     @Override
     public void postDataCallback(Data item) {
-        Fragment fragment = getFragment();
+        for (int i = 0; i < tablayoutAdapter.getCount(); i++) {
+            Fragment fragment = getFragment(i);
 
-        if (fragment instanceof ListGetFragment) {
-            ((ListGetFragment) fragment).postDataCallback(item);
-        }
-        if (fragment instanceof MapFragment) {
-            ((MapFragment) fragment).postDataCallback(item);
+            if (fragment instanceof ListGetFragment) {
+                ((ListGetFragment) fragment).postDataCallback(item);
+            }
+            if (fragment instanceof MapFragment) {
+                ((MapFragment) fragment).postDataCallback(item);
+            }
         }
     }
 
     @Override
     public void updateDataCallback(List<Data> items) {
-        Fragment fragment = getFragment();
+        for (int i = 0; i < tablayoutAdapter.getCount(); i++) {
+            Fragment fragment = getFragment(i);
 
-        if (fragment instanceof ListGetFragment)
-        {
-            ((ListGetFragment) fragment).updateDataCallback(items);
-        }
-        if (fragment instanceof MapFragment)
-        {
-            ((MapFragment) fragment).updateDataCallback(items);
+            if (fragment instanceof ListGetFragment) {
+                ((ListGetFragment) fragment).updateDataCallback(items);
+            }
+            if (fragment instanceof MapFragment) {
+                ((MapFragment) fragment).updateDataCallback(items);
+            }
         }
     }
 }
