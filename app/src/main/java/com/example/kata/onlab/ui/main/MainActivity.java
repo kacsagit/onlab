@@ -16,8 +16,6 @@ import com.example.kata.onlab.ui.map.MapFragment;
 
 import java.util.List;
 
-import io.realm.Realm;
-
 public class MainActivity extends AppCompatActivity implements AddPlaceFragment.IAddPlaceFragment, MainScreen {
 
     private ViewPager viewPager;
@@ -35,9 +33,7 @@ public class MainActivity extends AppCompatActivity implements AddPlaceFragment.
 
         setupViewPager(viewPager);
         tabs.setupWithViewPager(viewPager);
-        Realm.init(this);
-
-    }
+           }
 
     private void setupViewPager(ViewPager viewPager) {
         TablayoutAdapter tablayoutAdapter = new TablayoutAdapter(getSupportFragmentManager());

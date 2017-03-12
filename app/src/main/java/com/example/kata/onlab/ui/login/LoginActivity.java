@@ -3,10 +3,14 @@ package com.example.kata.onlab.ui.login;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.kata.onlab.R;
+import com.example.kata.onlab.network.LoginData;
+import com.example.kata.onlab.network.NetworkManager;
+import com.example.kata.onlab.ui.main.MainActivity;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -14,7 +18,9 @@ import com.facebook.FacebookSdk;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
-public class LoginActivity extends AppCompatActivity {
+import io.realm.Realm;
+
+public class LoginActivity extends AppCompatActivity implements LoginScreen {
 
     private CallbackManager callbackManager;
 
@@ -23,12 +29,15 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        Realm.init(this);
         callbackManager = CallbackManager.Factory.create();
         LoginButton loginButton = (LoginButton) findViewById(R.id.login_button);
+        loginButton.setReadPermissions("email");
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 // App code
+                Log.d("Login", loginResult.getAccessToken().getToken());
                 TextView info = (TextView)findViewById(R.id.info);
                 Toast.makeText(getApplicationContext(),"Fb Login Success",Toast.LENGTH_LONG);
                 info.setText(
@@ -38,6 +47,8 @@ public class LoginActivity extends AppCompatActivity {
                                 "Auth Token: "
                                 + loginResult.getAccessToken().getToken()
                 );
+
+                NetworkManager.getInstance().postToken(loginResult.getAccessToken().getToken());
             }
 
             @Override
@@ -70,5 +81,25 @@ public class LoginActivity extends AppCompatActivity {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             handleSignInResult(result);
         }*/
+    }
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        LoginPresenter.getInstance().attachScreen(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        LoginPresenter.getInstance().detachScreen();
+    }
+
+
+    @Override
+    public void logedIn(LoginData data) {
+        Intent intent=new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
 }

@@ -6,6 +6,7 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Query;
 
 /**
  * Created by Kata on 2017. 02. 11..
@@ -16,4 +17,7 @@ public interface NetApi {
 
     @POST("/")
     Call<Integer> postData(@Body Data dat);
+
+    @GET("/auth/facebook/token")
+    Call<LoginData> postToken(@Query("access_token")  String token);
 }

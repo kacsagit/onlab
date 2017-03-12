@@ -3,6 +3,7 @@ package com.example.kata.onlab.network;
 import android.util.Log;
 
 import com.example.kata.onlab.event.GetDataEvent;
+import com.example.kata.onlab.event.LoginDataEvent;
 import com.example.kata.onlab.event.PostDataEvent;
 
 import org.greenrobot.eventbus.EventBus;
@@ -19,8 +20,6 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import static com.google.android.gms.internal.zzs.TAG;
-
 /**
  * Created by Kata on 2017. 02. 11..
  */
@@ -29,6 +28,7 @@ public class NetworkManager {
 
     private static final String ENDPOINT_ADDRESS = "https://still-dawn-67153.herokuapp.com/";
 
+    private static final String TAG = "NetworkManager";
     private static NetworkManager instance;
 
     public static NetworkManager getInstance() {
@@ -80,6 +80,27 @@ public class NetworkManager {
         });
     }
 
+    public void postToken(String token) {
+        netApi.postToken(token).enqueue(new Callback<LoginData>() {
+            @Override
+            public void onResponse(Call<LoginData> call, Response<LoginData> response) {
+                if (response.isSuccessful()) {
+                    Log.d(TAG, response.body().id);
+                    LoginDataEvent loginDataEvent=new LoginDataEvent();
+                    loginDataEvent.setData(response.body());
+                    EventBus.getDefault().post(loginDataEvent);
+                }else{
+                    Log.d(TAG, response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<LoginData> call, Throwable t) {
+
+            }
+        });
+    }
+
     public List<Data> getData() {
 
         RealmResults<Data> results = realm.where(Data.class).findAll();
@@ -113,7 +134,6 @@ public class NetworkManager {
             }
         });
     }
-
 
 
     public interface ResponseListener<T> {
