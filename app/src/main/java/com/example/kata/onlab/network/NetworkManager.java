@@ -101,11 +101,52 @@ public class NetworkManager {
         });
     }
 
+    public void postTokenGoogle(String token) {
+        Google g=new Google();
+        g.id_token=token;
+        netApi.postTokenGoogle(g).enqueue(new Callback<LoginData>() {
+            @Override
+            public void onResponse(Call<LoginData> call, Response<LoginData> response) {
+                if (response.isSuccessful()) {
+                    Log.d(TAG, response.body().id);
+                    LoginDataEvent loginDataEvent=new LoginDataEvent();
+                    loginDataEvent.setData(response.body());
+                    EventBus.getDefault().post(loginDataEvent);
+                }else{
+                    Log.d(TAG, response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<LoginData> call, Throwable t) {
+
+            }
+        });
+    }
+
     public List<Data> getData() {
 
         RealmResults<Data> results = realm.where(Data.class).findAll();
         return results;
     }
+
+    public void logIn(String username, String password){
+        Login login=new Login();
+        login.username=username;
+        login.password=password;
+        netApi.logIn(login).enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                Log.d(TAG, response.body());
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+
+            }
+        });
+
+    };
 
     public void postData(final Data d) {
         netApi.postData(d).enqueue(new Callback<Integer>() {

@@ -15,9 +15,18 @@ public interface NetApi {
     @GET("/")
     Call<List<Data>> getData();
 
+    @POST("/login")
+    Call<String> logIn(@Body Login log);
+
     @POST("/")
     Call<Integer> postData(@Body Data dat);
 
     @GET("/auth/facebook/token")
     Call<LoginData> postToken(@Query("access_token")  String token);
+
+
+    @POST("/auth/google")
+    Call<LoginData> postTokenGoogle(@Body Google g);
+
+
 }

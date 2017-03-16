@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "179156263831",
+    "project_id": "onlab-1487437661835"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:179156263831:android:648700f95054f594",
+        "android_client_info": {
+          "package_name": "com.example.kata.onlab"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "179156263831-m39pf808tdk86v49u6m9pep7e9k1mg21.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.kata.onlab",
+            "certificate_hash": "2e2e8e5925bc774c89b40b882e1db28e865ba4de"
+          }
+        },
+        {
+          "client_id": "179156263831-vjf7nb2gk8cllv5joc4333keamg2qvja.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB1QlwmbsK_As6i_M1dSngKiXks1pLC8zs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
