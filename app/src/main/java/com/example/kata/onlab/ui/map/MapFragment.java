@@ -416,8 +416,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, MyLocat
 
     @Override
     public void onStop() {
+
+        myLocationManager.stopLocationMonitoring();
         super.onStop();
         MapPresenter.getInstance().detachScreen();
-        myLocationManager.stopLocationMonitoring();
     }
 }

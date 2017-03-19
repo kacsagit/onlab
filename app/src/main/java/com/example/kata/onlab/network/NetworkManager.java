@@ -14,6 +14,7 @@ import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -31,6 +32,7 @@ public class NetworkManager {
     private static final String TAG = "NetworkManager";
     private static NetworkManager instance;
 
+
     public static NetworkManager getInstance() {
         if (instance == null) {
             instance = new NetworkManager();
@@ -41,13 +43,17 @@ public class NetworkManager {
 
     private Retrofit retrofit;
     private NetApi netApi;
+    private String token;
     Realm realm;
 
     private NetworkManager() {
 
-        retrofit = new Retrofit.Builder().baseUrl(ENDPOINT_ADDRESS).client(new OkHttpClient.Builder().build()).addConverterFactory(GsonConverterFactory.create()).build();
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
+
+        retrofit = new Retrofit.Builder().baseUrl(ENDPOINT_ADDRESS).client(client).addConverterFactory(GsonConverterFactory.create()).build();
         netApi = retrofit.create(NetApi.class);
-        updateData();
         RealmConfiguration realmConfiguration = new RealmConfiguration.Builder().build();
         //Realm.deleteRealm(realmConfiguration);
         realm = Realm.getInstance(realmConfiguration);
@@ -55,41 +61,47 @@ public class NetworkManager {
     }
 
     public void updateData() {
-        netApi.getData().enqueue(new Callback<List<Data>>() {
-            @Override
-            public void onResponse(Call<List<Data>> call, Response<List<Data>> response) {
-                if (response.isSuccessful()) {
-                    Log.d(TAG, response.body().toString());
-                    GetDataEvent getDataEvent = new GetDataEvent();
-                    List<Data> resp = response.body();
-                    realm.beginTransaction();
-                    realm.copyToRealmOrUpdate(resp);
-                    realm.commitTransaction();
-                    RealmResults<Data> results = realm.where(Data.class).findAll();
-                    getDataEvent.setData(results);
-                    EventBus.getDefault().post(getDataEvent);
-                } else {
-                    // Toast.makeText(MainActivity.this, "Error: " + response.message(), Toast.LENGTH_SHORT).show();
+        if (token!=null) {
+            String mToken = "Bearer " +token;
+            netApi.getDataSpec(mToken).enqueue(new Callback<List<Data>>() {
+                @Override
+                public void onResponse(Call<List<Data>> call, Response<List<Data>> response) {
+                    if (response.isSuccessful()) {
+                        Log.d(TAG, response.body().toString());
+                        GetDataEvent getDataEvent = new GetDataEvent();
+                        List<Data> resp = response.body();
+                        realm.beginTransaction();
+                        realm.copyToRealmOrUpdate(resp);
+                        realm.commitTransaction();
+                        RealmResults<Data> results = realm.where(Data.class).findAll();
+                        getDataEvent.setData(results);
+                        EventBus.getDefault().post(getDataEvent);
+                    } else {
+                        // Toast.makeText(MainActivity.this, "Error: " + response.message(), Toast.LENGTH_SHORT).show();
+                    }
                 }
-            }
 
-            @Override
-            public void onFailure(Call<List<Data>> call, Throwable t) {
+                @Override
+                public void onFailure(Call<List<Data>> call, Throwable t) {
 
-            }
-        });
+                }
+            });
+        }
     }
 
-    public void postToken(String token) {
-        netApi.postToken(token).enqueue(new Callback<LoginData>() {
+    public void postToken(final String tokenFB) {
+        FB fb = new FB();
+        fb.access_token = tokenFB;
+        netApi.postToken(fb).enqueue(new Callback<LoginData>() {
             @Override
             public void onResponse(Call<LoginData> call, Response<LoginData> response) {
                 if (response.isSuccessful()) {
                     Log.d(TAG, response.body().id);
-                    LoginDataEvent loginDataEvent=new LoginDataEvent();
+                    LoginDataEvent loginDataEvent = new LoginDataEvent();
                     loginDataEvent.setData(response.body());
+                    token = tokenFB;
                     EventBus.getDefault().post(loginDataEvent);
-                }else{
+                } else {
                     Log.d(TAG, response.message());
                 }
             }
@@ -101,18 +113,19 @@ public class NetworkManager {
         });
     }
 
-    public void postTokenGoogle(String token) {
-        Google g=new Google();
-        g.id_token=token;
+    public void postTokenGoogle(final String tokenG) {
+        Google g = new Google();
+        g.id_token = tokenG;
         netApi.postTokenGoogle(g).enqueue(new Callback<LoginData>() {
             @Override
             public void onResponse(Call<LoginData> call, Response<LoginData> response) {
                 if (response.isSuccessful()) {
-                    Log.d(TAG, response.body().id);
-                    LoginDataEvent loginDataEvent=new LoginDataEvent();
+                    Log.d(TAG, response.body().mail);
+                    LoginDataEvent loginDataEvent = new LoginDataEvent();
                     loginDataEvent.setData(response.body());
+                    token = tokenG;
                     EventBus.getDefault().post(loginDataEvent);
-                }else{
+                } else {
                     Log.d(TAG, response.message());
                 }
             }
@@ -130,14 +143,24 @@ public class NetworkManager {
         return results;
     }
 
-    public void logIn(String username, String password){
-        Login login=new Login();
-        login.username=username;
-        login.password=password;
+    public void logIn(final String username, String password) {
+        final Login login = new Login();
+        login.username = username;
+        login.password = password;
         netApi.logIn(login).enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                Log.d(TAG, response.body());
+                if (response.isSuccessful()) {
+                    Log.d(TAG, response.body());
+                    token=response.body();
+                    LoginDataEvent loginDataEvent = new LoginDataEvent();
+                    LoginData loginData=new LoginData();
+                    loginData.mail=username;
+                    loginDataEvent.setData(loginData);
+                    EventBus.getDefault().post(loginDataEvent);
+                } else {
+                    Log.d(TAG, response.message());
+                }
             }
 
             @Override
@@ -146,34 +169,37 @@ public class NetworkManager {
             }
         });
 
-    };
+    }
+
+
 
     public void postData(final Data d) {
-        netApi.postData(d).enqueue(new Callback<Integer>() {
-            @Override
-            public void onResponse(Call<Integer> call, Response<Integer> response) {
-                if (response.isSuccessful()) {
-                    Log.d(TAG, response.body().toString());
-                    d.id = response.body();
+        if (token!=null) {
+            netApi.postData(token, d).enqueue(new Callback<Integer>() {
+                @Override
+                public void onResponse(Call<Integer> call, Response<Integer> response) {
+                    if (response.isSuccessful()) {
+                        Log.d(TAG, response.body().toString());
+                        d.id = response.body();
+                        realm.beginTransaction();
+                        realm.copyToRealmOrUpdate(d);
+                        realm.commitTransaction();
 
-                    realm.beginTransaction();
-                    realm.copyToRealmOrUpdate(d);
-                    realm.commitTransaction();
+                        PostDataEvent postDataEvent = new PostDataEvent();
+                        postDataEvent.setData(d);
+                        EventBus.getDefault().post(postDataEvent);
 
-                    PostDataEvent postDataEvent = new PostDataEvent();
-                    postDataEvent.setData(d);
-                    EventBus.getDefault().post(postDataEvent);
-
-                } else {
-                    //     Toast.makeText(MainActivity.this, "Error: " + response.message(), Toast.LENGTH_SHORT).show();
+                    } else {
+                        //     Toast.makeText(MainActivity.this, "Error: " + response.message(), Toast.LENGTH_SHORT).show();
+                    }
                 }
-            }
 
-            @Override
-            public void onFailure(Call<Integer> call, Throwable t) {
+                @Override
+                public void onFailure(Call<Integer> call, Throwable t) {
 
-            }
-        });
+                }
+            });
+        }
     }
 
 
