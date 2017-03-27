@@ -5,6 +5,7 @@ import android.util.Log;
 import com.example.kata.onlab.event.GetDataEvent;
 import com.example.kata.onlab.event.LoginDataEvent;
 import com.example.kata.onlab.event.PostDataEvent;
+import com.example.kata.onlab.event.SignUpDataEvent;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -55,7 +56,7 @@ public class NetworkManager {
         retrofit = new Retrofit.Builder().baseUrl(ENDPOINT_ADDRESS).client(client).addConverterFactory(GsonConverterFactory.create()).build();
         netApi = retrofit.create(NetApi.class);
         RealmConfiguration realmConfiguration = new RealmConfiguration.Builder().build();
-        //Realm.deleteRealm(realmConfiguration);
+        Realm.deleteRealm(realmConfiguration);
         realm = Realm.getInstance(realmConfiguration);
 
     }
@@ -96,10 +97,10 @@ public class NetworkManager {
             @Override
             public void onResponse(Call<LoginData> call, Response<LoginData> response) {
                 if (response.isSuccessful()) {
-                    Log.d(TAG, response.body().id);
+                    Log.d(TAG, response.body().email);
                     LoginDataEvent loginDataEvent = new LoginDataEvent();
                     loginDataEvent.setData(response.body());
-                    token = tokenFB;
+                    token = response.body().token;
                     EventBus.getDefault().post(loginDataEvent);
                 } else {
                     Log.d(TAG, response.message());
@@ -120,10 +121,10 @@ public class NetworkManager {
             @Override
             public void onResponse(Call<LoginData> call, Response<LoginData> response) {
                 if (response.isSuccessful()) {
-                    Log.d(TAG, response.body().mail);
+                    Log.d(TAG, response.body().email);
                     LoginDataEvent loginDataEvent = new LoginDataEvent();
                     loginDataEvent.setData(response.body());
-                    token = tokenG;
+                    token = response.body().token;
                     EventBus.getDefault().post(loginDataEvent);
                 } else {
                     Log.d(TAG, response.message());
@@ -144,9 +145,7 @@ public class NetworkManager {
     }
 
     public void logIn(final String username, String password) {
-        final Login login = new Login();
-        login.username = username;
-        login.password = password;
+        final Login login = new Login(username,password);
         netApi.logIn(login).enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
@@ -155,7 +154,7 @@ public class NetworkManager {
                     token=response.body();
                     LoginDataEvent loginDataEvent = new LoginDataEvent();
                     LoginData loginData=new LoginData();
-                    loginData.mail=username;
+                    loginData.email=username;
                     loginDataEvent.setData(loginData);
                     EventBus.getDefault().post(loginDataEvent);
                 } else {
@@ -171,11 +170,33 @@ public class NetworkManager {
 
     }
 
+    public void signupData(final Login d){
+        netApi.signupData(d).enqueue(new Callback<Integer>() {
+            @Override
+            public void onResponse(Call<Integer> call, Response<Integer> response) {
+                if (response.isSuccessful()) {
+                    Log.d(TAG, response.body().toString());
+                    SignUpDataEvent signupDataEvent = new SignUpDataEvent();
+                    signupDataEvent.setData(d);
+                    EventBus.getDefault().post(signupDataEvent);
+
+                } else {
+                    //     Toast.makeText(MainActivity.this, "Error: " + response.message(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Integer> call, Throwable t) {
+
+            }
+        });
+    }
+
 
 
     public void postData(final Data d) {
         if (token!=null) {
-            netApi.postData(token, d).enqueue(new Callback<Integer>() {
+            netApi.postData("Bearer "+token, d).enqueue(new Callback<Integer>() {
                 @Override
                 public void onResponse(Call<Integer> call, Response<Integer> response) {
                     if (response.isSuccessful()) {

@@ -5,7 +5,7 @@ package com.example.kata.onlab.network;
  */
 
 public class LoginData {
-    public String id;
     public String name;
-    public String mail;
+    public String email;
+    public String token;
 }

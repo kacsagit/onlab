@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.example.kata.onlab.R;
 import com.example.kata.onlab.network.LoginData;
 import com.example.kata.onlab.network.NetworkManager;
+import com.example.kata.onlab.ui.SignUp.SignUpActivity;
 import com.example.kata.onlab.ui.main.MainActivity;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -109,6 +110,15 @@ public class LoginActivity extends AppCompatActivity implements LoginScreen, Goo
                 NetworkManager.getInstance().logIn(username.getText().toString(),password.getText().toString());
             }
         });
+
+        Button signUp= (Button) findViewById(R.id.signUp);
+        signUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(LoginActivity.this, SignUpActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void signIn() {
@@ -168,7 +178,7 @@ public class LoginActivity extends AppCompatActivity implements LoginScreen, Goo
 
     @Override
     public void logedIn(LoginData data) {
-        Toast.makeText(this,data.mail,Toast.LENGTH_LONG).show();
+        Toast.makeText(this,data.email,Toast.LENGTH_LONG).show();
         Intent intent=new Intent(this, MainActivity.class);
         startActivity(intent);
 

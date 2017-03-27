@@ -31,5 +31,8 @@ public interface NetApi {
     @POST("/auth/google")
     Call<LoginData> postTokenGoogle(@Body Google g);
 
+    @POST("/signup")
+    Call<Integer> signupData(@Body Login dat);
+
 
 }
