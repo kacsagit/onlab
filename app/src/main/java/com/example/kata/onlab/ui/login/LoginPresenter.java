@@ -1,5 +1,6 @@
 package com.example.kata.onlab.ui.login;
 
+import com.example.kata.onlab.event.ErrorResponseEvent;
 import com.example.kata.onlab.event.LoginDataEvent;
 import com.example.kata.onlab.network.LoginData;
 import com.example.kata.onlab.ui.Presenter;
@@ -43,8 +44,16 @@ public class LoginPresenter extends Presenter<LoginScreen> {
         if (screen != null) {
             screen.logedIn(event.getData());
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onGetDataError(ErrorResponseEvent event) {
+        if (screen != null) {
+            screen.logedError();
+        }
 
 
     }
+
 
 }

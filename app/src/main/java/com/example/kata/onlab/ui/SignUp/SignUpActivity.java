@@ -5,12 +5,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.kata.onlab.R;
 import com.example.kata.onlab.network.Login;
 import com.example.kata.onlab.network.NetworkManager;
 
-public class SignUpActivity extends AppCompatActivity {
+public class SignUpActivity extends AppCompatActivity implements SignUpScreen{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,5 +31,10 @@ public class SignUpActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    public void onSignUp() {
+        Toast.makeText(this,"SignUp success",Toast.LENGTH_LONG).show();
     }
 }

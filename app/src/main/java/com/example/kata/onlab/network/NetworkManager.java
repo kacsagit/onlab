@@ -2,6 +2,7 @@ package com.example.kata.onlab.network;
 
 import android.util.Log;
 
+import com.example.kata.onlab.event.ErrorResponseEvent;
 import com.example.kata.onlab.event.GetDataEvent;
 import com.example.kata.onlab.event.LoginDataEvent;
 import com.example.kata.onlab.event.PostDataEvent;
@@ -45,6 +46,8 @@ public class NetworkManager {
     private Retrofit retrofit;
     private NetApi netApi;
     private String token;
+    private String usertablename;
+
     Realm realm;
 
     private NetworkManager() {
@@ -55,9 +58,7 @@ public class NetworkManager {
 
         retrofit = new Retrofit.Builder().baseUrl(ENDPOINT_ADDRESS).client(client).addConverterFactory(GsonConverterFactory.create()).build();
         netApi = retrofit.create(NetApi.class);
-        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder().build();
-        Realm.deleteRealm(realmConfiguration);
-        realm = Realm.getInstance(realmConfiguration);
+
 
     }
 
@@ -68,6 +69,9 @@ public class NetworkManager {
                 @Override
                 public void onResponse(Call<List<Data>> call, Response<List<Data>> response) {
                     if (response.isSuccessful()) {
+                        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder().name(usertablename).build();
+                        // Realm.deleteRealm(realmConfiguration);
+                        realm = Realm.getInstance(realmConfiguration);
                         Log.d(TAG, response.body().toString());
                         GetDataEvent getDataEvent = new GetDataEvent();
                         List<Data> resp = response.body();
@@ -78,6 +82,8 @@ public class NetworkManager {
                         getDataEvent.setData(results);
                         EventBus.getDefault().post(getDataEvent);
                     } else {
+                        ErrorResponseEvent errorResponseEvent=new ErrorResponseEvent();
+                        EventBus.getDefault().post(errorResponseEvent);
                         // Toast.makeText(MainActivity.this, "Error: " + response.message(), Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -90,20 +96,18 @@ public class NetworkManager {
         }
     }
 
-    public void postToken(final String tokenFB) {
+    public void postTokenFB(final String tokenFB) {
         FB fb = new FB();
         fb.access_token = tokenFB;
-        netApi.postToken(fb).enqueue(new Callback<LoginData>() {
+        netApi.postTokenFB(fb).enqueue(new Callback<LoginData>() {
             @Override
             public void onResponse(Call<LoginData> call, Response<LoginData> response) {
                 if (response.isSuccessful()) {
-                    Log.d(TAG, response.body().email);
-                    LoginDataEvent loginDataEvent = new LoginDataEvent();
-                    loginDataEvent.setData(response.body());
-                    token = response.body().token;
-                    EventBus.getDefault().post(loginDataEvent);
+                    onTokenPostSuccesSocial(response.body());
                 } else {
                     Log.d(TAG, response.message());
+                    ErrorResponseEvent errorResponseEvent=new ErrorResponseEvent();
+                    EventBus.getDefault().post(errorResponseEvent);
                 }
             }
 
@@ -114,6 +118,15 @@ public class NetworkManager {
         });
     }
 
+    public void onTokenPostSuccesSocial(LoginData data){
+        usertablename=data.email;
+        Log.d(TAG, data.email);
+        LoginDataEvent loginDataEvent = new LoginDataEvent();
+        loginDataEvent.setData(data);
+        token=data.token;
+        EventBus.getDefault().post(loginDataEvent);
+    }
+
     public void postTokenGoogle(final String tokenG) {
         Google g = new Google();
         g.id_token = tokenG;
@@ -121,13 +134,11 @@ public class NetworkManager {
             @Override
             public void onResponse(Call<LoginData> call, Response<LoginData> response) {
                 if (response.isSuccessful()) {
-                    Log.d(TAG, response.body().email);
-                    LoginDataEvent loginDataEvent = new LoginDataEvent();
-                    loginDataEvent.setData(response.body());
-                    token = response.body().token;
-                    EventBus.getDefault().post(loginDataEvent);
+                    onTokenPostSuccesSocial(response.body());
                 } else {
                     Log.d(TAG, response.message());
+                    ErrorResponseEvent errorResponseEvent=new ErrorResponseEvent();
+                    EventBus.getDefault().post(errorResponseEvent);
                 }
             }
 
@@ -139,7 +150,9 @@ public class NetworkManager {
     }
 
     public List<Data> getData() {
-
+        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder().name(usertablename).build();
+        // Realm.deleteRealm(realmConfiguration);
+        realm = Realm.getInstance(realmConfiguration);
         RealmResults<Data> results = realm.where(Data.class).findAll();
         return results;
     }
@@ -150,6 +163,7 @@ public class NetworkManager {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 if (response.isSuccessful()) {
+                    usertablename=username;
                     Log.d(TAG, response.body());
                     token=response.body();
                     LoginDataEvent loginDataEvent = new LoginDataEvent();
@@ -158,6 +172,8 @@ public class NetworkManager {
                     loginDataEvent.setData(loginData);
                     EventBus.getDefault().post(loginDataEvent);
                 } else {
+                    ErrorResponseEvent errorResponseEvent=new ErrorResponseEvent();
+                    EventBus.getDefault().post(errorResponseEvent);
                     Log.d(TAG, response.message());
                 }
             }
@@ -181,6 +197,8 @@ public class NetworkManager {
                     EventBus.getDefault().post(signupDataEvent);
 
                 } else {
+                    ErrorResponseEvent errorResponseEvent=new ErrorResponseEvent();
+                    EventBus.getDefault().post(errorResponseEvent);
                     //     Toast.makeText(MainActivity.this, "Error: " + response.message(), Toast.LENGTH_SHORT).show();
                 }
             }
@@ -211,6 +229,8 @@ public class NetworkManager {
                         EventBus.getDefault().post(postDataEvent);
 
                     } else {
+                        ErrorResponseEvent errorResponseEvent=new ErrorResponseEvent();
+                        EventBus.getDefault().post(errorResponseEvent);
                         //     Toast.makeText(MainActivity.this, "Error: " + response.message(), Toast.LENGTH_SHORT).show();
                     }
                 }

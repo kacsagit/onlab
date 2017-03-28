@@ -8,4 +8,6 @@ import com.example.kata.onlab.network.LoginData;
 
 public interface LoginScreen {
     void logedIn(LoginData data);
+
+    void logedError();
 }

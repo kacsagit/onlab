@@ -25,8 +25,7 @@ public interface NetApi {
     Call<Integer> postData(@Header("Authorization") String token,@Body Data dat);
 
     @POST("/auth/facebook/token")
-    Call<LoginData> postToken(@Body FB fb);
-
+    Call<LoginData> postTokenFB(@Body FB fb);
 
     @POST("/auth/google")
     Call<LoginData> postTokenGoogle(@Body Google g);

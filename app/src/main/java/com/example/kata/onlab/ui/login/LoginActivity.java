@@ -64,7 +64,7 @@ public class LoginActivity extends AppCompatActivity implements LoginScreen, Goo
                                 + loginResult.getAccessToken().getToken()
                 );
 
-                NetworkManager.getInstance().postToken(loginResult.getAccessToken().getToken());
+                NetworkManager.getInstance().postTokenFB(loginResult.getAccessToken().getToken());
             }
 
             @Override
@@ -182,6 +182,11 @@ public class LoginActivity extends AppCompatActivity implements LoginScreen, Goo
         Intent intent=new Intent(this, MainActivity.class);
         startActivity(intent);
 
+    }
+
+    @Override
+    public void logedError() {
+        Toast.makeText(this,"something is wrong",Toast.LENGTH_LONG).show();
     }
 
     @Override
