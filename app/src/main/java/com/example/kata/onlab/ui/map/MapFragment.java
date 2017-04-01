@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import com.example.kata.onlab.R;
 import com.example.kata.onlab.network.Data;
+import com.example.kata.onlab.network.NetworkManager;
 import com.example.kata.onlab.ui.AddPlaceFragment;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -172,7 +173,7 @@ public class MapFragment extends Fragment implements LocationListener, OnMapRead
         // Inflate the layout for this fragment
 
         View view = inflater.inflate(R.layout.fragment_map, container, false);
-        createGeofences(currentLatitude, currentLongitude);
+        createGeofences();
         mLocationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setInterval(10 * 1000)        // 10 seconds, in milliseconds
@@ -376,15 +377,17 @@ public class MapFragment extends Fragment implements LocationListener, OnMapRead
 
     }
 
-    public void createGeofences(double latitude, double longitude) {
-        String id = UUID.randomUUID().toString();
-        Geofence fence = new Geofence.Builder()
-                .setRequestId(id)
-                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_EXIT)
-                .setCircularRegion(latitude, longitude, 20000)
-                .setExpirationDuration(Geofence.NEVER_EXPIRE)
-                .build();
-        mGeofenceList.add(fence);
+    public void createGeofences() {
+        for (Data d: NetworkManager.getInstance().getData()) {
+            String id = UUID.randomUUID().toString();
+            Geofence fence = new Geofence.Builder()
+                    .setRequestId(id)
+                    .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_EXIT)
+                    .setCircularRegion(d.getLatitude(), d.getLongitude(), 3000)
+                    .setExpirationDuration(Geofence.NEVER_EXPIRE)
+                    .build();
+            mGeofenceList.add(fence);
+        }
     }
 
     private GeofencingRequest getGeofencingRequest() {
