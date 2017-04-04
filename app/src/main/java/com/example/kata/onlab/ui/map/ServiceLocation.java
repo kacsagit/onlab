@@ -6,18 +6,12 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
-import android.graphics.PixelFormat;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
-import android.view.Gravity;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.WindowManager;
-import android.widget.TextView;
 
 import com.example.kata.onlab.R;
 import com.example.kata.onlab.ui.main.MainActivity;
@@ -37,11 +31,6 @@ public class ServiceLocation extends Service implements LocationListener {
 
     private final int NOTIF_FOREGROUND_ID = 101;
 
-    private WindowManager windowManager;
-    private View floatingView;
-    private TextView tvFloatLat;
-    private TextView tvFloatLng;
-
     private IBinder binderServiceLocation = new BinderServiceLocation();
 
     @Override
@@ -57,16 +46,13 @@ public class ServiceLocation extends Service implements LocationListener {
         return lastLocation;
     }
 
-    public static final String KEY_WITH_FLOATING = "with_floating";
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         startForeground(NOTIF_FOREGROUND_ID, getMyNotification("starting..."));
         firstLocation = null;
 
-        if (intent.getBooleanExtra(KEY_WITH_FLOATING, false)) {
-            showFloatingWindow();
-        }
+
 
         if (!locationMonitorRunning) {
             locationMonitorRunning = true;
@@ -83,7 +69,6 @@ public class ServiceLocation extends Service implements LocationListener {
         if (ldLocationManager != null) {
             ldLocationManager.stopLocationMonitoring();
         }
-        hideFloatingWindow();
     }
 
     @Override
@@ -91,10 +76,6 @@ public class ServiceLocation extends Service implements LocationListener {
         updateNotification("Lat: " + location.getLatitude() + "n" +
                 "Lng: " + location.getLongitude());
 
-        if (tvFloatLat != null && tvFloatLng != null) {
-            tvFloatLat.setText("Lat:" + location.getLatitude());
-            tvFloatLng.setText("Lng:" + location.getLongitude());
-        }
 
         if (firstLocation == null) {
             firstLocation = location;
@@ -131,7 +112,7 @@ public class ServiceLocation extends Service implements LocationListener {
                 PendingIntent.FLAG_CANCEL_CURRENT);
 
         Notification notification = new Notification.Builder(this)
-                .setContentTitle("Service Location Demo")
+                .setContentTitle("Location monitoring")
                 .setContentText(text)
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setVibrate(new long[]{1000, 2000, 1000})
@@ -148,66 +129,6 @@ public class ServiceLocation extends Service implements LocationListener {
     }
 
 
-    private void showFloatingWindow() {
-        windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
-
-
-        final WindowManager.LayoutParams params = new WindowManager.LayoutParams(
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.TYPE_PHONE,
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-                PixelFormat.TRANSLUCENT);
-
-        params.gravity = Gravity.TOP | Gravity.LEFT;
-        params.x = 0;
-        params.y = 100;
-
-        windowManager.addView(floatingView, params);
-
-        try {
-            floatingView.setOnTouchListener(new View.OnTouchListener() {
-                private WindowManager.LayoutParams paramsF = params;
-                private int initialX;
-                private int initialY;
-                private float initialTouchX;
-                private float initialTouchY;
-
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    switch (event.getAction()) {
-                        case MotionEvent.ACTION_DOWN:
-                            initialX = paramsF.x;
-                            initialY = paramsF.y;
-                            initialTouchX = event.getRawX();
-                            initialTouchY = event.getRawY();
-                            break;
-                        case MotionEvent.ACTION_UP:
-                            break;
-                        case MotionEvent.ACTION_MOVE:
-                            paramsF.x = initialX + (int) (event.getRawX() - initialTouchX);
-                            paramsF.y = initialY + (int) (event.getRawY() - initialTouchY);
-                            if (floatingView != null) {
-                                windowManager.updateViewLayout(floatingView, paramsF);
-                            }
-                            break;
-                    }
-                    return false;
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void hideFloatingWindow() {
-        if (floatingView != null) {
-            windowManager.removeView(floatingView);
-            floatingView = null;
-            tvFloatLat = null;
-            tvFloatLng = null;
-        }
-    }
 
     public class BinderServiceLocation extends Binder {
         public ServiceLocation getSerivce() {

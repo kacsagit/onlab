@@ -50,7 +50,6 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
@@ -96,31 +95,6 @@ public class MapFragment extends Fragment implements LocationListener, OnMapRead
             new GoogleApiClient.ConnectionCallbacks() {
                 @Override
                 public void onConnected(Bundle bundle) {
-                    if (ActivityCompat.checkSelfPermission(context,
-                            Manifest.permission.ACCESS_FINE_LOCATION) !=
-                            PackageManager.PERMISSION_GRANTED &&
-                            ActivityCompat.checkSelfPermission(context,
-                                    Manifest.permission.ACCESS_COARSE_LOCATION)
-                                    != PackageManager.PERMISSION_GRANTED) {
-                        return;
-                    }
-                    Log.i(TAG, "onConnected");
-                    Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-
-                    if (location == null) {
-                        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, MapFragment.this);
-
-                    } else {
-                        //If everything went fine lets get latitude and longitude
-                        currentLatitude = location.getLatitude();
-                        currentLongitude = location.getLongitude();
-
-                        Log.i(TAG, currentLatitude + " WORKS " + currentLongitude);
-
-                        //createGeofences(currentLatitude, currentLongitude);
-                        //registerGeofences(mGeofenceList);
-                    }
-
                     try {
                         LocationServices.GeofencingApi.addGeofences(
                                 mGoogleApiClient,
@@ -345,14 +319,14 @@ public class MapFragment extends Fragment implements LocationListener, OnMapRead
 
     @Override
     public void locationChanged(Location location) {
-/*        if (ActivityCompat.checkSelfPermission(this.getContext(),
+        if (ActivityCompat.checkSelfPermission(this.getContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION) !=
                 PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this.getContext(),
                         Manifest.permission.ACCESS_COARSE_LOCATION)
                         != PackageManager.PERMISSION_GRANTED) {
             return;
-        }*/
+        }
 
 
         if (currLocationMarker != null) {

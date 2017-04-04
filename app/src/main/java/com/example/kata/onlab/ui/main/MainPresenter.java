@@ -30,7 +30,9 @@ public class MainPresenter extends Presenter<MainScreen> {
     @Override
     public void attachScreen(MainScreen screen) {
         super.attachScreen(screen);
-        EventBus.getDefault().register(this);
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
     }
 
     @Override
