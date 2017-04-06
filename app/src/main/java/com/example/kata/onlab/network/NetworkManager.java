@@ -62,10 +62,14 @@ public class NetworkManager {
 
     }
 
+    public void setTokenEmail(String token,String email){
+        this.token=token;
+        this.usertablename=email;
+    }
+
     public void updateData() {
         if (token!=null) {
-            String mToken = "Bearer " +token;
-            netApi.getDataSpec(mToken).enqueue(new Callback<List<Data>>() {
+            netApi.getDataSpec(token).enqueue(new Callback<List<Data>>() {
                 @Override
                 public void onResponse(Call<List<Data>> call, Response<List<Data>> response) {
                     if (response.isSuccessful()) {
@@ -168,6 +172,7 @@ public class NetworkManager {
                     token=response.body();
                     LoginDataEvent loginDataEvent = new LoginDataEvent();
                     LoginData loginData=new LoginData();
+                    loginData.token=response.body();
                     loginData.email=username;
                     loginDataEvent.setData(loginData);
                     EventBus.getDefault().post(loginDataEvent);
@@ -214,7 +219,7 @@ public class NetworkManager {
 
     public void postData(final Data d) {
         if (token!=null) {
-            netApi.postData("Bearer "+token, d).enqueue(new Callback<Integer>() {
+            netApi.postData(token, d).enqueue(new Callback<Integer>() {
                 @Override
                 public void onResponse(Call<Integer> call, Response<Integer> response) {
                     if (response.isSuccessful()) {

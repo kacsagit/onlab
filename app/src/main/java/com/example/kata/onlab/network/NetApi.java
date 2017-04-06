@@ -15,13 +15,13 @@ public interface NetApi {
     @GET("/")
     Call<List<Data>> getData();
 
-    @GET("/get")
+    @GET("/api/get")
     Call<List<Data>> getDataSpec(@Header("Authorization") String token);
 
     @POST("/login")
     Call<String> logIn(@Body Login log);
 
-    @POST("/")
+    @POST("/api")
     Call<Integer> postData(@Header("Authorization") String token,@Body Data dat);
 
     @POST("/auth/facebook/token")

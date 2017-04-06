@@ -1,7 +1,9 @@
 package com.example.kata.onlab.ui.login;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -119,6 +121,15 @@ public class LoginActivity extends AppCompatActivity implements LoginScreen, Goo
                 startActivity(intent);
             }
         });
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String token = preferences.getString("Token", "");
+        String email = preferences.getString("Email", "");
+        if (!token.isEmpty()&&!email.isEmpty()){
+            NetworkManager.getInstance().setTokenEmail(token,email);
+            Intent intent=new Intent(this, MainActivity.class);
+            startActivity(intent);
+        }
     }
 
     private void signIn() {
@@ -178,6 +189,11 @@ public class LoginActivity extends AppCompatActivity implements LoginScreen, Goo
 
     @Override
     public void logedIn(LoginData data) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("Token",data.token);
+        editor.putString("Email",data.email);
+        editor.apply();
         Toast.makeText(this,data.email,Toast.LENGTH_LONG).show();
         Intent intent=new Intent(this, MainActivity.class);
         startActivity(intent);
@@ -187,6 +203,11 @@ public class LoginActivity extends AppCompatActivity implements LoginScreen, Goo
     @Override
     public void logedError() {
         Toast.makeText(this,"something is wrong",Toast.LENGTH_LONG).show();
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("Token","");
+        editor.putString("Email","");
+        editor.apply();
     }
 
     @Override
