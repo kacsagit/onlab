@@ -141,8 +141,6 @@ public class MapFragment extends Fragment implements LocationListener, OnMapRead
         myLocationManager = new MyLocationManager(this, getContext());
         requestNeededPermission();
         context = this.getContext();
-        buildGoogleApiClientEmpty();
-
 
     }
 
@@ -185,6 +183,7 @@ public class MapFragment extends Fragment implements LocationListener, OnMapRead
         super.onResume();
         mapView.onResume();
         mapView.getMapAsync(this);
+        buildGoogleApiClientEmpty();
         mGoogleApiClient.connect();
         getData();
 
