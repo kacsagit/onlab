@@ -6,7 +6,6 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -16,7 +15,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -156,23 +154,11 @@ public class MapFragment extends Fragment implements LocationListener, OnMapRead
 
         mapView = (MapView) view.findViewById(R.id.map);
         mapView.onCreate(savedInstanceState);
-        Intent intetn2=new Intent(this.getContext(),ServiceLocation.class);
-        context.startService(intetn2);
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(
-                mMessageReceiver,
-                new IntentFilter(ServiceLocation.BR_NEW_LOCATION));
 
         return view;
 
     }
 
-    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Location currentLocation = intent.getParcelableExtra(ServiceLocation.KEY_LOCATION);
-
-        }
-    };
 
     @Override
     public void onMapReady(GoogleMap map) {

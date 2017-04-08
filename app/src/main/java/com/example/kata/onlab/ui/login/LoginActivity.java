@@ -131,6 +131,7 @@ public class LoginActivity extends AppCompatActivity implements LoginScreen, Goo
         if (!token.isEmpty() && !email.isEmpty()) {
             NetworkManager.getInstance().setTokenEmail(token, email);
             Intent intent = new Intent(this, MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
         }
     }
@@ -209,6 +210,7 @@ public class LoginActivity extends AppCompatActivity implements LoginScreen, Goo
   //      String token=FirebaseInstanceId.getInstance().getToken();
         Toast.makeText(this, data.email, Toast.LENGTH_LONG).show();
         Intent intent = new Intent(this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
 
     }
