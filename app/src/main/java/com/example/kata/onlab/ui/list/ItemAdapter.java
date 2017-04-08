@@ -4,10 +4,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
-import com.example.kata.onlab.network.Data;
 import com.example.kata.onlab.R;
+import com.example.kata.onlab.network.Data;
+import com.example.kata.onlab.network.NetworkManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,10 +36,18 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
 
     @Override
     public void onBindViewHolder(ItemViewHolder holder, int position) {
-        Data item = items.get(position);
+        final Data item = items.get(position);
         holder.longitude.setText(Float.toString(item.longitude));
         holder.latitude.setText(Float.toString(item.latitude));
         holder.place.setText(item.place);
+        holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked){
+                    NetworkManager.getInstance().pushNotif(item.getOwnerid());
+                }
+            }
+        });
 
     }
 
@@ -89,12 +100,14 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
         TextView place;
         TextView longitude;
         TextView latitude;
+        CheckBox checkBox;
 
         public ItemViewHolder(View itemView) {
             super(itemView);
             place = (TextView) itemView.findViewById(R.id.place);
             longitude = (TextView) itemView.findViewById(R.id.longitude);
             latitude = (TextView) itemView.findViewById(R.id.latitude);
+            checkBox=(CheckBox) itemView.findViewById(R.id.checkbox);
             /*itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

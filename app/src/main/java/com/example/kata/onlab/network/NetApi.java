@@ -18,6 +18,9 @@ public interface NetApi {
     @GET("/api/get")
     Call<List<Data>> getDataSpec(@Header("Authorization") String token);
 
+    @GET("/api/getme")
+    Call<List<Data>> getDataSpecMy(@Header("Authorization") String token);
+
     @POST("/login")
     Call<String> logIn(@Body Login log);
 
@@ -36,5 +39,7 @@ public interface NetApi {
     @POST("/api/device")
     Call<Void> signDevice(@Header("Authorization") String token,@Body Deviceid s);
 
+    @POST("/api/push")
+    Call<Void> pushNotif(@Header("Authorization") String token,@Body PushId id);
 
 }

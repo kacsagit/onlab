@@ -29,6 +29,7 @@ import com.example.kata.onlab.R;
 import com.example.kata.onlab.network.Data;
 import com.example.kata.onlab.network.NetworkManager;
 import com.example.kata.onlab.ui.AddPlaceFragment;
+import com.example.kata.onlab.ui.MyPoints.MyPoints;
 import com.example.kata.onlab.ui.list.ListGetFragment;
 import com.example.kata.onlab.ui.login.LoginActivity;
 import com.example.kata.onlab.ui.map.MapFragment;
@@ -220,9 +221,12 @@ public class MainActivity extends AppCompatActivity implements AddPlaceFragment.
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
             LoginManager.getInstance().logOut();
-        } /*else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.nav_gallery) {
+            Intent intent=new Intent(this, MyPoints.class);
+            startActivity(intent);
 
-        } else if (id == R.id.nav_slideshow) {
+
+        } /*else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {
 

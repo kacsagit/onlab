@@ -58,7 +58,7 @@ public class NetworkManager {
 
         retrofit = new Retrofit.Builder().baseUrl(ENDPOINT_ADDRESS).client(client).addConverterFactory(GsonConverterFactory.create()).build();
         netApi = retrofit.create(NetApi.class);
-
+        updateData();
 
     }
 
@@ -73,7 +73,7 @@ public class NetworkManager {
                 @Override
                 public void onResponse(Call<List<Data>> call, Response<List<Data>> response) {
                     if (response.isSuccessful()) {
-                        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder().name(usertablename).build();
+                        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().name(usertablename).build();
                         // Realm.deleteRealm(realmConfiguration);
                         realm = Realm.getInstance(realmConfiguration);
                         Log.d(TAG, response.body().toString());
@@ -99,6 +99,41 @@ public class NetworkManager {
             });
         }
     }
+
+    public void updateDataMy() {
+        if (token!=null) {
+            netApi.getDataSpecMy(token).enqueue(new Callback<List<Data>>() {
+                @Override
+                public void onResponse(Call<List<Data>> call, Response<List<Data>> response) {
+                    if (response.isSuccessful()) {
+                        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().name(usertablename+"1").build();
+                        // Realm.deleteRealm(realmConfiguration);
+                        realm = Realm.getInstance(realmConfiguration);
+                        Log.d(TAG, response.body().toString());
+                        GetDataEvent getDataEvent = new GetDataEvent();
+                        List<Data> resp = response.body();
+                        realm.beginTransaction();
+                        realm.copyToRealmOrUpdate(resp);
+                        realm.commitTransaction();
+                        RealmResults<Data> results = realm.where(Data.class).findAll();
+                        getDataEvent.setData(results);
+                        EventBus.getDefault().post(getDataEvent);
+                    } else {
+                        ErrorResponseEvent errorResponseEvent=new ErrorResponseEvent();
+                        EventBus.getDefault().post(errorResponseEvent);
+                        // Toast.makeText(MainActivity.this, "Error: " + response.message(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<List<Data>> call, Throwable t) {
+
+                }
+            });
+        }
+    }
+
+
 
     public void postTokenFB(final String tokenFB) {
         FB fb = new FB();
@@ -154,8 +189,8 @@ public class NetworkManager {
     }
 
     public List<Data> getData() {
-        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder().name(usertablename).build();
-        // Realm.deleteRealm(realmConfiguration);
+        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder().name(usertablename).deleteRealmIfMigrationNeeded().build();
+      //  Realm.deleteRealm(realmConfiguration);
         realm = Realm.getInstance(realmConfiguration);
         RealmResults<Data> results = realm.where(Data.class).findAll();
         return results;
@@ -252,6 +287,27 @@ public class NetworkManager {
         if (token!=null) {
             Deviceid d=new Deviceid(devicetoken);
             netApi.signDevice(token,d).enqueue(new Callback<Void>() {
+                @Override
+                public void onResponse(Call<Void> call, Response<Void> response) {
+                    if (response.isSuccessful()) {
+
+                    } else {
+
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Void> call, Throwable t) {
+
+                }
+            });
+        }
+    }
+
+    public void pushNotif(int id){
+        if (token!=null) {
+            PushId d=new PushId(id);
+            netApi.pushNotif(token,d).enqueue(new Callback<Void>() {
                 @Override
                 public void onResponse(Call<Void> call, Response<Void> response) {
                     if (response.isSuccessful()) {

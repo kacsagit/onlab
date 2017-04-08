@@ -3,7 +3,6 @@ package com.example.kata.onlab.ui.map;
 
 import android.Manifest;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -89,6 +88,14 @@ public class MapFragment extends Fragment implements LocationListener, OnMapRead
                 .build();
     }
 
+    protected synchronized void buildGoogleApiClientEmpty() {
+        mGoogleApiClient = new GoogleApiClient.Builder(this.getContext())
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+    }
+
     private GoogleApiClient.ConnectionCallbacks connectionAddListener =
             new GoogleApiClient.ConnectionCallbacks() {
                 @Override
@@ -134,7 +141,7 @@ public class MapFragment extends Fragment implements LocationListener, OnMapRead
         myLocationManager = new MyLocationManager(this, getContext());
         requestNeededPermission();
         context = this.getContext();
-        buildGoogleApiClient();
+        buildGoogleApiClientEmpty();
 
 
     }
@@ -145,7 +152,7 @@ public class MapFragment extends Fragment implements LocationListener, OnMapRead
         // Inflate the layout for this fragment
 
         View view = inflater.inflate(R.layout.fragment_map, container, false);
-        createGeofences();
+
         mLocationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setInterval(10 * 1000)        // 10 seconds, in milliseconds
@@ -287,15 +294,22 @@ public class MapFragment extends Fragment implements LocationListener, OnMapRead
 
 
     public void getData() {
-        setUpMap(MapPresenter.getInstance().getNetworkData());
+        List<Data> list=MapPresenter.getInstance().getNetworkData();
+        setUpMap(list);
+        if (list.size() != 0) {
+            createGeofences();
+            buildGoogleApiClient();
+        }
     }
 
-    public void updateData() {
-        MapPresenter.getInstance().updateNetworkData();
-    }
 
     public void updateDataCallback(List<Data> list) {
         setUpMap(list);
+        if (list.size() != 0) {
+            createGeofences();
+            buildGoogleApiClient();
+        }
+
     }
 
     public void postDataCallback(Data item) {
@@ -338,7 +352,7 @@ public class MapFragment extends Fragment implements LocationListener, OnMapRead
     }
 
     public void createGeofences() {
-        for (Data d: NetworkManager.getInstance().getData()) {
+        for (Data d : NetworkManager.getInstance().getData()) {
             String id = UUID.randomUUID().toString();
             Geofence fence = new Geofence.Builder()
                     .setRequestId(id)
@@ -353,8 +367,12 @@ public class MapFragment extends Fragment implements LocationListener, OnMapRead
     private GeofencingRequest getGeofencingRequest() {
         GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
         builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER);
+
         builder.addGeofences(mGeofenceList);
+
         return builder.build();
+
+
     }
 
     private PendingIntent getGeofencePendingIntent() {
@@ -363,7 +381,6 @@ public class MapFragment extends Fragment implements LocationListener, OnMapRead
             return mGeofencePendingIntent;
         }
         Intent intent = new Intent(this.getContext(), GeofenceTransitionsIntentService.class);
-
 
 
         // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when

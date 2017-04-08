@@ -17,6 +17,32 @@ public class Data extends RealmObject {
 
         @PrimaryKey
         public int id;
+        public String place;
+        public float  longitude;
+        public float  latitude;
+        public int ownerid;
+        public int done;
+
+
+        public int isDone() {
+                return done;
+        }
+
+        public void setDone(int done) {
+                this.done = done;
+        }
+
+
+
+        public int getOwnerid() {
+                return ownerid;
+        }
+
+        public void setOwnerid(int ownerid) {
+                this.ownerid = ownerid;
+        }
+
+
 
         public String getPlace() {
                 return place;
@@ -42,9 +68,7 @@ public class Data extends RealmObject {
                 this.latitude = latitude;
         }
 
-        public String place;
-        public float  longitude;
-        public float  latitude;
+
 
         public Data(){}
         public Data(String place){this.place=place;}
