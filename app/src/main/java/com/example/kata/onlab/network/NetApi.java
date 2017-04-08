@@ -33,5 +33,8 @@ public interface NetApi {
     @POST("/signup")
     Call<Integer> signupData(@Body Login dat);
 
+    @POST("/api/device")
+    Call<Void> signDevice(@Header("Authorization") String token,@Body Deviceid s);
+
 
 }

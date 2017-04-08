@@ -1,7 +1,9 @@
 {
   "project_info": {
     "project_number": "179156263831",
-    "project_id": "onlab-1487437661835"
+    "firebase_url": "https://onlab-1487437661835.firebaseio.com",
+    "project_id": "onlab-1487437661835",
+    "storage_bucket": "onlab-1487437661835.appspot.com"
   },
   "client": [
     {
@@ -13,11 +15,19 @@
       },
       "oauth_client": [
         {
+          "client_id": "179156263831-gois7n8k6p3gr0diq8kik1ag2383t97e.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "179156263831-1ft0siuvco0s1nadaj307fcsui3kgsj6.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
           "client_id": "179156263831-m39pf808tdk86v49u6m9pep7e9k1mg21.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.kata.onlab",
-            "certificate_hash": "2e2e8e5925bc774c89b40b882e1db28e865ba4de"
+            "certificate_hash": "eb579f1bd89b164647e549b80a0be05aea72c664"
           }
         },
         {
@@ -35,11 +45,16 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "179156263831-gois7n8k6p3gr0diq8kik1ag2383t97e.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
-          "status": 1
+          "status": 2
         }
       }
     }

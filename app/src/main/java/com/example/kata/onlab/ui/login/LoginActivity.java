@@ -31,13 +31,16 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.firebase.iid.FirebaseInstanceId;
+
+import java.io.IOException;
 
 import static com.example.kata.onlab.R.id.sigIn;
 
 public class LoginActivity extends AppCompatActivity implements LoginScreen, GoogleApiClient.OnConnectionFailedListener {
 
-    private static final int RC_SIGN_IN =2000;
-    private static final String TAG ="LoginActivity";
+    private static final int RC_SIGN_IN = 2000;
+    private static final String TAG = "LoginActivity";
     private CallbackManager callbackManager;
     GoogleApiClient mGoogleApiClient;
     TextView info;
@@ -51,13 +54,13 @@ public class LoginActivity extends AppCompatActivity implements LoginScreen, Goo
         callbackManager = CallbackManager.Factory.create();
         LoginButton loginButton = (LoginButton) findViewById(R.id.login_button);
         loginButton.setReadPermissions("email");
-        info= (TextView)findViewById(R.id.info);
+        info = (TextView) findViewById(R.id.info);
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 // App code
                 Log.d("Login", loginResult.getAccessToken().getToken());
-                Toast.makeText(getApplicationContext(),"Fb Login Success",Toast.LENGTH_LONG);
+                Toast.makeText(getApplicationContext(), "Fb Login Success", Toast.LENGTH_LONG);
                 info.setText(
                         "User ID: "
                                 + loginResult.getAccessToken().getUserId()
@@ -72,14 +75,14 @@ public class LoginActivity extends AppCompatActivity implements LoginScreen, Goo
             @Override
             public void onCancel() {
                 // App code
-                Toast.makeText(getApplicationContext(),"cancel",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "cancel", Toast.LENGTH_SHORT).show();
 
             }
 
             @Override
             public void onError(FacebookException exception) {
                 // App code
-                Toast.makeText(getApplicationContext(),"error",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "error", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -100,24 +103,24 @@ public class LoginActivity extends AppCompatActivity implements LoginScreen, Goo
                 signIn();
             }
         });
-        Button signIn= (Button) findViewById(sigIn);
+        Button signIn = (Button) findViewById(sigIn);
 
-        final EditText username= (EditText) findViewById(R.id.username);
-        final EditText password= (EditText) findViewById(R.id.password);
+        final EditText username = (EditText) findViewById(R.id.username);
+        final EditText password = (EditText) findViewById(R.id.password);
 
         signIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d(TAG,username.getText().toString());
-                NetworkManager.getInstance().logIn(username.getText().toString(),password.getText().toString());
+                Log.d(TAG, username.getText().toString());
+                NetworkManager.getInstance().logIn(username.getText().toString(), password.getText().toString());
             }
         });
 
-        Button signUp= (Button) findViewById(R.id.signUp);
+        Button signUp = (Button) findViewById(R.id.signUp);
         signUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(LoginActivity.this, SignUpActivity.class);
+                Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
                 startActivity(intent);
             }
         });
@@ -125,9 +128,9 @@ public class LoginActivity extends AppCompatActivity implements LoginScreen, Goo
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         String token = preferences.getString("Token", "");
         String email = preferences.getString("Email", "");
-        if (!token.isEmpty()&&!email.isEmpty()){
-            NetworkManager.getInstance().setTokenEmail(token,email);
-            Intent intent=new Intent(this, MainActivity.class);
+        if (!token.isEmpty() && !email.isEmpty()) {
+            NetworkManager.getInstance().setTokenEmail(token, email);
+            Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
         }
     }
@@ -143,7 +146,7 @@ public class LoginActivity extends AppCompatActivity implements LoginScreen, Goo
         super.onActivityResult(requestCode, resultCode, data);
 
         //facebook
-        if ( FacebookSdk.isFacebookRequestCode(requestCode)){
+        if (FacebookSdk.isFacebookRequestCode(requestCode)) {
             callbackManager.onActivityResult(requestCode, resultCode, data);
         }
 
@@ -161,7 +164,7 @@ public class LoginActivity extends AppCompatActivity implements LoginScreen, Goo
             String idToken = result.getSignInAccount().getIdToken();
             GoogleSignInAccount acct = result.getSignInAccount();
             info.setText(idToken);
-            Log.d(TAG,idToken);
+            Log.d(TAG, idToken);
             NetworkManager.getInstance().postTokenGoogle(idToken);
             Toast.makeText(getApplicationContext(), "success", Toast.LENGTH_LONG).show();
         } else {
@@ -170,8 +173,6 @@ public class LoginActivity extends AppCompatActivity implements LoginScreen, Goo
 
         }
     }
-
-
 
 
     @Override
@@ -191,22 +192,34 @@ public class LoginActivity extends AppCompatActivity implements LoginScreen, Goo
     public void logedIn(LoginData data) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putString("Token",data.token);
-        editor.putString("Email",data.email);
+        editor.putString("Token", data.token);
+        editor.putString("Email", data.email);
         editor.apply();
-        Toast.makeText(this,data.email,Toast.LENGTH_LONG).show();
-        Intent intent=new Intent(this, MainActivity.class);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    FirebaseInstanceId.getInstance().deleteInstanceId();
+                    String token=FirebaseInstanceId.getInstance().getToken();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+  //      String token=FirebaseInstanceId.getInstance().getToken();
+        Toast.makeText(this, data.email, Toast.LENGTH_LONG).show();
+        Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
 
     }
 
     @Override
     public void logedError() {
-        Toast.makeText(this,"something is wrong",Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "something is wrong", Toast.LENGTH_LONG).show();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putString("Token","");
-        editor.putString("Email","");
+        editor.putString("Token", "");
+        editor.putString("Email", "");
         editor.apply();
     }
 

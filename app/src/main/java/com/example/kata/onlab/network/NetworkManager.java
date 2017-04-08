@@ -248,6 +248,27 @@ public class NetworkManager {
         }
     }
 
+    public void signDevice(String devicetoken){
+        if (token!=null) {
+            Deviceid d=new Deviceid(devicetoken);
+            netApi.signDevice(token,d).enqueue(new Callback<Void>() {
+                @Override
+                public void onResponse(Call<Void> call, Response<Void> response) {
+                    if (response.isSuccessful()) {
+
+                    } else {
+
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Void> call, Throwable t) {
+
+                }
+            });
+        }
+    }
+
 
     public interface ResponseListener<T> {
         void onResponse(T t);
