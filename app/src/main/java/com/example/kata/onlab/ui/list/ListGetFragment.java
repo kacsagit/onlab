@@ -22,11 +22,11 @@ import java.util.List;
  */
 public class ListGetFragment extends Fragment implements ListScreen{
 
-    private RecyclerView recyclerView;
-    ItemAdapter adapter;
-    SwipeRefreshLayout swipeRefresh;
-    View view;
-    Context context;
+    protected RecyclerView recyclerView;
+    protected ItemAdapter adapter;
+    protected SwipeRefreshLayout swipeRefresh;
+    protected View view;
+    protected Context context;
     private static final String TAG = "ListGetFragment";
 
     @Override
@@ -80,7 +80,7 @@ public class ListGetFragment extends Fragment implements ListScreen{
         swipeRefresh.setRefreshing(false);
     }
 
-    private void initRecycleView() {
+    protected void initRecycleView() {
         recyclerView = (RecyclerView) view.findViewById(R.id.MainRecyclerView);
         adapter = new ItemAdapter();
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));

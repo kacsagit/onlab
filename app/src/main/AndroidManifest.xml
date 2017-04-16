@@ -60,7 +60,10 @@
             android:name=".ui.main.MainActivity"
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme" />
-        <activity android:name=".ui.MyPoints.MyPoints"></activity>
+        <activity android:name=".ui.MyPoints.MyPoints" />
+        <activity android:name=".ui.friends.FriendsActivity" />
+        <activity android:name=".ui.friendsearch.FriendSearchActivity" />
+        <activity android:name=".ui.friendDetails.FriendDetalsActivity"></activity>
     </application>
 
 </manifest>

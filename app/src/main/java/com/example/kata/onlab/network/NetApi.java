@@ -18,6 +18,10 @@ public interface NetApi {
     @GET("/api/get")
     Call<List<Data>> getDataSpec(@Header("Authorization") String token);
 
+    @GET("/users")
+    Call<List<Friends>> getusers();
+
+
     @GET("/api/getme")
     Call<List<Data>> getDataSpecMy(@Header("Authorization") String token);
 

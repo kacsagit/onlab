@@ -1,5 +1,6 @@
 package com.example.kata.onlab.ui.login;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -8,11 +9,13 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.dd.processbutton.iml.ActionProcessButton;
 import com.example.kata.onlab.R;
 import com.example.kata.onlab.network.LoginData;
 import com.example.kata.onlab.network.NetworkManager;
@@ -44,6 +47,7 @@ public class LoginActivity extends AppCompatActivity implements LoginScreen, Goo
     private CallbackManager callbackManager;
     GoogleApiClient mGoogleApiClient;
     TextView info;
+    ActionProcessButton signIn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,8 +107,9 @@ public class LoginActivity extends AppCompatActivity implements LoginScreen, Goo
                 signIn();
             }
         });
-        Button signIn = (Button) findViewById(sigIn);
-
+        signIn = (ActionProcessButton) findViewById(sigIn);
+        signIn.setMode(ActionProcessButton.Mode.ENDLESS);
+        signIn.setProgress(0);
         final EditText username = (EditText) findViewById(R.id.username);
         final EditText password = (EditText) findViewById(R.id.password);
 
@@ -112,6 +117,10 @@ public class LoginActivity extends AppCompatActivity implements LoginScreen, Goo
             @Override
             public void onClick(View view) {
                 Log.d(TAG, username.getText().toString());
+                signIn.setProgress(1);
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(signIn.getWindowToken(),
+                        InputMethodManager.RESULT_UNCHANGED_SHOWN);
                 NetworkManager.getInstance().logIn(username.getText().toString(), password.getText().toString());
             }
         });
@@ -207,6 +216,7 @@ public class LoginActivity extends AppCompatActivity implements LoginScreen, Goo
                 }
             }
         }).start();
+        signIn.setProgress(100);
   //      String token=FirebaseInstanceId.getInstance().getToken();
         Toast.makeText(this, data.email, Toast.LENGTH_LONG).show();
         Intent intent = new Intent(this, MainActivity.class);
@@ -220,6 +230,7 @@ public class LoginActivity extends AppCompatActivity implements LoginScreen, Goo
         Toast.makeText(this, "something is wrong", Toast.LENGTH_LONG).show();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = preferences.edit();
+        signIn.setProgress(0);
         editor.putString("Token", "");
         editor.putString("Email", "");
         editor.apply();
