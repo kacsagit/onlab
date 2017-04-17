@@ -7,6 +7,7 @@ import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
+import retrofit2.http.Query;
 
 /**
  * Created by Kata on 2017. 02. 11..
@@ -18,9 +19,16 @@ public interface NetApi {
     @GET("/api/get")
     Call<List<Data>> getDataSpec(@Header("Authorization") String token);
 
-    @GET("/users")
-    Call<List<Friends>> getusers();
+    @GET("/api/users")
+    Call<List<Friends>> getusers(@Header("Authorization") String token);
 
+
+    @GET("/api/user")
+    Call<FriendDetail> getuser(@Header("Authorization") String token, @Query("id") int id);
+
+
+    @GET("/api/getfriends")
+    Call<List<Friends>> getFriends(@Header("Authorization") String token);
 
     @GET("/api/getme")
     Call<List<Data>> getDataSpecMy(@Header("Authorization") String token);

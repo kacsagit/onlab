@@ -16,85 +16,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:checkedButton="@+id/button_1">
+            android:checkedButton="@+id/buttonall">
 
 
             <RadioButton
-                android:id="@+id/button_1"
+                android:id="@+id/buttonall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/custom_btn_radio"
-                android:button="@mipmap/ic_launcher"
-                android:padding="1dp" />
-
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/custom_btn_radio"
-                android:button="@mipmap/ic_launcher"
-                android:padding="1dp" />
-
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/custom_btn_radio"
-                android:button="@mipmap/ic_launcher"
-                android:padding="1dp" />
-
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/custom_btn_radio"
-                android:button="@mipmap/ic_launcher"
-                android:padding="1dp" />
-
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/custom_btn_radio"
-                android:button="@mipmap/ic_launcher"
-                android:padding="1dp" />
-
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/custom_btn_radio"
-                android:button="@mipmap/ic_launcher"
-                android:padding="1dp" />
-
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/custom_btn_radio"
-                android:button="@mipmap/ic_launcher"
-                android:padding="1dp" />
-
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/custom_btn_radio"
-                android:button="@mipmap/ic_launcher"
-                android:padding="1dp" />
-
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/custom_btn_radio"
-                android:button="@mipmap/ic_launcher"
-                android:padding="1dp" />
-
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/custom_btn_radio"
-                android:button="@mipmap/ic_launcher"
-                android:padding="1dp" />
-
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/custom_btn_radio"
-                android:button="@mipmap/ic_launcher"
+                android:button="@drawable/ic_add_white_36dp"
                 android:padding="1dp" />
 
         </RadioGroup>

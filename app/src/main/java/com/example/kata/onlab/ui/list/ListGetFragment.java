@@ -15,6 +15,7 @@ import com.example.kata.onlab.R;
 import com.example.kata.onlab.network.Data;
 import com.example.kata.onlab.ui.AddPlaceFragment;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,6 +28,7 @@ public class ListGetFragment extends Fragment implements ListScreen{
     protected SwipeRefreshLayout swipeRefresh;
     protected View view;
     protected Context context;
+    protected  List<Data> items;
     private static final String TAG = "ListGetFragment";
 
     @Override
@@ -51,18 +53,13 @@ public class ListGetFragment extends Fragment implements ListScreen{
 
             }
         });
+        items=new ArrayList<>();
         return view;
 
     }
 
     public void newItemView(){
         new AddPlaceFragment().show(getActivity().getSupportFragmentManager(), AddPlaceFragment.TAG);
-    }
-
-    public void getData() {
-        swipeRefresh.setRefreshing(true);
-        adapter.update(ListPresenter.getInstance().getNetworkData());
-        swipeRefresh.setRefreshing(false);
     }
 
 
@@ -72,10 +69,12 @@ public class ListGetFragment extends Fragment implements ListScreen{
     }
 
     public void postDataCallback(Data item){
+        items.add(item);
         adapter.addItem(item);
     }
 
     public void updateDataCallback(List<Data> list) {
+        items=list;
         adapter.update(list);
         swipeRefresh.setRefreshing(false);
     }

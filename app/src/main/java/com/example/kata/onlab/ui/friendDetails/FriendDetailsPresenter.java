@@ -1,35 +1,33 @@
-package com.example.kata.onlab.ui.friendsearch;
+package com.example.kata.onlab.ui.friendDetails;
 
-import com.example.kata.onlab.event.GetUsersEvent;
-import com.example.kata.onlab.network.Friends;
+import com.example.kata.onlab.event.GetUserEvent;
+import com.example.kata.onlab.network.FriendDetail;
 import com.example.kata.onlab.ui.Presenter;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.List;
-
 /**
  * Created by Kata on 2017. 02. 26..
  */
 
-public class FriendSearchPresenter extends Presenter<FriendSearchScreen> {
+public class FriendDetailsPresenter extends Presenter<FriendDetailsScreen> {
 
-    private static FriendSearchPresenter instance = null;
+    private static FriendDetailsPresenter instance = null;
 
-    private FriendSearchPresenter() {
+    private FriendDetailsPresenter() {
     }
 
-    public static FriendSearchPresenter getInstance() {
+    public static FriendDetailsPresenter getInstance() {
         if (instance == null) {
-            instance = new FriendSearchPresenter();
+            instance = new FriendDetailsPresenter();
         }
         return instance;
     }
 
     @Override
-    public void attachScreen(FriendSearchScreen screen) {
+    public void attachScreen(FriendDetailsScreen screen) {
         super.attachScreen(screen);
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
@@ -43,13 +41,12 @@ public class FriendSearchPresenter extends Presenter<FriendSearchScreen> {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onUserData(GetUsersEvent<List<Friends>> event) {
+    public void onUserData(GetUserEvent<FriendDetail> event) {
         if (screen != null) {
             screen.updateUserCallback(event.getData());
         }
-
-
     }
+
 
 
 }

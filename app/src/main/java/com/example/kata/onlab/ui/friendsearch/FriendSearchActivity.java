@@ -3,9 +3,10 @@ package com.example.kata.onlab.ui.friendsearch;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
+import android.content.Context;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -20,6 +21,7 @@ import com.example.kata.onlab.databinding.ActivityFriendSearchBinding;
 import com.example.kata.onlab.network.Friends;
 import com.example.kata.onlab.network.FriendsComp;
 import com.example.kata.onlab.network.NetworkManager;
+import com.example.kata.onlab.ui.friendDetails.FriendDetalsActivity;
 import com.github.wrdlbrnft.sortedlistadapter.SortedListAdapter;
 
 import java.util.ArrayList;
@@ -27,7 +29,7 @@ import java.util.Comparator;
 import java.util.List;
 
 public class FriendSearchActivity extends AppCompatActivity implements FriendSearchScreen,SearchView.OnQueryTextListener, SortedListAdapter.Callback {
-
+    Context mContext;
     private static final Comparator<FriendsComp> COMPARATOR = new SortedListAdapter.ComparatorBuilder<FriendsComp>()
             .setOrderForModel(FriendsComp.class, new Comparator<FriendsComp>() {
                 @Override
@@ -47,6 +49,7 @@ public class FriendSearchActivity extends AppCompatActivity implements FriendSea
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mContext = this;
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_friend_search);
 
         setSupportActionBar(mBinding.toolbars.toolbar);
@@ -65,7 +68,11 @@ public class FriendSearchActivity extends AppCompatActivity implements FriendSea
         mAdapter = new ExampleAdapter(this, COMPARATOR, new ExampleAdapter.Listener() {
             @Override
             public void onExampleModelClicked(FriendsComp model) {
-                Snackbar.make(mBinding.getRoot(), Integer.toString(model.id), Snackbar.LENGTH_SHORT).show();
+                //Snackbar.make(mBinding.getRoot(), Integer.toString(model.id), Snackbar.LENGTH_SHORT).show();
+                Intent intent = new Intent(mContext, FriendDetalsActivity.class);
+                intent.putExtra(FriendDetalsActivity.ID, model.id);
+                intent.putExtra(FriendDetalsActivity.NAME, model.name);
+                mContext.startActivity(intent);
             }
         });
 

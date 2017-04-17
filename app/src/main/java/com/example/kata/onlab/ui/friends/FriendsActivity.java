@@ -8,11 +8,15 @@ import android.widget.GridView;
 
 import com.example.kata.onlab.R;
 import com.example.kata.onlab.network.Friends;
+import com.example.kata.onlab.network.NetworkManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class FriendsActivity extends AppCompatActivity {
+public class FriendsActivity extends AppCompatActivity implements  FriendScreen {
+    List<Friends> friends;
+    GridView view;
+    FriendsAdapter friendsAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,16 +35,28 @@ public class FriendsActivity extends AppCompatActivity {
             }
         });
         GridView view= (GridView) findViewById(R.id.gridview);
-        List<Friends> friends=new ArrayList<Friends>();
-        friends.add(new Friends());
-        friends.add(new Friends());
-        friends.add(new Friends());
-        friends.add(new Friends());
-        friends.add(new Friends());
-        friends.add(new Friends());
-        friends.add(new Friends());
-        friends.add(new Friends());
-        friends.add(new Friends());
-        view.setAdapter(new FriendsAdapter(this, friends));
+        friends=new ArrayList<Friends>();
+        friendsAdapter=new FriendsAdapter(this, friends);
+        view.setAdapter(friendsAdapter);
+        NetworkManager.getInstance().getfriends();
     }
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        FriendPresenter.getInstance().attachScreen(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        FriendPresenter.getInstance().detachScreen();
+    }
+
+    @Override
+    public void updateUserCallback(List<Friends> data) {
+        friendsAdapter.update(data);
+    }
+
 }

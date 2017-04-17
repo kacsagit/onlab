@@ -13,6 +13,14 @@ public class Friends extends RealmObject {
     public int id;
     public String name;
 
+    public Friends() {
 
+    }
+
+    public Friends(int id_, String name_) {
+        id = id_;
+        name = name_;
+
+    }
 
 }

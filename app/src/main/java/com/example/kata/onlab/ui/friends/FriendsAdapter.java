@@ -11,6 +11,7 @@ import android.widget.BaseAdapter;
 
 import com.example.kata.onlab.R;
 import com.example.kata.onlab.network.Friends;
+import com.example.kata.onlab.ui.friendDetails.FriendDetalsActivity;
 import com.example.kata.onlab.ui.friendsearch.FriendSearchActivity;
 import com.mikhaellopez.circularimageview.CircularImageView;
 
@@ -22,7 +23,7 @@ import java.util.List;
  */
 
 public class FriendsAdapter extends BaseAdapter {
-    List<Friends> friends=new ArrayList<>();
+    List<Friends> friends = new ArrayList<>();
     Context mContext;
 
     public FriendsAdapter(Context context, List<Friends> friends) {
@@ -33,7 +34,7 @@ public class FriendsAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return 1+friends.size();
+        return 1 + friends.size();
     }
 
     @Override
@@ -47,22 +48,39 @@ public class FriendsAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         LayoutInflater mInflater = (LayoutInflater) mContext
                 .getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-        convertView=mInflater.inflate(R.layout.friend_item, null);
-        if (position==0){
-            CircularImageView cimage= (CircularImageView) convertView.findViewById(R.id.item);
-            cimage.setImageDrawable(ContextCompat.getDrawable(mContext,R.drawable.ic_add_white_36dp));
+        convertView = mInflater.inflate(R.layout.friend_item, null);
+        CircularImageView cimage = (CircularImageView) convertView.findViewById(R.id.item);
+        if (position == 0) {
+            cimage.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_add_white_36dp));
             cimage.setBorderColor(R.color.blue_normal);
             cimage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent=new Intent(mContext, FriendSearchActivity.class);
+                    Intent intent = new Intent(mContext, FriendSearchActivity.class);
+                    mContext.startActivity(intent);
+                }
+            });
+        } else {
+            cimage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(mContext, FriendDetalsActivity.class);
+                    intent.putExtra(FriendDetalsActivity.ID, friends.get(position - 1).id);
+                    intent.putExtra(FriendDetalsActivity.NAME, friends.get(position - 1).name);
                     mContext.startActivity(intent);
                 }
             });
         }
         return convertView;
+    }
+
+    public void update(List<Friends> itemsrec) {
+        friends.clear();
+        friends.addAll(itemsrec);
+        notifyDataSetChanged();
+
     }
 }

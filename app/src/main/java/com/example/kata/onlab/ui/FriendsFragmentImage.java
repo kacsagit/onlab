@@ -2,12 +2,10 @@ package com.example.kata.onlab.ui;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import com.example.kata.onlab.R;
@@ -26,10 +24,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Kata on 2017. 04. 16..
+ * Created by Kata on 2017. 04. 17..
  */
 
-public class FriendsFragment extends ListGetFragment {
+public class FriendsFragmentImage extends ListGetFragment {
     List<Friends> data;
     RadioGroup rgroup;
 
@@ -37,7 +35,7 @@ public class FriendsFragment extends ListGetFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        view = inflater.inflate(R.layout.friends_fragment, container, false);
+        view = inflater.inflate(R.layout.friend_fragment_image, container, false);
         initRecycleView();
         context = getContext();
         swipeRefresh = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefresh);
@@ -59,23 +57,7 @@ public class FriendsFragment extends ListGetFragment {
         });
         data = new ArrayList<>();
         rgroup = (RadioGroup) view.findViewById(R.id.radioSex);
-        rgroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if (checkedId == R.id.buttonall) {
-                    adapter.update(items);
-                    return;
-                }
-                for (Friends f : data) {
-                    if (checkedId == f.id) {
-                        sort(f.id);
 
-
-                    }
-
-                }
-            }
-        });
         NetworkManager.getInstance().getfriends();
         return view;
     }
@@ -97,15 +79,7 @@ public class FriendsFragment extends ListGetFragment {
     @Override
     public void updateDataCallback(List<Data> list) {
         items = list;
-        if (R.id.buttonall == rgroup.getCheckedRadioButtonId()) {
-            adapter.update(list);
-        } else {
-            for (Friends f : data) {
-                if (rgroup.getCheckedRadioButtonId() == f.id) {
-                    sort(f.id);
-                }
-            }
-        }
+
         swipeRefresh.setRefreshing(false);
     }
 
@@ -125,17 +99,6 @@ public class FriendsFragment extends ListGetFragment {
 
     private void updateUserCallback(List<Friends> data) {
         this.data = data;
-        for (Friends f : data) {
-            View radioButton_ = rgroup.findViewById(f.id);
-            if (radioButton_ == null) {
-                RadioButton radioButton = new RadioButton(context);
-                radioButton.setBackground(ContextCompat.getDrawable(context, R.drawable.custom_btn_radio));
-                radioButton.setButtonDrawable(ContextCompat.getDrawable(context, R.mipmap.ic_launcher));
-                radioButton.setPadding(1, 1, 1, 1);
-                radioButton.setId(f.id);
-                RadioGroup.LayoutParams params = new RadioGroup.LayoutParams(RadioGroup.LayoutParams.WRAP_CONTENT, RadioGroup.LayoutParams.WRAP_CONTENT);
-                rgroup.addView(radioButton, params);
-            }
-        }
+
     }
 }

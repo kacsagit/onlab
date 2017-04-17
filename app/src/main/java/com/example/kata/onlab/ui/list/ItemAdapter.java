@@ -20,6 +20,8 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
 
     public final List<Data> items;
 
+
+
     public ItemAdapter() {
         items = new ArrayList<>();
     }
@@ -93,6 +95,13 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
         items.addAll(itemsrec);
         notifyDataSetChanged();
 
+    }
+
+    public void sort(int id) {
+
+    }
+
+    public void all() {
     }
 
     public class ItemViewHolder extends RecyclerView.ViewHolder {

@@ -4,7 +4,9 @@ import android.util.Log;
 
 import com.example.kata.onlab.event.ErrorResponseEvent;
 import com.example.kata.onlab.event.GetDataEvent;
+import com.example.kata.onlab.event.GetFriendsEvent;
 import com.example.kata.onlab.event.GetUserEvent;
+import com.example.kata.onlab.event.GetUsersEvent;
 import com.example.kata.onlab.event.LoginDataEvent;
 import com.example.kata.onlab.event.PostDataEvent;
 import com.example.kata.onlab.event.SignUpDataEvent;
@@ -68,32 +70,86 @@ public class NetworkManager {
         this.usertablename = email;
     }
 
-    public void getusers() {
-        netApi.getusers().enqueue(new Callback<List<Friends>>() {
-            @Override
-            public void onResponse(Call<List<Friends>> call, Response<List<Friends>> response) {
-                if (response.isSuccessful()) {
-                    RealmConfiguration realmConfiguration = new RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().name(usertablename + "users").build();
-                    //Realm.deleteRealm(realmConfiguration);
-                    realm = Realm.getInstance(realmConfiguration);
-                    Log.d(TAG, response.body().toString());
-                    GetUserEvent getUserEvent = new GetUserEvent();
-                    List<Friends> resp = response.body();
-                    realm.beginTransaction();
-                    realm.copyToRealmOrUpdate(resp);
-                    realm.commitTransaction();
-                    RealmResults<Friends> results = realm.where(Friends.class).findAll();
-                    getUserEvent.setData(results);
-                    EventBus.getDefault().post(getUserEvent);
+    public void getfriends() {
+        if (token != null) {
+            netApi.getFriends(token).enqueue(new Callback<List<Friends>>() {
+                @Override
+                public void onResponse(Call<List<Friends>> call, Response<List<Friends>> response) {
+                    if (response.isSuccessful()) {
+                        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().name(usertablename + "friends").build();
+                        //Realm.deleteRealm(realmConfiguration);
+                        realm = Realm.getInstance(realmConfiguration);
+                        Log.d(TAG, response.body().toString());
+                        GetFriendsEvent getFriendsEvent = new GetFriendsEvent();
+                        List<Friends> resp = response.body();
+                        realm.beginTransaction();
+                        realm.copyToRealmOrUpdate(resp);
+                        realm.commitTransaction();
+                        RealmResults<Friends> results = realm.where(Friends.class).findAll();
+                        getFriendsEvent.setData(results);
+                        EventBus.getDefault().post(getFriendsEvent);
+                    }
                 }
 
-            }
+                @Override
+                public void onFailure(Call<List<Friends>> call, Throwable t) {
 
-            @Override
-            public void onFailure(Call<List<Friends>> call, Throwable t) {
+                }
+            });
+        }
+    }
 
-            }
-        });
+    public void getuser(int id) {
+        if (token != null) {
+            netApi.getuser(token,id).enqueue(new Callback<FriendDetail>() {
+                @Override
+                public void onResponse(Call<FriendDetail> call, Response<FriendDetail> response) {
+                    if (response.isSuccessful()) {
+                        Log.d(TAG, response.body().toString());
+                        GetUserEvent getUserEvent = new GetUserEvent();
+                        FriendDetail resp = response.body();
+                        getUserEvent.setData(response.body());
+                        EventBus.getDefault().post(getUserEvent);
+                    }
+
+                }
+
+                @Override
+                public void onFailure(Call<FriendDetail> call, Throwable t) {
+
+                }
+            });
+        }
+    }
+
+    public void getusers() {
+        if (token != null) {
+            netApi.getusers(token).enqueue(new Callback<List<Friends>>() {
+                @Override
+                public void onResponse(Call<List<Friends>> call, Response<List<Friends>> response) {
+                    if (response.isSuccessful()) {
+                        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().name(usertablename + "users").build();
+                        //Realm.deleteRealm(realmConfiguration);
+                        realm = Realm.getInstance(realmConfiguration);
+                        Log.d(TAG, response.body().toString());
+                        GetUsersEvent getUserEvent = new GetUsersEvent();
+                        List<Friends> resp = response.body();
+                        realm.beginTransaction();
+                        realm.copyToRealmOrUpdate(resp);
+                        realm.commitTransaction();
+                        RealmResults<Friends> results = realm.where(Friends.class).findAll();
+                        getUserEvent.setData(results);
+                        EventBus.getDefault().post(getUserEvent);
+                    }
+
+                }
+
+                @Override
+                public void onFailure(Call<List<Friends>> call, Throwable t) {
+
+                }
+            });
+        }
     }
 
     public void updateData() {
