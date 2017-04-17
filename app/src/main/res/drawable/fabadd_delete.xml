@@ -1,0 +1,4 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:state_activated="true" android:drawable="@drawable/ic_delete"/>
+    <item  android:drawable="@drawable/ic_add_white_36dp"/>
+</selector>
