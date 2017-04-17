@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 import com.example.kata.onlab.R;
+import com.example.kata.onlab.network.FriendDetail;
 import com.example.kata.onlab.network.Friends;
 import com.example.kata.onlab.ui.friendDetails.FriendDetalsActivity;
 import com.example.kata.onlab.ui.friendsearch.FriendSearchActivity;
@@ -82,5 +83,11 @@ public class FriendsAdapter extends BaseAdapter {
         friends.addAll(itemsrec);
         notifyDataSetChanged();
 
+    }
+
+    public void add(FriendDetail friendd) {
+        Friends friend=new Friends(friendd.id,friendd.name);
+        friends.add(friend);
+        notifyDataSetChanged();
     }
 }

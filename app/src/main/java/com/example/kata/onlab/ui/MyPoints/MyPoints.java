@@ -48,12 +48,6 @@ public class MyPoints extends AppCompatActivity implements MyPointsScreen {
         new AddPlaceFragment().show(getSupportFragmentManager(), AddPlaceFragment.TAG);
     }
 
-    public void getData() {
-        swipeRefresh.setRefreshing(true);
-        adapter.update(MyPointsPresenter.getInstance().getNetworkData());
-        swipeRefresh.setRefreshing(false);
-    }
-
 
     public void updateData() {
         swipeRefresh.setRefreshing(true);

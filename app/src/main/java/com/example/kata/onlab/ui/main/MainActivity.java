@@ -31,6 +31,7 @@ import com.example.kata.onlab.network.NetworkManager;
 import com.example.kata.onlab.ui.AddPlaceFragment;
 import com.example.kata.onlab.ui.MyPoints.MyPoints;
 import com.example.kata.onlab.ui.friends.FriendsActivity;
+import com.example.kata.onlab.ui.list.FriendsFragment;
 import com.example.kata.onlab.ui.list.ListGetFragment;
 import com.example.kata.onlab.ui.login.LoginActivity;
 import com.example.kata.onlab.ui.map.MapFragment;
@@ -39,10 +40,17 @@ import com.facebook.login.LoginManager;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
+import io.realm.RealmResults;
 
 public class MainActivity extends AppCompatActivity implements AddPlaceFragment.IAddPlaceFragment, MainScreen,NavigationView.OnNavigationItemSelectedListener, SharedPreferences.OnSharedPreferenceChangeListener{
 
+    Realm realm;
+    RealmResults<Data> results;
     private ViewPager viewPager;
     private TablayoutAdapter tablayoutAdapter;
 
@@ -57,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements AddPlaceFragment.
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
 
 
 
@@ -80,7 +89,12 @@ public class MainActivity extends AppCompatActivity implements AddPlaceFragment.
         preferences.registerOnSharedPreferenceChangeListener(this);
         String email = preferences.getString("Email", "");
         user.setText(email);
-        NetworkManager.getInstance().updateData();
+
+        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().name(email + "data").build();
+        // Realm.deleteRealm(realmConfiguration);
+        realm = Realm.getInstance(realmConfiguration);
+        results = realm.where(Data.class).findAll();
+
 
         MenuItem menu=navigationView.getMenu().findItem(R.id.nav_number);
         LinearLayout i= (LinearLayout) menu.getActionView();
@@ -102,6 +116,16 @@ public class MainActivity extends AppCompatActivity implements AddPlaceFragment.
                     mMessageReceiver,
                     new IntentFilter(ServiceLocation.BR_NEW_LOCATION));
         }
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateFragments();
+        NetworkManager.getInstance().updateData();
+
+
     }
 
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
@@ -143,6 +167,10 @@ public class MainActivity extends AppCompatActivity implements AddPlaceFragment.
 
     @Override
     public void postDataCallback(Data item) {
+        realm.beginTransaction();
+        realm.copyToRealmOrUpdate(item);
+        realm.commitTransaction();
+
         for (int i = 0; i < tablayoutAdapter.getCount(); i++) {
             Fragment fragment = getFragment(i);
 
@@ -157,16 +185,28 @@ public class MainActivity extends AppCompatActivity implements AddPlaceFragment.
 
     @Override
     public void updateDataCallback(List<Data> items) {
+        realm.beginTransaction();
+        realm.copyToRealmOrUpdate(items);
+        realm.commitTransaction();
+        results = realm.where(Data.class).findAll();
+        updateFragments();
+    }
+
+
+    public void updateFragments(){
         for (int i = 0; i < tablayoutAdapter.getCount(); i++) {
             Fragment fragment = getFragment(i);
 
-            if (fragment instanceof ListGetFragment) {
-                ((ListGetFragment) fragment).updateDataCallback(items);
+            if (fragment instanceof FriendsFragment) {
+                ((FriendsFragment) fragment).updateDataCallback(new ArrayList<Data>(results));
+            }else if (fragment instanceof ListGetFragment) {
+                ((ListGetFragment) fragment).updateDataCallback(new ArrayList<Data>(results));
             }
             if (fragment instanceof MapFragment) {
-                ((MapFragment) fragment).updateDataCallback(items);
+                ((MapFragment) fragment).updateDataCallback(new ArrayList<Data>(results));
             }
         }
+
     }
 
     @Override

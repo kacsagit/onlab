@@ -93,7 +93,6 @@ public class ListGetFragment extends Fragment implements ListScreen{
     public void onResume() {
         super.onResume();
 
-
     }
 
     @Override

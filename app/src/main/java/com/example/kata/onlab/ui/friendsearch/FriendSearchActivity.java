@@ -5,8 +5,10 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -28,6 +30,10 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
+import io.realm.RealmResults;
+
 public class FriendSearchActivity extends AppCompatActivity implements FriendSearchScreen,SearchView.OnQueryTextListener, SortedListAdapter.Callback {
     Context mContext;
     private static final Comparator<FriendsComp> COMPARATOR = new SortedListAdapter.ComparatorBuilder<FriendsComp>()
@@ -43,14 +49,21 @@ public class FriendSearchActivity extends AppCompatActivity implements FriendSea
     private ExampleAdapter mAdapter;
     private ActivityFriendSearchBinding mBinding;
     private Animator mAnimator;
+    RealmResults<Friends> results;
 
     private List<FriendsComp> mModels;
+    Realm realm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mContext = this;
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_friend_search);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String email = preferences.getString("Email", "");
+        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().name(email + "users").build();
+        realm = Realm.getInstance(realmConfiguration);
+        results = realm.where(Friends.class).findAll();
 
         setSupportActionBar(mBinding.toolbars.toolbar);
         setTitle("Find friends");
@@ -86,6 +99,13 @@ public class FriendSearchActivity extends AppCompatActivity implements FriendSea
         for (int i = 0; i < words.length; i++) {
             mModels.add(new Friends(i, i + 1, words[i]));
         }*/
+
+        List<Friends> list=new ArrayList<>(results);
+
+        for (Friends f :list) {
+            FriendsComp fc=new FriendsComp(f.id,f.name);
+            mModels.add(fc);
+        }
         mAdapter.edit()
                 .replaceAll(mModels)
                 .commit();
@@ -181,7 +201,13 @@ public class FriendSearchActivity extends AppCompatActivity implements FriendSea
 
     @Override
     public void updateUserCallback(List<Friends> data) {
-        for (Friends f :data) {
+        realm.beginTransaction();
+        realm.copyToRealmOrUpdate(data);
+        realm.commitTransaction();
+        results = realm.where(Friends.class).findAll();
+        List<Friends> list=new ArrayList<>(results);
+
+        for (Friends f :list) {
             FriendsComp fc=new FriendsComp(f.id,f.name);
             mModels.add(fc);
         }

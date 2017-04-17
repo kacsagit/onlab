@@ -6,7 +6,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RadioGroup;
 
 import com.example.kata.onlab.R;
 import com.example.kata.onlab.event.GetFriendsEvent;
@@ -29,7 +28,6 @@ import java.util.List;
 
 public class FriendsFragmentImage extends ListGetFragment {
     List<Friends> data;
-    RadioGroup rgroup;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -56,7 +54,7 @@ public class FriendsFragmentImage extends ListGetFragment {
             }
         });
         data = new ArrayList<>();
-        rgroup = (RadioGroup) view.findViewById(R.id.radioSex);
+
 
         NetworkManager.getInstance().getfriends();
         return view;

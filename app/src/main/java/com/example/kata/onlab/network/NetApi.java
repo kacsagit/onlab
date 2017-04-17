@@ -4,6 +4,7 @@ import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
@@ -38,6 +39,12 @@ public interface NetApi {
 
     @POST("/api")
     Call<Integer> postData(@Header("Authorization") String token,@Body Data dat);
+
+    @POST("/api/addfirend")
+    Call<Integer> postFriend(@Header("Authorization") String token,@Body Friend dat);
+
+    @DELETE("/api/deletefirend")
+    Call<Integer> deleteFriend(@Header("Authorization") String token,@Query("id") int id);
 
     @POST("/auth/facebook/token")
     Call<LoginData> postTokenFB(@Body FB fb);

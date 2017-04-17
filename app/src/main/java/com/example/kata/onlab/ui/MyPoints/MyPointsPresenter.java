@@ -30,9 +30,6 @@ public class MyPointsPresenter extends Presenter<MyPointsScreen> {
         return instance;
     }
 
-    public List<Data> getNetworkData() {
-        return NetworkManager.getInstance().getData();
-    }
 
     public void updateNetworkData() {
         NetworkManager.getInstance().updateDataMy();

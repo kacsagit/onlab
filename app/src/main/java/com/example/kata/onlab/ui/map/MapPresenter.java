@@ -1,11 +1,8 @@
 package com.example.kata.onlab.ui.map;
 
-import com.example.kata.onlab.network.Data;
 import com.example.kata.onlab.network.NetworkManager;
 import com.example.kata.onlab.ui.Presenter;
 import com.google.android.gms.maps.model.LatLng;
-
-import java.util.List;
 
 /**
  * Created by Kata on 2017. 02. 26..
@@ -25,9 +22,6 @@ public class MapPresenter extends Presenter<MapScreen> {
         return instance;
     }
 
-    public List<Data> getNetworkData(){
-        return NetworkManager.getInstance().getData();
-    }
 
     public void updateNetworkData(){
         NetworkManager.getInstance().updateData();

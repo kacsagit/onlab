@@ -1,10 +1,7 @@
 package com.example.kata.onlab.ui.list;
 
-import com.example.kata.onlab.network.Data;
 import com.example.kata.onlab.network.NetworkManager;
 import com.example.kata.onlab.ui.Presenter;
-
-import java.util.List;
 
 /**
  * Created by Kata on 2017. 02. 26..
@@ -24,9 +21,6 @@ public class ListPresenter  extends Presenter<ListScreen> {
         return instance;
     }
 
-    public List<Data> getNetworkData(){
-        return NetworkManager.getInstance().getData();
-    }
 
     public void updateNetworkData(){
         NetworkManager.getInstance().updateData();

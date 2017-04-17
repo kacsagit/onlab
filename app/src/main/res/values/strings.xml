@@ -12,7 +12,7 @@
     <string name="facebook_app_id">1675013179474840</string>
     <string name="fb_login_protocol_scheme">fb1675013179474840</string>
     <string name="server_client_id">179156263831-1ft0siuvco0s1nadaj307fcsui3kgsj6.apps.googleusercontent.com</string>
-    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_main">Todos</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

@@ -2,6 +2,7 @@ package com.example.kata.onlab.network;
 
 import android.util.Log;
 
+import com.example.kata.onlab.event.DeleteFriendEvent;
 import com.example.kata.onlab.event.ErrorResponseEvent;
 import com.example.kata.onlab.event.GetDataEvent;
 import com.example.kata.onlab.event.GetFriendsEvent;
@@ -9,15 +10,13 @@ import com.example.kata.onlab.event.GetUserEvent;
 import com.example.kata.onlab.event.GetUsersEvent;
 import com.example.kata.onlab.event.LoginDataEvent;
 import com.example.kata.onlab.event.PostDataEvent;
+import com.example.kata.onlab.event.PostFriendEvent;
 import com.example.kata.onlab.event.SignUpDataEvent;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
 
-import io.realm.Realm;
-import io.realm.RealmConfiguration;
-import io.realm.RealmResults;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
@@ -51,7 +50,6 @@ public class NetworkManager {
     private String token;
     private String usertablename;
 
-    Realm realm;
 
     private NetworkManager() {
 
@@ -70,23 +68,57 @@ public class NetworkManager {
         this.usertablename = email;
     }
 
+    public void postFriend(final FriendDetail friend){
+        if (token != null) {
+            netApi.postFriend(token,new Friend(friend.id)).enqueue(new Callback<Integer>() {
+                @Override
+                public void onResponse(Call<Integer> call, Response<Integer> response) {
+                    if (response.isSuccessful()) {
+
+                        PostFriendEvent postFriendEvent = new PostFriendEvent();
+                        postFriendEvent.setData(friend);
+                        EventBus.getDefault().post(postFriendEvent);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Integer> call, Throwable t) {
+
+                }
+            });
+        }
+    }
+    public void deleteFriend(final FriendDetail friend) {
+        if (token != null) {
+            netApi.deleteFriend(token,friend.id).enqueue(new Callback<Integer>() {
+                @Override
+                public void onResponse(Call<Integer> call, Response<Integer> response) {
+                    if (response.isSuccessful()) {
+                        DeleteFriendEvent deleteFriendEvent = new DeleteFriendEvent();
+                        deleteFriendEvent.setData(friend);
+                        EventBus.getDefault().post(deleteFriendEvent);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Integer> call, Throwable t) {
+
+                }
+            });
+        }
+    }
+
+
     public void getfriends() {
         if (token != null) {
             netApi.getFriends(token).enqueue(new Callback<List<Friends>>() {
                 @Override
                 public void onResponse(Call<List<Friends>> call, Response<List<Friends>> response) {
                     if (response.isSuccessful()) {
-                        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().name(usertablename + "friends").build();
-                        //Realm.deleteRealm(realmConfiguration);
-                        realm = Realm.getInstance(realmConfiguration);
                         Log.d(TAG, response.body().toString());
                         GetFriendsEvent getFriendsEvent = new GetFriendsEvent();
                         List<Friends> resp = response.body();
-                        realm.beginTransaction();
-                        realm.copyToRealmOrUpdate(resp);
-                        realm.commitTransaction();
-                        RealmResults<Friends> results = realm.where(Friends.class).findAll();
-                        getFriendsEvent.setData(results);
+                        getFriendsEvent.setData(resp);
                         EventBus.getDefault().post(getFriendsEvent);
                     }
                 }
@@ -128,17 +160,11 @@ public class NetworkManager {
                 @Override
                 public void onResponse(Call<List<Friends>> call, Response<List<Friends>> response) {
                     if (response.isSuccessful()) {
-                        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().name(usertablename + "users").build();
-                        //Realm.deleteRealm(realmConfiguration);
-                        realm = Realm.getInstance(realmConfiguration);
+
                         Log.d(TAG, response.body().toString());
                         GetUsersEvent getUserEvent = new GetUsersEvent();
                         List<Friends> resp = response.body();
-                        realm.beginTransaction();
-                        realm.copyToRealmOrUpdate(resp);
-                        realm.commitTransaction();
-                        RealmResults<Friends> results = realm.where(Friends.class).findAll();
-                        getUserEvent.setData(results);
+                        getUserEvent.setData(resp);
                         EventBus.getDefault().post(getUserEvent);
                     }
 
@@ -158,17 +184,10 @@ public class NetworkManager {
                 @Override
                 public void onResponse(Call<List<Data>> call, Response<List<Data>> response) {
                     if (response.isSuccessful()) {
-                        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().name(usertablename + "data").build();
-                        // Realm.deleteRealm(realmConfiguration);
-                        realm = Realm.getInstance(realmConfiguration);
                         Log.d(TAG, response.body().toString());
                         GetDataEvent getDataEvent = new GetDataEvent();
                         List<Data> resp = response.body();
-                        realm.beginTransaction();
-                        realm.copyToRealmOrUpdate(resp);
-                        realm.commitTransaction();
-                        RealmResults<Data> results = realm.where(Data.class).findAll();
-                        getDataEvent.setData(results);
+                        getDataEvent.setData(resp);
                         EventBus.getDefault().post(getDataEvent);
                     } else {
                         ErrorResponseEvent errorResponseEvent = new ErrorResponseEvent();
@@ -191,17 +210,10 @@ public class NetworkManager {
                 @Override
                 public void onResponse(Call<List<Data>> call, Response<List<Data>> response) {
                     if (response.isSuccessful()) {
-                        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().name(usertablename + "1" + "data").build();
-                        // Realm.deleteRealm(realmConfiguration);
-                        realm = Realm.getInstance(realmConfiguration);
                         Log.d(TAG, response.body().toString());
                         GetDataEvent getDataEvent = new GetDataEvent();
                         List<Data> resp = response.body();
-                        realm.beginTransaction();
-                        realm.copyToRealmOrUpdate(resp);
-                        realm.commitTransaction();
-                        RealmResults<Data> results = realm.where(Data.class).findAll();
-                        getDataEvent.setData(results);
+                        getDataEvent.setData(resp);
                         EventBus.getDefault().post(getDataEvent);
                     } else {
                         ErrorResponseEvent errorResponseEvent = new ErrorResponseEvent();
@@ -272,13 +284,7 @@ public class NetworkManager {
         });
     }
 
-    public List<Data> getData() {
-        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder().name(usertablename + "data").deleteRealmIfMigrationNeeded().build();
-        //  Realm.deleteRealm(realmConfiguration);
-        realm = Realm.getInstance(realmConfiguration);
-        RealmResults<Data> results = realm.where(Data.class).findAll();
-        return results;
-    }
+
 
     public void logIn(final String username, String password) {
         final Login login = new Login(username, password);
@@ -343,10 +349,6 @@ public class NetworkManager {
                     if (response.isSuccessful()) {
                         Log.d(TAG, response.body().toString());
                         d.id = response.body();
-                        realm.beginTransaction();
-                        realm.copyToRealmOrUpdate(d);
-                        realm.commitTransaction();
-
                         PostDataEvent postDataEvent = new PostDataEvent();
                         postDataEvent.setData(d);
                         EventBus.getDefault().post(postDataEvent);
@@ -407,6 +409,7 @@ public class NetworkManager {
             });
         }
     }
+
 
 
     public interface ResponseListener<T> {

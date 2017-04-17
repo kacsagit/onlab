@@ -5,32 +5,35 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <HorizontalScrollView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:scrollbarSize="0dp">
 
 
-        <RadioGroup
-            android:id="@+id/radioSex"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:checkedButton="@+id/buttonall">
 
+            <!--GridView xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/gridview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="8dp"
+                android:columnWidth="80dp"
+                android:gravity="center"
+                android:horizontalSpacing="5dp"
+                android:numColumns="auto_fit"
 
-            <RadioButton
-                android:id="@+id/buttonall"
-                android:layout_width="wrap_content"
+                android:stretchMode="spacingWidthUniform"
+                android:verticalSpacing="5dp"/-->
+            <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/custom_btn_radio"
-                android:button="@drawable/ic_add_white_36dp"
-                android:padding="1dp" />
-
-        </RadioGroup>
+                android:orientation="horizontal"
+                android:scrollbars="vertical"
+                 />
 
 
-    </HorizontalScrollView>
+
+
+
+
 
     <include layout="@layout/fragment_list" />
 </LinearLayout>

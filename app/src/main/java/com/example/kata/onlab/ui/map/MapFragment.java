@@ -22,7 +22,6 @@ import android.widget.Toast;
 
 import com.example.kata.onlab.R;
 import com.example.kata.onlab.network.Data;
-import com.example.kata.onlab.network.NetworkManager;
 import com.example.kata.onlab.ui.AddPlaceFragment;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -63,7 +62,7 @@ public class MapFragment extends Fragment implements LocationListener, OnMapRead
     private Location prevLoc = null;
     private MapView mapView;
     private static GoogleMap googleMap;
-
+    List<Data> datalist;
     private List<Geofence> mGeofenceList;
     LocationRequest mLocationRequest;
     GoogleApiClient mGoogleApiClient;
@@ -136,7 +135,7 @@ public class MapFragment extends Fragment implements LocationListener, OnMapRead
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        datalist = new ArrayList<>();
         mGeofenceList = new ArrayList<Geofence>();
         myLocationManager = new MyLocationManager(this, getContext());
         requestNeededPermission();
@@ -185,7 +184,6 @@ public class MapFragment extends Fragment implements LocationListener, OnMapRead
         mapView.getMapAsync(this);
         buildGoogleApiClientEmpty();
         mGoogleApiClient.connect();
-        getData();
 
 
     }
@@ -292,19 +290,10 @@ public class MapFragment extends Fragment implements LocationListener, OnMapRead
     }
 
 
-    public void getData() {
-        List<Data> list=MapPresenter.getInstance().getNetworkData();
-        setUpMap(list);
-        if (list.size() != 0) {
-            createGeofences();
-            buildGoogleApiClient();
-        }
-    }
-
-
     public void updateDataCallback(List<Data> list) {
-        setUpMap(list);
-        if (list.size() != 0) {
+        datalist = list;
+        setUpMap(datalist);
+        if (datalist.size() != 0) {
             createGeofences();
             buildGoogleApiClient();
         }
@@ -312,6 +301,7 @@ public class MapFragment extends Fragment implements LocationListener, OnMapRead
     }
 
     public void postDataCallback(Data item) {
+        datalist.add(item);
         addMarker(item);
     }
 
@@ -351,7 +341,7 @@ public class MapFragment extends Fragment implements LocationListener, OnMapRead
     }
 
     public void createGeofences() {
-        for (Data d : NetworkManager.getInstance().getData()) {
+        for (Data d : datalist) {
             String id = UUID.randomUUID().toString();
             Geofence fence = new Geofence.Builder()
                     .setRequestId(id)

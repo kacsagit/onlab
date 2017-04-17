@@ -8,4 +8,8 @@ import com.example.kata.onlab.network.FriendDetail;
 
 public interface FriendDetailsScreen {
     void updateUserCallback(FriendDetail data);
+
+    void updateFriendCallback(FriendDetail friend);
+
+    void deleteFriendCallback(FriendDetail data);
 }

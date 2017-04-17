@@ -1,6 +1,8 @@
 package com.example.kata.onlab.ui.friendDetails;
 
+import com.example.kata.onlab.event.DeleteFriendEvent;
 import com.example.kata.onlab.event.GetUserEvent;
+import com.example.kata.onlab.event.PostFriendEvent;
 import com.example.kata.onlab.network.FriendDetail;
 import com.example.kata.onlab.ui.Presenter;
 
@@ -44,6 +46,19 @@ public class FriendDetailsPresenter extends Presenter<FriendDetailsScreen> {
     public void onUserData(GetUserEvent<FriendDetail> event) {
         if (screen != null) {
             screen.updateUserCallback(event.getData());
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onPostFirend(PostFriendEvent<FriendDetail> event) {
+        if (screen != null) {
+            screen.updateFriendCallback(event.getData());
+        }
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onDeleteFirend(DeleteFriendEvent<FriendDetail> event) {
+        if (screen != null) {
+            screen.deleteFriendCallback(event.getData());
         }
     }
 
