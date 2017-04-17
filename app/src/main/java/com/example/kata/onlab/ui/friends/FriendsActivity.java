@@ -4,6 +4,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.GridView;
@@ -19,10 +21,12 @@ import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 
+import static com.example.kata.onlab.R.id.recyclerView;
+
 public class FriendsActivity extends AppCompatActivity implements  FriendScreen {
     List<Friends> friends;
     GridView view;
-    FriendsAdapter friendsAdapter;
+    FriendsRecAdapter friendsAdapter;
     Realm realm;
     RealmResults<Friends> results;
 
@@ -50,10 +54,14 @@ public class FriendsActivity extends AppCompatActivity implements  FriendScreen 
                 onBackPressed();
             }
         });
-        GridView view= (GridView) findViewById(R.id.gridview);
+
+        RecyclerView view= (RecyclerView) findViewById(recyclerView);
+        view.setLayoutManager(new GridLayoutManager
+                (this, 5,GridLayoutManager.VERTICAL, false));
         friends=new ArrayList<Friends>();
-        friendsAdapter=new FriendsAdapter(this, friends);
+        friendsAdapter=new FriendsRecAdapter();
         view.setAdapter(friendsAdapter);
+        updateUserCallback(new ArrayList<Friends>(results));
 
 
     }

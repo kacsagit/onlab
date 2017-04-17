@@ -69,15 +69,10 @@ public class FriendsFragment extends ListGetFragment implements FriendsRecAdapte
         realm = Realm.getInstance(realmConfiguration);
         results = realm.where(Friends.class).findAll();
         NetworkManager.getInstance().getfriends();
-       /* GridView gview= (GridView) view.findViewById(R.id.gridview);
-        friendsAdapter=new FriendsAdapter(context, new ArrayList<Friends>(results));
-        gview.setAdapter(friendsAdapter);*/
         RecyclerView reciew = (RecyclerView) view.findViewById(R.id.recyclerView);
         LinearLayoutManager horizontalLayoutManagaer
                 = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
         reciew.setLayoutManager(horizontalLayoutManagaer);
-
-      // reciew.setLayoutManager(new GridLayoutManager(this.context,,GridLayoutManager.VERTICAL, false));*/
         friendsAdapter=new FriendsRecAdapter(this);
         reciew.setAdapter(friendsAdapter);
         updateUserCallback(new ArrayList<Friends>(results));
