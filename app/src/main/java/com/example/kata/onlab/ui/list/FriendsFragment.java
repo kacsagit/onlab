@@ -4,10 +4,14 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -16,6 +20,7 @@ import com.example.kata.onlab.event.GetFriendsEvent;
 import com.example.kata.onlab.network.Data;
 import com.example.kata.onlab.network.Friends;
 import com.example.kata.onlab.network.NetworkManager;
+import com.example.kata.onlab.ui.map.MapFragment;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -76,10 +81,33 @@ public class FriendsFragment extends ListGetFragment implements FriendsRecAdapte
         friendsAdapter=new FriendsRecAdapter(this);
         reciew.setAdapter(friendsAdapter);
         updateUserCallback(new ArrayList<Friends>(results));
-
+        setHasOptionsMenu(true);
 
 
         return view;
+    }
+
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu,MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_list, menu);
+        super.onCreateOptionsMenu(menu,inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.action_map:
+                // do stuff
+                final FragmentTransaction ft = getFragmentManager().beginTransaction();
+                ft.replace(R.id.content_frame, new MapFragment());
+                ft.commit();
+                return true;
+
+        }
+
+        return false;
     }
 
     @Override

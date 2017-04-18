@@ -1,5 +1,6 @@
 package com.example.kata.onlab.ui.main;
 
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -9,11 +10,11 @@ import android.location.Location;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -32,9 +33,7 @@ import com.example.kata.onlab.ui.AddPlaceFragment;
 import com.example.kata.onlab.ui.MyPoints.MyPoints;
 import com.example.kata.onlab.ui.friends.FriendsActivity;
 import com.example.kata.onlab.ui.list.FriendsFragment;
-import com.example.kata.onlab.ui.list.ListGetFragment;
 import com.example.kata.onlab.ui.login.LoginActivity;
-import com.example.kata.onlab.ui.map.MapFragment;
 import com.example.kata.onlab.ui.map.ServiceLocation;
 import com.facebook.login.LoginManager;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -51,13 +50,12 @@ public class MainActivity extends AppCompatActivity implements AddPlaceFragment.
 
     Realm realm;
     RealmResults<Data> results;
-    private ViewPager viewPager;
-    private TablayoutAdapter tablayoutAdapter;
 
     private static final String TAG = "MainActivity";
     public static final String KEY_START_SERVICE = "start_service";
     SwitchCompat switchCompat;
     SharedPreferences preferences;
+    Fragment fragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,13 +76,10 @@ public class MainActivity extends AppCompatActivity implements AddPlaceFragment.
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        TabLayout tabs = (TabLayout) findViewById(R.id.tabs);
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
-        setupViewPager(viewPager);
-        tabs.setupWithViewPager(viewPager);
 
         View header = navigationView.getHeaderView(0);
         TextView user= (TextView) header.findViewById(R.id.textView);
+
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
         preferences.registerOnSharedPreferenceChangeListener(this);
         String email = preferences.getString("Email", "");
@@ -107,6 +102,13 @@ public class MainActivity extends AppCompatActivity implements AddPlaceFragment.
                 editor.apply();
             }
         });
+
+        fragment  = new FriendsFragment();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.add(R.id.content_frame,fragment);
+        fragmentTransaction.commit();
+
 
         if (preferences.getBoolean(KEY_START_SERVICE, true)) {
             switchCompat.setChecked(true);
@@ -136,11 +138,6 @@ public class MainActivity extends AppCompatActivity implements AddPlaceFragment.
         }
     };
 
-    private void setupViewPager(ViewPager viewPager) {
-        tablayoutAdapter = new TablayoutAdapter(getSupportFragmentManager());
-        viewPager.setAdapter(tablayoutAdapter);
-    }
-
 
     @Override
     public void onNewItemCreated(Data newItem) {
@@ -148,9 +145,7 @@ public class MainActivity extends AppCompatActivity implements AddPlaceFragment.
     }
 
 
-    public Fragment getFragment(int id) {
-        return getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.viewpager + ":" + id);
-    }
+
 
 
     @Override
@@ -171,16 +166,10 @@ public class MainActivity extends AppCompatActivity implements AddPlaceFragment.
         realm.copyToRealmOrUpdate(item);
         realm.commitTransaction();
 
-        for (int i = 0; i < tablayoutAdapter.getCount(); i++) {
-            Fragment fragment = getFragment(i);
 
-            if (fragment instanceof ListGetFragment) {
-                ((ListGetFragment) fragment).postDataCallback(item);
-            }
-            if (fragment instanceof MapFragment) {
-                ((MapFragment) fragment).postDataCallback(item);
-            }
-        }
+        ((FriendsFragment) fragment).postDataCallback(item);
+
+
     }
 
     @Override
@@ -194,18 +183,8 @@ public class MainActivity extends AppCompatActivity implements AddPlaceFragment.
 
 
     public void updateFragments(){
-        for (int i = 0; i < tablayoutAdapter.getCount(); i++) {
-            Fragment fragment = getFragment(i);
+        ((FriendsFragment) fragment).updateDataCallback(new ArrayList<Data>(results));
 
-            if (fragment instanceof FriendsFragment) {
-                ((FriendsFragment) fragment).updateDataCallback(new ArrayList<Data>(results));
-            }else if (fragment instanceof ListGetFragment) {
-                ((ListGetFragment) fragment).updateDataCallback(new ArrayList<Data>(results));
-            }
-            if (fragment instanceof MapFragment) {
-                ((MapFragment) fragment).updateDataCallback(new ArrayList<Data>(results));
-            }
-        }
 
     }
 
