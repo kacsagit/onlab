@@ -1,18 +1,25 @@
 package com.example.kata.onlab.ui.main;
 
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -25,6 +32,7 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.kata.onlab.R;
 import com.example.kata.onlab.network.Data;
@@ -39,17 +47,9 @@ import com.facebook.login.LoginManager;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
-import io.realm.Realm;
-import io.realm.RealmConfiguration;
-import io.realm.RealmResults;
+public class MainActivity extends AppCompatActivity implements AddPlaceFragment.IAddPlaceFragment, MainScreen, NavigationView.OnNavigationItemSelectedListener, SharedPreferences.OnSharedPreferenceChangeListener {
 
-public class MainActivity extends AppCompatActivity implements AddPlaceFragment.IAddPlaceFragment, MainScreen,NavigationView.OnNavigationItemSelectedListener, SharedPreferences.OnSharedPreferenceChangeListener{
-
-    Realm realm;
-    RealmResults<Data> results;
 
     private static final String TAG = "MainActivity";
     public static final String KEY_START_SERVICE = "start_service";
@@ -65,8 +65,6 @@ public class MainActivity extends AppCompatActivity implements AddPlaceFragment.
         setSupportActionBar(toolbar);
 
 
-
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -78,21 +76,16 @@ public class MainActivity extends AppCompatActivity implements AddPlaceFragment.
 
 
         View header = navigationView.getHeaderView(0);
-        TextView user= (TextView) header.findViewById(R.id.textView);
+        TextView user = (TextView) header.findViewById(R.id.textView);
 
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
         preferences.registerOnSharedPreferenceChangeListener(this);
         String email = preferences.getString("Email", "");
         user.setText(email);
 
-        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().name(email + "data").build();
-        // Realm.deleteRealm(realmConfiguration);
-        realm = Realm.getInstance(realmConfiguration);
-        results = realm.where(Data.class).findAll();
 
-
-        MenuItem menu=navigationView.getMenu().findItem(R.id.nav_number);
-        LinearLayout i= (LinearLayout) menu.getActionView();
+        MenuItem menu = navigationView.getMenu().findItem(R.id.nav_number);
+        LinearLayout i = (LinearLayout) menu.getActionView();
         switchCompat = (SwitchCompat) i.findViewById(R.id.toggleButton);
         switchCompat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -103,10 +96,10 @@ public class MainActivity extends AppCompatActivity implements AddPlaceFragment.
             }
         });
 
-        fragment  = new FriendsFragment();
+        fragment = new FriendsFragment();
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.add(R.id.content_frame,fragment);
+        fragmentTransaction.add(R.id.content_frame, fragment);
         fragmentTransaction.commit();
 
 
@@ -124,8 +117,6 @@ public class MainActivity extends AppCompatActivity implements AddPlaceFragment.
     @Override
     protected void onResume() {
         super.onResume();
-        updateFragments();
-        NetworkManager.getInstance().updateData();
 
 
     }
@@ -145,9 +136,6 @@ public class MainActivity extends AppCompatActivity implements AddPlaceFragment.
     }
 
 
-
-
-
     @Override
     protected void onStart() {
         super.onStart();
@@ -160,33 +148,6 @@ public class MainActivity extends AppCompatActivity implements AddPlaceFragment.
         MainPresenter.getInstance().detachScreen();
     }
 
-    @Override
-    public void postDataCallback(Data item) {
-        realm.beginTransaction();
-        realm.copyToRealmOrUpdate(item);
-        realm.commitTransaction();
-
-
-        ((FriendsFragment) fragment).postDataCallback(item);
-
-
-    }
-
-    @Override
-    public void updateDataCallback(List<Data> items) {
-        realm.beginTransaction();
-        realm.copyToRealmOrUpdate(items);
-        realm.commitTransaction();
-        results = realm.where(Data.class).findAll();
-        updateFragments();
-    }
-
-
-    public void updateFragments(){
-        ((FriendsFragment) fragment).updateDataCallback(new ArrayList<Data>(results));
-
-
-    }
 
     @Override
     public void onBackPressed() {
@@ -231,7 +192,7 @@ public class MainActivity extends AppCompatActivity implements AddPlaceFragment.
                 public void run() {
                     try {
                         FirebaseInstanceId.getInstance().deleteInstanceId();
-                        String token=FirebaseInstanceId.getInstance().getToken();
+                        String token = FirebaseInstanceId.getInstance().getToken();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -242,17 +203,34 @@ public class MainActivity extends AppCompatActivity implements AddPlaceFragment.
             startActivity(intent);
             LoginManager.getInstance().logOut();
         } else if (id == R.id.nav_gallery) {
-            Intent intent=new Intent(this, MyPoints.class);
+            Intent intent = new Intent(this, MyPoints.class);
             startActivity(intent);
 
 
         } else if (id == R.id.nav_slideshow) {
-            Intent intent=new Intent(this, FriendsActivity.class);
+            Intent intent = new Intent(this, FriendsActivity.class);
             startActivity(intent);
 
-        }/* else if (id == R.id.nav_manage) {
+        } else if (id == R.id.nav_manage) {
+            if (ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    Toast.makeText(this,
+                            "I need it picking image", Toast.LENGTH_SHORT).show();
+                }
 
-        } else if (id == R.id.nav_share) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        101);
+            } else {
+                Intent intent = new Intent(Intent.ACTION_PICK,
+                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(intent, 1);
+            }
+
+        }/*  else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {
 
@@ -269,11 +247,42 @@ public class MainActivity extends AppCompatActivity implements AddPlaceFragment.
         return true;
     }
 
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
+        super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
+        switch (requestCode) {
+            case 1:
+                if (resultCode == RESULT_OK) {
+                    Uri selectedImage = imageReturnedIntent.getData();
+                    NetworkManager.getInstance().postImage(getRealPathFromURI(selectedImage));
+                }
+                break;
+        }
+    }
+
+    private String getRealPathFromURI(Uri contentURI) {
+        String result = "";
+        try {
+            Cursor cursor = this.getContentResolver().query(contentURI, null, null, null, null);
+            if (cursor == null) { // Source is Dropbox or other similar local file path
+                result = contentURI.getPath();
+            } else {
+                cursor.moveToFirst();
+                int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+                result = cursor.getString(idx); // Exception raised HERE
+                cursor.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (KEY_START_SERVICE.equals(key)) {
             boolean startService = sharedPreferences.getBoolean(KEY_START_SERVICE, false);
-            Intent i = new Intent(getApplicationContext(),ServiceLocation.class);
+            Intent i = new Intent(getApplicationContext(), ServiceLocation.class);
             if (startService) {
                 startService(i);
                 LocalBroadcastManager.getInstance(this).registerReceiver(

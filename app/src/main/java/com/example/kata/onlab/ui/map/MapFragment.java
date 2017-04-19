@@ -5,11 +5,13 @@ import android.Manifest;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -26,6 +28,7 @@ import android.widget.Toast;
 
 import com.example.kata.onlab.R;
 import com.example.kata.onlab.network.Data;
+import com.example.kata.onlab.network.NetworkManager;
 import com.example.kata.onlab.ui.AddPlaceFragment;
 import com.example.kata.onlab.ui.list.FriendsFragment;
 import com.google.android.gms.common.ConnectionResult;
@@ -55,6 +58,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
+import io.realm.RealmResults;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -63,7 +70,8 @@ public class MapFragment extends Fragment implements LocationListener, OnMapRead
 
     private static final String TAG = "MapFragment";
     private MyLocationManager myLocationManager = null;
-
+    Realm realm;
+    RealmResults<Data> results;
     private Location prevLoc = null;
     private MapView mapView;
     private static GoogleMap googleMap;
@@ -164,6 +172,13 @@ public class MapFragment extends Fragment implements LocationListener, OnMapRead
         mapView = (MapView) view.findViewById(R.id.map);
         mapView.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String email = preferences.getString("Email", "");
+        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().name(email + "data").build();
+        // Realm.deleteRealm(realmConfiguration);
+        realm = Realm.getInstance(realmConfiguration);
+        results = realm.where(Data.class).findAll();
+        markersData=new ArrayList<>(results);
         return view;
 
     }
@@ -211,6 +226,8 @@ public class MapFragment extends Fragment implements LocationListener, OnMapRead
         mapView.getMapAsync(this);
         buildGoogleApiClientEmpty();
         mGoogleApiClient.connect();
+        updateDataCallback(markersData);
+        NetworkManager.getInstance().updateData();
 
 
     }

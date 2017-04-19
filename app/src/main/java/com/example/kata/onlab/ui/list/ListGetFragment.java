@@ -1,7 +1,9 @@
 package com.example.kata.onlab.ui.list;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -13,16 +15,23 @@ import android.view.ViewGroup;
 
 import com.example.kata.onlab.R;
 import com.example.kata.onlab.network.Data;
+import com.example.kata.onlab.network.NetworkManager;
 import com.example.kata.onlab.ui.AddPlaceFragment;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
+import io.realm.RealmResults;
 
 /**
  * Created by Kata on 2017. 02. 18..
  */
 public class ListGetFragment extends Fragment implements ListScreen{
 
+    Realm realm;
+    RealmResults<Data> results;
     protected RecyclerView recyclerView;
     protected ItemAdapter adapter;
     protected SwipeRefreshLayout swipeRefresh;
@@ -53,7 +62,15 @@ public class ListGetFragment extends Fragment implements ListScreen{
 
             }
         });
-        items=new ArrayList<>();
+
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String email = preferences.getString("Email", "");
+        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().name(email + "data").build();
+        // Realm.deleteRealm(realmConfiguration);
+        realm = Realm.getInstance(realmConfiguration);
+        results = realm.where(Data.class).findAll();
+        items=new ArrayList<>(results);
         return view;
 
     }
@@ -69,13 +86,20 @@ public class ListGetFragment extends Fragment implements ListScreen{
     }
 
     public void postDataCallback(Data item){
+        realm.beginTransaction();
+        realm.copyToRealmOrUpdate(item);
+        realm.commitTransaction();
         items.add(item);
         adapter.addItem(item);
     }
 
     public void updateDataCallback(List<Data> list) {
+        realm.beginTransaction();
+        realm.copyToRealmOrUpdate(items);
+        realm.commitTransaction();
+        results = realm.where(Data.class).findAll();
         items=list;
-        adapter.update(list);
+        adapter.update(items);
         swipeRefresh.setRefreshing(false);
     }
 
@@ -92,6 +116,8 @@ public class ListGetFragment extends Fragment implements ListScreen{
     @Override
     public void onResume() {
         super.onResume();
+        updateDataCallback(items);
+        NetworkManager.getInstance().updateData();
 
     }
 

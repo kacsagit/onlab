@@ -15,9 +15,14 @@ import com.example.kata.onlab.event.SignUpDataEvent;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.io.File;
 import java.util.List;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -366,6 +371,30 @@ public class NetworkManager {
                 }
             });
         }
+    }
+
+
+    public void postImage(String filePath){
+        if (token != null) {
+            File file = new File(filePath);
+            RequestBody reqFile = RequestBody.create(MediaType.parse("image/*"), file);
+            MultipartBody.Part body = MultipartBody.Part.createFormData("avatar", file.getName(), reqFile);
+            RequestBody name = RequestBody.create(MediaType.parse("text/plain"), "avatar");
+            netApi.postImage(token,body, name).enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.isSuccessful()) {
+
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    t.printStackTrace();
+                }
+            });
+        }
+
     }
 
     public void signDevice(String devicetoken) {
