@@ -69,7 +69,6 @@ public class FriendDetalsActivity extends AppCompatActivity implements FriendDet
                 }
             }
         });
-
         NetworkManager.getInstance().getuser(extras.getInt(ID));
     }
 
