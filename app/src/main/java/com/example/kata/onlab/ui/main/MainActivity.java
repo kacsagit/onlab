@@ -36,6 +36,8 @@ import android.widget.Toast;
 
 import com.example.kata.onlab.R;
 import com.example.kata.onlab.network.Data;
+import com.example.kata.onlab.network.Friends;
+import com.example.kata.onlab.network.NetApi;
 import com.example.kata.onlab.network.NetworkManager;
 import com.example.kata.onlab.ui.AddPlaceFragment;
 import com.example.kata.onlab.ui.MyPoints.MyPoints;
@@ -45,6 +47,8 @@ import com.example.kata.onlab.ui.login.LoginActivity;
 import com.example.kata.onlab.ui.map.ServiceLocation;
 import com.facebook.login.LoginManager;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.mikhaellopez.circularimageview.CircularImageView;
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 
@@ -56,6 +60,8 @@ public class MainActivity extends AppCompatActivity implements AddPlaceFragment.
     SwitchCompat switchCompat;
     SharedPreferences preferences;
     Fragment fragment;
+    TextView user;
+    CircularImageView image;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,13 +82,13 @@ public class MainActivity extends AppCompatActivity implements AddPlaceFragment.
 
 
         View header = navigationView.getHeaderView(0);
-        TextView user = (TextView) header.findViewById(R.id.textView);
+
+        user = (TextView) header.findViewById(R.id.textView);
+
+        image = (CircularImageView) header.findViewById(R.id.imageView);
 
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
         preferences.registerOnSharedPreferenceChangeListener(this);
-        String email = preferences.getString("Email", "");
-        user.setText(email);
-
 
         MenuItem menu = navigationView.getMenu().findItem(R.id.nav_number);
         LinearLayout i = (LinearLayout) menu.getActionView();
@@ -133,6 +139,7 @@ public class MainActivity extends AppCompatActivity implements AddPlaceFragment.
     @Override
     protected void onResume() {
         super.onResume();
+        NetworkManager.getInstance().getme();
 
 
     }
@@ -309,5 +316,14 @@ public class MainActivity extends AppCompatActivity implements AddPlaceFragment.
                 LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
             }
         }
+    }
+
+    @Override
+    public void updateProfile(Friends data) {
+        user.setText(data.name);
+        String url = NetApi.GETIMEAGE +data.image;
+        url = url.replace("\\", "/");
+        Picasso.with(this).load(url).placeholder(R.mipmap.ic_launcher).into(image);
+
     }
 }

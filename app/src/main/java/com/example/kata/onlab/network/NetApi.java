@@ -39,6 +39,9 @@ public interface NetApi {
     @GET("/api/getfriends")
     Call<List<Friends>> getFriends(@Header("Authorization") String token);
 
+    @GET("/api/me")
+    Call<Friends> getMe(@Header("Authorization") String token);
+
     @GET("/api/getme")
     Call<List<Data>> getDataSpecMy(@Header("Authorization") String token);
 

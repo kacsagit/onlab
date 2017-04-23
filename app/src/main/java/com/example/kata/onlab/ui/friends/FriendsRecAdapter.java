@@ -2,11 +2,13 @@ package com.example.kata.onlab.ui.friends;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.kata.onlab.R;
 import com.example.kata.onlab.network.FriendDetail;
@@ -45,6 +47,7 @@ public class FriendsRecAdapter extends RecyclerView.Adapter<FriendsRecAdapter.It
         if (position == 0) {
             holder.imageView.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_add_white_36dp));
             holder.imageView.setBorderColor(R.color.blue_normal);
+            holder.name.setText("Add new friends");
             holder.imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -56,6 +59,8 @@ public class FriendsRecAdapter extends RecyclerView.Adapter<FriendsRecAdapter.It
         } else {
             final Friends friend = friends.get(position - 1);
             holder.imageView.setImageDrawable(ContextCompat.getDrawable(mContext, R.mipmap.ic_launcher));
+            holder.name.setText(friend.name);
+            holder.imageView.setBorderColor(Color.parseColor("#EEEEEE"));
             holder.imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -104,10 +109,12 @@ public class FriendsRecAdapter extends RecyclerView.Adapter<FriendsRecAdapter.It
 
     public class ItemViewHolder extends RecyclerView.ViewHolder {
         CircularImageView imageView;
+        TextView name;
 
         public ItemViewHolder(View itemView) {
             super(itemView);
             imageView = (CircularImageView) itemView.findViewById(R.id.item);
+            name= (TextView) itemView.findViewById(R.id.name);
 
         }
     }

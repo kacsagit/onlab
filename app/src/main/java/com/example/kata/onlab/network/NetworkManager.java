@@ -6,6 +6,7 @@ import com.example.kata.onlab.event.DeleteFriendEvent;
 import com.example.kata.onlab.event.ErrorResponseEvent;
 import com.example.kata.onlab.event.GetDataEvent;
 import com.example.kata.onlab.event.GetFriendsEvent;
+import com.example.kata.onlab.event.GetMeEvent;
 import com.example.kata.onlab.event.GetUserEvent;
 import com.example.kata.onlab.event.GetUsersEvent;
 import com.example.kata.onlab.event.LoginDataEvent;
@@ -130,6 +131,28 @@ public class NetworkManager {
 
                 @Override
                 public void onFailure(Call<List<Friends>> call, Throwable t) {
+
+                }
+            });
+        }
+    }
+
+    public void getme() {
+        if (token != null) {
+            netApi.getMe(token).enqueue(new Callback<Friends>() {
+                @Override
+                public void onResponse(Call<Friends> call, Response<Friends> response) {
+                    if (response.isSuccessful()) {
+                        Log.d(TAG, response.body().toString());
+                        GetMeEvent getmeEvent = new GetMeEvent();
+                        Friends resp = response.body();
+                        getmeEvent.setData(resp);
+                        EventBus.getDefault().post(getmeEvent);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Friends> call, Throwable t) {
 
                 }
             });

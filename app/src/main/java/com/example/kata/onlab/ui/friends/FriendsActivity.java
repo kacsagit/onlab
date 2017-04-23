@@ -8,7 +8,6 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.GridView;
 
 import com.example.kata.onlab.R;
 import com.example.kata.onlab.network.Friends;
@@ -23,12 +22,12 @@ import io.realm.RealmResults;
 
 import static com.example.kata.onlab.R.id.recyclerView;
 
-public class FriendsActivity extends AppCompatActivity implements  FriendScreen {
+public class FriendsActivity extends AppCompatActivity implements FriendScreen {
     List<Friends> friends;
-    GridView view;
     FriendsRecAdapter friendsAdapter;
     Realm realm;
     RealmResults<Friends> results;
+    RecyclerView view;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,20 +54,27 @@ public class FriendsActivity extends AppCompatActivity implements  FriendScreen 
             }
         });
 
-        RecyclerView view= (RecyclerView) findViewById(recyclerView);
-        view.setLayoutManager(new GridLayoutManager
-                (this, 5,GridLayoutManager.VERTICAL, false));
-        friends=new ArrayList<Friends>();
-        friendsAdapter=new FriendsRecAdapter();
-        view.setAdapter(friendsAdapter);
-        updateUserCallback(new ArrayList<Friends>(results));
+
+        view = (RecyclerView) findViewById(recyclerView);
+
+
+        friends = new ArrayList<Friends>();
 
 
     }
-    protected void onResume(){
+
+    protected void onResume() {
         super.onResume();
         NetworkManager.getInstance().getfriends();
+        int numberOfColumns = 2;
+        if (this.getResources().getConfiguration().orientation == this.getResources().getConfiguration() .ORIENTATION_LANDSCAPE)
+            numberOfColumns = 4;
+
+        view.setLayoutManager(new GridLayoutManager(this, numberOfColumns, GridLayoutManager.VERTICAL, false));
+        friendsAdapter = new FriendsRecAdapter();
+        view.setAdapter(friendsAdapter);
         friendsAdapter.update(new ArrayList<Friends>(results));
+        updateUserCallback(new ArrayList<Friends>(results));
     }
 
 

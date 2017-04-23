@@ -1,6 +1,7 @@
 package com.example.kata.onlab.ui.friendsfragment;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -36,7 +37,7 @@ public class FriendsRecAdapter extends RecyclerView.Adapter<FriendsRecAdapter.It
     public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView =
                 LayoutInflater.from(parent.getContext()).
-                        inflate(R.layout.friend_item, parent, false);
+                        inflate(R.layout.friends_itemrecycler, parent, false);
         mContext = parent.getContext();
         ItemViewHolder viewHolder = new ItemViewHolder(itemView);
         return viewHolder;
@@ -58,6 +59,7 @@ public class FriendsRecAdapter extends RecyclerView.Adapter<FriendsRecAdapter.It
         } else {
             final Friends friend = friends.get(position - 1);
             holder.imageView.setImageDrawable(ContextCompat.getDrawable(mContext, R.mipmap.ic_launcher));
+            holder.imageView.setBorderColor(Color.parseColor("#EEEEEE"));
             holder.imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
