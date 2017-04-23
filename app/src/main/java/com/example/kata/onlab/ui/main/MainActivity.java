@@ -40,7 +40,7 @@ import com.example.kata.onlab.network.NetworkManager;
 import com.example.kata.onlab.ui.AddPlaceFragment;
 import com.example.kata.onlab.ui.MyPoints.MyPoints;
 import com.example.kata.onlab.ui.friends.FriendsActivity;
-import com.example.kata.onlab.ui.list.FriendsFragment;
+import com.example.kata.onlab.ui.friendsfragment.FriendsFragment;
 import com.example.kata.onlab.ui.login.LoginActivity;
 import com.example.kata.onlab.ui.map.ServiceLocation;
 import com.facebook.login.LoginManager;
@@ -104,12 +104,28 @@ public class MainActivity extends AppCompatActivity implements AddPlaceFragment.
 
 
         if (preferences.getBoolean(KEY_START_SERVICE, true)) {
-            switchCompat.setChecked(true);
-            Intent intetn2 = new Intent(this, ServiceLocation.class);
-            startService(intetn2);
-            LocalBroadcastManager.getInstance(this).registerReceiver(
-                    mMessageReceiver,
-                    new IntentFilter(ServiceLocation.BR_NEW_LOCATION));
+            if (ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                        Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    Toast.makeText(this,
+                            "I need it for gps", Toast.LENGTH_SHORT).show();
+                }
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        101);
+            } else {
+
+
+                switchCompat.setChecked(true);
+                Intent intetn2 = new Intent(this, ServiceLocation.class);
+                startService(intetn2);
+                LocalBroadcastManager.getInstance(this).registerReceiver(
+                        mMessageReceiver,
+                        new IntentFilter(ServiceLocation.BR_NEW_LOCATION));
+            }
         }
     }
 
@@ -218,7 +234,7 @@ public class MainActivity extends AppCompatActivity implements AddPlaceFragment.
                 if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                     Toast.makeText(this,
-                            "I need it picking image", Toast.LENGTH_SHORT).show();
+                            "I need it for picking an image", Toast.LENGTH_SHORT).show();
                 }
 
                 ActivityCompat.requestPermissions(this,

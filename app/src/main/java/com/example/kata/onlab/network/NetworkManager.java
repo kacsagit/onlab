@@ -36,7 +36,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class NetworkManager {
 
-    private static final String ENDPOINT_ADDRESS = "https://still-dawn-67153.herokuapp.com/";
+    public static final String ENDPOINT_ADDRESS = "https://still-dawn-67153.herokuapp.com/";
 
     private static final String TAG = "NetworkManager";
     private static NetworkManager instance;

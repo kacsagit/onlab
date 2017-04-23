@@ -67,8 +67,6 @@ public class ListPresenter  extends Presenter<ListScreen> {
     }
 
 
-
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onPostData(PostDataEvent<Data> event) {
         if (screen != null) {

@@ -12,14 +12,16 @@ public class Friends extends RealmObject {
     @PrimaryKey
     public int id;
     public String name;
+    public String image;
 
     public Friends() {
 
     }
 
-    public Friends(int id_, String name_) {
+    public Friends(int id_, String name_,String image_) {
         id = id_;
         name = name_;
+        image=image_;
 
     }
 

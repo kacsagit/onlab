@@ -4,7 +4,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.example.kata.onlab.ui.list.FriendsFragment;
+import com.example.kata.onlab.ui.friendsfragment.FriendsFragment;
 import com.example.kata.onlab.ui.list.ListGetFragment;
 import com.example.kata.onlab.ui.map.MapFragment;
 

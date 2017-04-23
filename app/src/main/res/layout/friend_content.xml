@@ -21,17 +21,15 @@
 
                 <TextView
                     android:id="@+id/email"
-                    android:textSize="22dp"
+                    android:textSize="22sp"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Big@Foot.hh" />
+                    android:layout_height="wrap_content"/>
 
                 <TextView
                     android:id="@+id/location"
-                    android:textSize="22dp"
+                    android:textSize="22sp"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Big Hill" />
+                    android:layout_height="wrap_content" />
             </LinearLayout>
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>

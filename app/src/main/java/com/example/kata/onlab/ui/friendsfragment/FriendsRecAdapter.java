@@ -1,4 +1,4 @@
-package com.example.kata.onlab.ui.list;
+package com.example.kata.onlab.ui.friendsfragment;
 
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
@@ -10,7 +10,9 @@ import android.view.ViewGroup;
 import com.example.kata.onlab.R;
 import com.example.kata.onlab.network.FriendDetail;
 import com.example.kata.onlab.network.Friends;
+import com.example.kata.onlab.network.NetApi;
 import com.mikhaellopez.circularimageview.CircularImageView;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,8 +43,10 @@ public class FriendsRecAdapter extends RecyclerView.Adapter<FriendsRecAdapter.It
     }
 
     @Override
-    public void onBindViewHolder(ItemViewHolder holder, int position) {
+    public void onBindViewHolder(final ItemViewHolder holder, int position) {
+        Picasso.with(holder.imageView.getContext()).cancelRequest(holder.imageView);
         if (position == 0) {
+            holder.imageView.setImageDrawable(null);
             holder.imageView.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_add_white_36dp));
             holder.imageView.setBorderColor(R.color.blue_normal);
             holder.imageView.setOnClickListener(new View.OnClickListener() {
@@ -60,13 +64,19 @@ public class FriendsRecAdapter extends RecyclerView.Adapter<FriendsRecAdapter.It
                     listener.sort(friend.id);
                 }
             });
+            if (friend.image != null) {
+                String url = NetApi.GETIMEAGE +friend.image;
+                url = url.replace("\\", "/");
+                Picasso.with(mContext).load(url).placeholder(R.mipmap.ic_launcher).into(holder.imageView);
 
+            }
         }
 
     }
 
     public interface MyInterface {
         public void sort(int id);
+
         public void unsort();
     }
 
@@ -85,7 +95,7 @@ public class FriendsRecAdapter extends RecyclerView.Adapter<FriendsRecAdapter.It
     }
 
     public void add(FriendDetail friendd) {
-        Friends friend = new Friends(friendd.id, friendd.name);
+        Friends friend = new Friends(friendd.id, friendd.name, friendd.image);
         friends.add(friend);
         notifyItemInserted(friends.size() - 1 + 1);
     }

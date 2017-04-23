@@ -3,6 +3,7 @@ package com.example.kata.onlab.ui.login;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -35,8 +36,15 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.jakewharton.picasso.OkHttp3Downloader;
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
+
+import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 import static com.example.kata.onlab.R.id.sigIn;
 
@@ -141,8 +149,50 @@ public class LoginActivity extends AppCompatActivity implements LoginScreen, Goo
             NetworkManager.getInstance().setTokenEmail(token, email);
             Intent intent = new Intent(this, MainActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            setupPicasso();
             startActivity(intent);
         }
+    }
+
+    public void setupPicasso(){
+        final Context context=this;
+       /* final OkHttpClient client = new OkHttpClient.Builder()
+                .authenticator(new Authenticator() {
+                    @Override
+                    public Request authenticate(Route route, Response response) throws IOException {
+                        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                        String credential = preferences.getString("Token", "");
+                        return response.request().newBuilder()
+                                .header("Authorization", credential)
+                                .build();
+                    }
+                })
+                .build();*/
+        OkHttpClient client = new OkHttpClient.Builder()
+                .addInterceptor(new Interceptor() {
+                    @Override
+                    public Response intercept(Chain chain) throws IOException {
+                        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+                        String credential = preferences.getString("Token", "");
+                        Request newRequest = chain.request().newBuilder()
+                                .addHeader("Authorization", credential)
+                                .build();
+                        return chain.proceed(newRequest);
+                    }
+                })
+                .build();
+
+
+        final Picasso picasso = new Picasso.Builder(this).listener(new Picasso.Listener() {
+            @Override
+            public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
+                exception.printStackTrace();
+            }
+        })
+                .downloader(new OkHttp3Downloader(client))
+                .build();
+        picasso.setLoggingEnabled(true);
+        Picasso.setSingletonInstance(picasso);
     }
 
     private void signIn() {
@@ -205,6 +255,7 @@ public class LoginActivity extends AppCompatActivity implements LoginScreen, Goo
         editor.putString("Token", data.token);
         editor.putString("Email", data.email);
         editor.apply();
+        setupPicasso();
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -217,6 +268,8 @@ public class LoginActivity extends AppCompatActivity implements LoginScreen, Goo
             }
         }).start();
         signIn.setProgress(100);
+
+
   //      String token=FirebaseInstanceId.getInstance().getToken();
         Toast.makeText(this, data.email, Toast.LENGTH_LONG).show();
         Intent intent = new Intent(this, MainActivity.class);

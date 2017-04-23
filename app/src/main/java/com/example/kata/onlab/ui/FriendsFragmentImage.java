@@ -60,7 +60,8 @@ public class FriendsFragmentImage extends ListGetFragment {
         return view;
     }
 
-    void sort(int id) {
+/*
+    public void sort(int id) {
         List<Data> temp = new ArrayList<Data>();
         for (Data d : items) {
             if (d.ownerid == id)
@@ -68,6 +69,11 @@ public class FriendsFragmentImage extends ListGetFragment {
         }
         adapter.update(temp);
     }
+
+
+    public void unsort() {
+        adapter.update(items);
+    }*/
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUserData(GetFriendsEvent<List<Friends>> event) {

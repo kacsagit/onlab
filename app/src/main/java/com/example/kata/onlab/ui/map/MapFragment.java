@@ -15,7 +15,6 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,7 +29,8 @@ import com.example.kata.onlab.R;
 import com.example.kata.onlab.network.Data;
 import com.example.kata.onlab.network.NetworkManager;
 import com.example.kata.onlab.ui.AddPlaceFragment;
-import com.example.kata.onlab.ui.list.FriendsFragment;
+import com.example.kata.onlab.ui.friendsfragment.FriendsRecAdapter;
+import com.example.kata.onlab.ui.friendsfragment.OnMenuSelectionSetListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
@@ -66,7 +66,7 @@ import io.realm.RealmResults;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MapFragment extends Fragment implements LocationListener, OnMapReadyCallback, MyLocationManager.OnLocChanged, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, MapScreen {
+public class MapFragment extends Fragment implements LocationListener, FriendsRecAdapter.MyInterface, OnMapReadyCallback, MyLocationManager.OnLocChanged, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, MapScreen {
 
     private static final String TAG = "MapFragment";
     private MyLocationManager myLocationManager = null;
@@ -162,13 +162,14 @@ public class MapFragment extends Fragment implements LocationListener, OnMapRead
         // Inflate the layout for this fragment
 
         View view = inflater.inflate(R.layout.fragment_map, container, false);
+        getActivity().invalidateOptionsMenu();
 
         mLocationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setInterval(10 * 1000)        // 10 seconds, in milliseconds
                 .setFastestInterval(1 * 1000); // 1 second, in milliseconds
 
-
+        onAttachToParentFragment(getParentFragment());
         mapView = (MapView) view.findViewById(R.id.map);
         mapView.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
@@ -185,19 +186,21 @@ public class MapFragment extends Fragment implements LocationListener, OnMapRead
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_map, menu);
         super.onCreateOptionsMenu(menu,inflater);
+        menu.clear();
+        inflater.inflate(R.menu.menu_map, menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         switch (id) {
-            case R.id.action_map:
+            case R.id.action_list:
                 // do stuff
-                final FragmentTransaction ft = getFragmentManager().beginTransaction();
+                mOnPlayerSelectionSetListener.onPlayerSelectionSet(id);
+                /*final FragmentTransaction ft = getFragmentManager().beginTransaction();
                 ft.replace(R.id.content_frame, new FriendsFragment());
-                ft.commit();
+                ft.commit();*/
                 return true;
 
         }
@@ -352,10 +355,10 @@ public class MapFragment extends Fragment implements LocationListener, OnMapRead
 
     @Override
     public void locationChanged(Location location) {
-        if (ActivityCompat.checkSelfPermission(this.getContext(),
+        if (ActivityCompat.checkSelfPermission(context,
                 Manifest.permission.ACCESS_FINE_LOCATION) !=
                 PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(this.getContext(),
+                ActivityCompat.checkSelfPermission(context,
                         Manifest.permission.ACCESS_COARSE_LOCATION)
                         != PackageManager.PERMISSION_GRANTED) {
             return;
@@ -367,13 +370,14 @@ public class MapFragment extends Fragment implements LocationListener, OnMapRead
         }
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
                 mGoogleApiClient);
+
+
         if (googleMap != null) {
             googleMap.setMyLocationEnabled(true);
             latLng = new LatLng(location.getLatitude(), location.getLongitude());
             MarkerOptions markerOptions = new MarkerOptions()
                     .position(latLng).title("Current Position").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
             currLocationMarker = googleMap.addMarker(markerOptions);
-
 
             CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(latLng).zoom(googleMap.getCameraPosition().zoom).build();
@@ -438,6 +442,7 @@ public class MapFragment extends Fragment implements LocationListener, OnMapRead
         if (googleMap != null) {
             if (markers != null) {
                 markers.clear();
+                googleMap.clear();
             }
             for (Data item : markersData) {
                 addMarker(item);
@@ -527,5 +532,38 @@ public class MapFragment extends Fragment implements LocationListener, OnMapRead
                 .newCameraPosition(cameraPosition));
 
 
+    }
+
+    @Override
+    public void sort(int id) {
+        List<Data> temp = new ArrayList<Data>();
+        for (Data d : datalist) {
+            if (d.ownerid == id)
+                temp.add(d);
+        }
+        setUpMap(temp);
+    }
+
+    @Override
+    public void unsort() {
+        setUpMap(datalist);
+
+    }
+
+    OnMenuSelectionSetListener mOnPlayerSelectionSetListener;
+
+
+    public void onAttachToParentFragment(Fragment fragment)
+    {
+        try
+        {
+            mOnPlayerSelectionSetListener = (OnMenuSelectionSetListener)fragment;
+
+        }
+        catch (ClassCastException e)
+        {
+            throw new ClassCastException(
+                    fragment.toString() + " must implement OnMenuSelectionSetListener");
+        }
     }
 }

@@ -1,8 +1,13 @@
 package com.example.kata.onlab.ui.map;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.widget.Toast;
 
 /**
  * Created by android on 2016. 10. 18..
@@ -20,6 +25,8 @@ public class LDLocationManager {
     }
 
     public void startLocationMonitoring() {
+
+
         locMan.requestLocationUpdates(
                 LocationManager.GPS_PROVIDER,
                 100, 100, listener);

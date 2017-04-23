@@ -10,6 +10,9 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -17,6 +20,8 @@ import com.example.kata.onlab.R;
 import com.example.kata.onlab.network.Data;
 import com.example.kata.onlab.network.NetworkManager;
 import com.example.kata.onlab.ui.AddPlaceFragment;
+import com.example.kata.onlab.ui.friendsfragment.FriendsRecAdapter;
+import com.example.kata.onlab.ui.friendsfragment.OnMenuSelectionSetListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +33,7 @@ import io.realm.RealmResults;
 /**
  * Created by Kata on 2017. 02. 18..
  */
-public class ListGetFragment extends Fragment implements ListScreen{
+public class ListGetFragment extends Fragment implements ListScreen, FriendsRecAdapter.MyInterface {
 
     Realm realm;
     RealmResults<Data> results;
@@ -45,6 +50,8 @@ public class ListGetFragment extends Fragment implements ListScreen{
                              Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         view = inflater.inflate(R.layout.fragment_list, container, false);
+        getActivity().invalidateOptionsMenu();
+        onAttachToParentFragment(getParentFragment());
         initRecycleView();
         context=getContext();
         swipeRefresh = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefresh);
@@ -71,6 +78,7 @@ public class ListGetFragment extends Fragment implements ListScreen{
         realm = Realm.getInstance(realmConfiguration);
         results = realm.where(Data.class).findAll();
         items=new ArrayList<>(results);
+        setHasOptionsMenu(true);
         return view;
 
     }
@@ -111,6 +119,47 @@ public class ListGetFragment extends Fragment implements ListScreen{
 
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu,inflater);
+        menu.clear();
+        inflater.inflate(R.menu.menu_list, menu);
+    }
+
+
+    @Override
+    public void sort(int id) {
+        List<Data> temp = new ArrayList<Data>();
+        for (Data d : items) {
+            if (d.ownerid == id)
+                temp.add(d);
+        }
+        adapter.update(temp);
+    }
+
+
+    @Override
+    public void unsort() {
+        adapter.update(items);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.action_map:
+                // do stuff
+                mOnPlayerSelectionSetListener.onPlayerSelectionSet(id);
+                /*final FragmentTransaction ft = getFragmentManager().beginTransaction();
+                ft.replace(R.id.content_frame, new MapFragment());
+                ft.commit();*/
+                return true;
+
+        }
+
+        return false;
+    }
+
 
 
     @Override
@@ -138,6 +187,23 @@ public class ListGetFragment extends Fragment implements ListScreen{
     public void onStop() {
         super.onStop();
         ListPresenter.getInstance().detachScreen();
+    }
+
+    OnMenuSelectionSetListener mOnPlayerSelectionSetListener;
+
+
+    public void onAttachToParentFragment(Fragment fragment)
+    {
+        try
+        {
+            mOnPlayerSelectionSetListener = (OnMenuSelectionSetListener)fragment;
+
+        }
+        catch (ClassCastException e)
+        {
+            throw new ClassCastException(
+                    fragment.toString() + " must implement OnMenuSelectionSetListener");
+        }
     }
 
 }

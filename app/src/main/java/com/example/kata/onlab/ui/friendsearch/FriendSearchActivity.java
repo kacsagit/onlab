@@ -103,7 +103,7 @@ public class FriendSearchActivity extends AppCompatActivity implements FriendSea
         List<Friends> list=new ArrayList<>(results);
 
         for (Friends f :list) {
-            FriendsComp fc=new FriendsComp(f.id,f.name);
+            FriendsComp fc=new FriendsComp(f.id,f.name,f.image);
             mModels.add(fc);
         }
         mAdapter.edit()
@@ -208,7 +208,7 @@ public class FriendSearchActivity extends AppCompatActivity implements FriendSea
         List<Friends> list=new ArrayList<>(results);
 
         for (Friends f :list) {
-            FriendsComp fc=new FriendsComp(f.id,f.name);
+            FriendsComp fc=new FriendsComp(f.id,f.name,f.image);
             mModels.add(fc);
         }
         mAdapter.edit()

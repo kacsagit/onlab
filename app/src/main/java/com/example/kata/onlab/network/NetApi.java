@@ -19,6 +19,9 @@ import retrofit2.http.Query;
  * Created by Kata on 2017. 02. 11..
  */
 public interface NetApi {
+
+    String GETIMEAGE=NetworkManager.ENDPOINT_ADDRESS+"api/image?image=";
+
     @GET("/")
     Call<List<Data>> getData();
 

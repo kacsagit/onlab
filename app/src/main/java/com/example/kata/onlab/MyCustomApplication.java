@@ -16,6 +16,29 @@ public class MyCustomApplication extends Application {
     public void onCreate() {
         super.onCreate();
         Realm.init(this);
+/*
+        final OkHttpClient client = new OkHttpClient.Builder()
+                .authenticator(new Authenticator() {
+                    @Override
+                    public Request authenticate(Route route, Response response) throws IOException {
+                        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                        String credential = preferences.getString("Token", "");
+                        return response.request().newBuilder()
+                                .header("Authorization", credential)
+                                .build();
+                    }
+                })
+                .build();
+        final Picasso picasso = new Picasso.Builder(this).listener(new Picasso.Listener() {
+            @Override
+            public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
+                exception.printStackTrace();
+            }
+        })
+                .downloader(new OkHttp3Downloader(client))
+                .build();
+        picasso.setLoggingEnabled(true);
+        Picasso.setSingletonInstance(picasso);*/
         // Required initialization logic here!
     }
 

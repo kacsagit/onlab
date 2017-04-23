@@ -14,7 +14,9 @@ import com.example.kata.onlab.R;
 import com.example.kata.onlab.network.Data;
 import com.example.kata.onlab.network.FriendDetail;
 import com.example.kata.onlab.network.Friends;
+import com.example.kata.onlab.network.NetApi;
 import com.example.kata.onlab.network.NetworkManager;
+import com.squareup.picasso.Picasso;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
@@ -45,7 +47,7 @@ public class FriendDetalsActivity extends AppCompatActivity implements FriendDet
             }
         });
         Bundle extras = getIntent().getExtras();
-        NetworkManager.getInstance().getuser(extras.getInt(ID));
+
         getSupportActionBar().setTitle(extras.getString(NAME));
 
 
@@ -67,6 +69,8 @@ public class FriendDetalsActivity extends AppCompatActivity implements FriendDet
                 }
             }
         });
+
+        NetworkManager.getInstance().getuser(extras.getInt(ID));
     }
 
 
@@ -86,6 +90,12 @@ public class FriendDetalsActivity extends AppCompatActivity implements FriendDet
     public void updateUserCallback(FriendDetail data) {
         friend = data;
         email.setText(friend.email);
+        if (friend.image != null) {
+            String url = NetApi.GETIMEAGE +friend.image;
+            url = url.replace("\\", "/");
+            Picasso.with(this).load(url).placeholder(R.mipmap.ic_launcher).into(image);
+        }
+
         if (friend.isfriend == 1) {
             fab.setActivated(true);
 

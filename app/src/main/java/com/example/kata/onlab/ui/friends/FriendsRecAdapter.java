@@ -11,9 +11,11 @@ import android.view.ViewGroup;
 import com.example.kata.onlab.R;
 import com.example.kata.onlab.network.FriendDetail;
 import com.example.kata.onlab.network.Friends;
+import com.example.kata.onlab.network.NetApi;
 import com.example.kata.onlab.ui.friendDetails.FriendDetalsActivity;
 import com.example.kata.onlab.ui.friendsearch.FriendSearchActivity;
 import com.mikhaellopez.circularimageview.CircularImageView;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,8 +29,6 @@ public class FriendsRecAdapter extends RecyclerView.Adapter<FriendsRecAdapter.It
     Context mContext;
 
 
-
-
     @Override
     public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView =
@@ -40,7 +40,8 @@ public class FriendsRecAdapter extends RecyclerView.Adapter<FriendsRecAdapter.It
     }
 
     @Override
-    public void onBindViewHolder(ItemViewHolder holder, final int position) {
+    public void onBindViewHolder(final ItemViewHolder holder, final int position) {
+        Picasso.with(holder.imageView.getContext()).cancelRequest(holder.imageView);
         if (position == 0) {
             holder.imageView.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_add_white_36dp));
             holder.imageView.setBorderColor(R.color.blue_normal);
@@ -62,9 +63,14 @@ public class FriendsRecAdapter extends RecyclerView.Adapter<FriendsRecAdapter.It
                     intent.putExtra(FriendDetalsActivity.ID, friends.get(position - 1).id);
                     intent.putExtra(FriendDetalsActivity.NAME, friends.get(position - 1).name);
                     mContext.startActivity(intent);
-
                 }
             });
+            if (friend.image != null) {
+                String url = NetApi.GETIMEAGE +friend.image;
+                url = url.replace("\\", "/");
+                Picasso.with(mContext).load(url).placeholder(R.mipmap.ic_launcher).into(holder.imageView);
+
+            }
 
         }
 
@@ -72,6 +78,7 @@ public class FriendsRecAdapter extends RecyclerView.Adapter<FriendsRecAdapter.It
 
     public interface MyInterface {
         public void sort(int id);
+
         public void unsort();
     }
 
@@ -90,7 +97,7 @@ public class FriendsRecAdapter extends RecyclerView.Adapter<FriendsRecAdapter.It
     }
 
     public void add(FriendDetail friendd) {
-        Friends friend = new Friends(friendd.id, friendd.name);
+        Friends friend = new Friends(friendd.id, friendd.name, friendd.image);
         friends.add(friend);
         notifyItemInserted(friends.size() - 1 + 1);
     }
