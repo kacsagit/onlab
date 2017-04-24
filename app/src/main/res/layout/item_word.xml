@@ -7,44 +7,54 @@
             type="com.example.kata.onlab.ui.friendsearch.ExampleAdapter.Listener" />
 
 
-
         <variable
             name="model"
             type="com.example.kata.onlab.network.FriendsComp" />
 
     </data>
 
-    <LinearLayout
+    <android.support.v7.widget.CardView
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/card_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/selectableItemBackground"
-        android:clickable="true"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:onClick="@{view -> listener.onExampleModelClicked(model)}">
+        android:layout_gravity="center"
+        android:layout_margin="5dp"
+        card_view:cardCornerRadius="1dp"
+        card_view:contentPadding="6dp">
 
-        <com.mikhaellopez.circularimageview.CircularImageView xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/item"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:src="@mipmap/ic_launcher"
-            app:imageUrl="@{model.imageUrl}"
-            app:civ_border_color="#EEEEEE"
-            app:civ_border_width="4dp"
-            app:civ_shadow="true"
-            app:civ_shadow_color="#AAAAAA"
-            app:civ_shadow_radius="2" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:gravity="center_vertical"
+            android:onClick="@{view -> listener.onExampleModelClicked(model)}"
+            android:orientation="horizontal">
+
+            <com.mikhaellopez.circularimageview.CircularImageView
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/item"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@mipmap/ic_launcher"
+                app:civ_border_color="#EEEEEE"
+                app:civ_border_width="1dp"
+                app:civ_shadow="true"
+                app:civ_shadow_color="#AAAAAA"
+                app:civ_shadow_radius="2"
+                app:imageUrl="@{model.imageUrl}" />
 
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:text="@{model.name}"
-            android:textColor="@android:color/black"
-            android:textSize="22sp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:text="@{model.name}"
+                android:textColor="@android:color/black"
+                android:textSize="22sp" />
 
 
-    </LinearLayout>
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
 </layout>

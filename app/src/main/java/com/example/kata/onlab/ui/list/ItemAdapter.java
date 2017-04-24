@@ -1,16 +1,17 @@
 package com.example.kata.onlab.ui.list;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.example.kata.onlab.R;
 import com.example.kata.onlab.network.Data;
-import com.example.kata.onlab.network.NetworkManager;
+import com.example.kata.onlab.network.NetApi;
+import com.mikhaellopez.circularimageview.CircularImageView;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.List;
 public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder> {
 
     public final List<Data> items;
+    Context mContext;
 
 
 
@@ -32,6 +34,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
         View itemView =
                 LayoutInflater.from(parent.getContext()).
                         inflate(R.layout.item_recyclerview, parent, false);
+        mContext = parent.getContext();
         ItemViewHolder viewHolder = new ItemViewHolder(itemView);
         return viewHolder;
     }
@@ -39,17 +42,22 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
     @Override
     public void onBindViewHolder(ItemViewHolder holder, int position) {
         final Data item = items.get(position);
-        holder.longitude.setText(Float.toString(item.longitude));
-        holder.latitude.setText(Float.toString(item.latitude));
+        if (item.image != null) {
+            String url = NetApi.GETIMEAGE +item.image;
+            url = url.replace("\\", "/");
+            Picasso.with(mContext).load(url).placeholder(R.mipmap.ic_launcher).into(holder.image);
+
+        }
         holder.place.setText(item.place);
-        holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        
+       /* holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked){
                     NetworkManager.getInstance().pushNotif(item.getOwnerid());
                 }
             }
-        });
+        });*/
 
     }
 
@@ -107,16 +115,12 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
     public class ItemViewHolder extends RecyclerView.ViewHolder {
 
         TextView place;
-        TextView longitude;
-        TextView latitude;
-        CheckBox checkBox;
+        CircularImageView image;
 
         public ItemViewHolder(View itemView) {
             super(itemView);
             place = (TextView) itemView.findViewById(R.id.place);
-            longitude = (TextView) itemView.findViewById(R.id.longitude);
-            latitude = (TextView) itemView.findViewById(R.id.latitude);
-            checkBox=(CheckBox) itemView.findViewById(R.id.checkbox);
+            image=(CircularImageView) itemView.findViewById(R.id.imageView);
             /*itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

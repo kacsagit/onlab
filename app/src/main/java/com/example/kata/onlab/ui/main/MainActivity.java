@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements AddPlaceFragment.
         fragment = new FriendsFragment();
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.add(R.id.content_frame, fragment);
+        fragmentTransaction.replace(R.id.content_frame, fragment);
         fragmentTransaction.commit();
 
 

@@ -1,9 +1,16 @@
 package com.example.kata.onlab;
 
 import android.app.Application;
+import android.content.Context;
 import android.content.res.Configuration;
+import android.net.Uri;
+
+import com.example.kata.onlab.network.TokenInterceptor;
+import com.jakewharton.picasso.OkHttp3Downloader;
+import com.squareup.picasso.Picasso;
 
 import io.realm.Realm;
+import okhttp3.OkHttpClient;
 
 /**
  * Created by Kata on 2017. 03. 12..
@@ -16,30 +23,24 @@ public class MyCustomApplication extends Application {
     public void onCreate() {
         super.onCreate();
         Realm.init(this);
-/*
-        final OkHttpClient client = new OkHttpClient.Builder()
-                .authenticator(new Authenticator() {
-                    @Override
-                    public Request authenticate(Route route, Response response) throws IOException {
-                        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                        String credential = preferences.getString("Token", "");
-                        return response.request().newBuilder()
-                                .header("Authorization", credential)
-                                .build();
-                    }
-                })
-                .build();
-        final Picasso picasso = new Picasso.Builder(this).listener(new Picasso.Listener() {
+        setupPicasso();
+
+    }
+    public void setupPicasso(){
+        final Context context=this;
+        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(new TokenInterceptor()).build();
+
+        Picasso.Builder builder = new Picasso.Builder(this);
+        builder.listener(new Picasso.Listener() {
             @Override
             public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
                 exception.printStackTrace();
             }
-        })
-                .downloader(new OkHttp3Downloader(client))
-                .build();
+        });
+        builder.downloader(new OkHttp3Downloader(client));
+        final Picasso picasso = builder.build();
         picasso.setLoggingEnabled(true);
-        Picasso.setSingletonInstance(picasso);*/
-        // Required initialization logic here!
+        Picasso.setSingletonInstance(picasso);
     }
 
     // Called by the system when the device configuration changes while your component is running.
