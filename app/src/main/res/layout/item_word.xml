@@ -20,8 +20,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_margin="5dp"
-        card_view:cardCornerRadius="1dp"
-        card_view:contentPadding="6dp">
+        card_view:cardCornerRadius="0dp"
+        card_view:contentPadding="0dp">
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -32,7 +33,7 @@
             android:onClick="@{view -> listener.onExampleModelClicked(model)}"
             android:orientation="horizontal">
 
-            <com.mikhaellopez.circularimageview.CircularImageView
+            <!--com.mikhaellopez.circularimageview.CircularImageView
                 xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/item"
                 android:layout_width="40dp"
@@ -43,7 +44,16 @@
                 app:civ_shadow="true"
                 app:civ_shadow_color="#AAAAAA"
                 app:civ_shadow_radius="2"
-                app:imageUrl="@{model.imageUrl}" />
+                app:imageUrl="@{model.imageUrl}" /-->
+
+            <ImageView
+                android:id="@+id/item"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginRight="6dp"
+                android:scaleType="centerCrop"
+                android:src="@{model.imageUrl}"
+                />
 
 
             <TextView

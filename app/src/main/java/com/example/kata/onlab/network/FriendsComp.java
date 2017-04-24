@@ -24,7 +24,7 @@ public class FriendsComp implements SortedListAdapter.ViewModel {
 
     }
 
-    @BindingAdapter({"bind:imageUrl"})
+    @BindingAdapter({"android:src"})
     public static void loadImage(ImageView view, String imageUrl) {
         Picasso.with(view.getContext()).cancelRequest(view);
         Picasso.with(view.getContext())
