@@ -5,12 +5,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.kata.onlab.R;
 import com.example.kata.onlab.network.Data;
 import com.example.kata.onlab.network.NetApi;
-import com.mikhaellopez.circularimageview.CircularImageView;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -49,7 +49,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
 
         }
         holder.place.setText(item.place);
-        
+
        /* holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -115,12 +115,12 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
     public class ItemViewHolder extends RecyclerView.ViewHolder {
 
         TextView place;
-        CircularImageView image;
+        ImageView image;
 
         public ItemViewHolder(View itemView) {
             super(itemView);
             place = (TextView) itemView.findViewById(R.id.place);
-            image=(CircularImageView) itemView.findViewById(R.id.imageView);
+            image=(ImageView) itemView.findViewById(R.id.imageView);
             /*itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
