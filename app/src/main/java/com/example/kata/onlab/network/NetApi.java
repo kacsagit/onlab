@@ -57,6 +57,11 @@ public interface NetApi {
     @DELETE("/api/deletefirend")
     Call<Integer> deleteFriend(@Header("Authorization") String token,@Query("id") int id);
 
+
+    @GET("/api/getDataDetail")
+    Call<DataDetails> getDataDetail(@Header("Authorization") String token,@Query("id") int id);
+
+
     @POST("/auth/facebook/token")
     Call<LoginData> postTokenFB(@Body FB fb);
 

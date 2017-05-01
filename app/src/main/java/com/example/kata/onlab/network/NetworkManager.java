@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.example.kata.onlab.event.DeleteFriendEvent;
 import com.example.kata.onlab.event.ErrorResponseEvent;
+import com.example.kata.onlab.event.GetDataDetailsEvent;
 import com.example.kata.onlab.event.GetDataEvent;
 import com.example.kata.onlab.event.GetFriendsEvent;
 import com.example.kata.onlab.event.GetMeEvent;
@@ -74,9 +75,9 @@ public class NetworkManager {
         this.usertablename = email;
     }
 
-    public void postFriend(final FriendDetail friend){
+    public void postFriend(final FriendDetail friend) {
         if (token != null) {
-            netApi.postFriend(token,new Friend(friend.id)).enqueue(new Callback<Integer>() {
+            netApi.postFriend(token, new Friend(friend.id)).enqueue(new Callback<Integer>() {
                 @Override
                 public void onResponse(Call<Integer> call, Response<Integer> response) {
                     if (response.isSuccessful()) {
@@ -94,9 +95,10 @@ public class NetworkManager {
             });
         }
     }
+
     public void deleteFriend(final FriendDetail friend) {
         if (token != null) {
-            netApi.deleteFriend(token,friend.id).enqueue(new Callback<Integer>() {
+            netApi.deleteFriend(token, friend.id).enqueue(new Callback<Integer>() {
                 @Override
                 public void onResponse(Call<Integer> call, Response<Integer> response) {
                     if (response.isSuccessful()) {
@@ -161,7 +163,7 @@ public class NetworkManager {
 
     public void getuser(int id) {
         if (token != null) {
-            netApi.getuser(token,id).enqueue(new Callback<FriendDetail>() {
+            netApi.getuser(token, id).enqueue(new Callback<FriendDetail>() {
                 @Override
                 public void onResponse(Call<FriendDetail> call, Response<FriendDetail> response) {
                     if (response.isSuccessful()) {
@@ -313,7 +315,6 @@ public class NetworkManager {
     }
 
 
-
     public void logIn(final String username, String password) {
         final Login login = new Login(username, password);
         netApi.logIn(login).enqueue(new Callback<String>() {
@@ -397,13 +398,13 @@ public class NetworkManager {
     }
 
 
-    public void postImage(String filePath){
+    public void postImage(String filePath) {
         if (token != null) {
             File file = new File(filePath);
             RequestBody reqFile = RequestBody.create(MediaType.parse("image/*"), file);
             MultipartBody.Part body = MultipartBody.Part.createFormData("avatar", file.getName(), reqFile);
             RequestBody name = RequestBody.create(MediaType.parse("text/plain"), "avatar");
-            netApi.postImage(token,body, name).enqueue(new Callback<ResponseBody>() {
+            netApi.postImage(token, body, name).enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                     if (response.isSuccessful()) {
@@ -462,6 +463,28 @@ public class NetworkManager {
         }
     }
 
+    public void getDataDetails(int dataid) {
+        if (token != null) {
+            netApi.getDataDetail(token,dataid).enqueue(new Callback<DataDetails>() {
+                @Override
+                public void onResponse(Call<DataDetails> call, Response<DataDetails> response) {
+                    if (response.isSuccessful()) {
+                        GetDataDetailsEvent getDataDetailsEvent = new GetDataDetailsEvent();
+                        getDataDetailsEvent.setData(response.body());
+                        EventBus.getDefault().post(getDataDetailsEvent);
+                    } else {
+
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<DataDetails> call, Throwable t) {
+
+                }
+            });
+
+        }
+    }
 
 
     public interface ResponseListener<T> {

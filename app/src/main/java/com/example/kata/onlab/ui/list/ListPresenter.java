@@ -1,9 +1,11 @@
 package com.example.kata.onlab.ui.list;
 
 import com.example.kata.onlab.event.ErrorEvent;
+import com.example.kata.onlab.event.GetDataDetailsEvent;
 import com.example.kata.onlab.event.GetDataEvent;
 import com.example.kata.onlab.event.PostDataEvent;
 import com.example.kata.onlab.network.Data;
+import com.example.kata.onlab.network.DataDetails;
 import com.example.kata.onlab.network.NetworkManager;
 import com.example.kata.onlab.ui.Presenter;
 
@@ -71,6 +73,13 @@ public class ListPresenter  extends Presenter<ListScreen> {
     public void onPostData(PostDataEvent<Data> event) {
         if (screen != null) {
             screen.postDataCallback(event.getData());
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onGetDataDetails(GetDataDetailsEvent<DataDetails> event) {
+        if (screen != null) {
+            screen.getDataDetailsCallback(event.getData());
         }
     }
 

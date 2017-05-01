@@ -6,11 +6,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.kata.onlab.R;
 import com.example.kata.onlab.network.Data;
+import com.example.kata.onlab.network.DataDetails;
 import com.example.kata.onlab.network.NetApi;
+import com.example.kata.onlab.network.NetworkManager;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -19,8 +22,9 @@ import java.util.List;
 
 public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder> {
 
-    public final List<Data> items;
+    public final List<DataDetails> items;
     Context mContext;
+    int mExpandedPosition=-1;
 
 
 
@@ -36,12 +40,13 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
                         inflate(R.layout.item_recyclerview, parent, false);
         mContext = parent.getContext();
         ItemViewHolder viewHolder = new ItemViewHolder(itemView);
+
         return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(ItemViewHolder holder, int position) {
-        final Data item = items.get(position);
+    public void onBindViewHolder(ItemViewHolder holder, final int position) {
+        final DataDetails item = items.get(position);
         if (item.image != null) {
             String url = NetApi.GETIMEAGE +item.image;
             url = url.replace("\\", "/");
@@ -49,6 +54,20 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
 
         }
         holder.place.setText(item.place);
+
+        final boolean isExpanded = position==mExpandedPosition;
+        holder.details.setVisibility(isExpanded?View.VISIBLE:View.GONE);
+        holder.itemView.setActivated(isExpanded);
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mExpandedPosition = isExpanded ? -1:position;
+                NetworkManager.getInstance().getDataDetails(item.id);
+                /*TransitionManager.beginDelayedTransition(recyclerView);
+                notifyDataSetChanged();*/
+            }
+        });
+        holder.description.setText(item.description);
 
        /* holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -62,14 +81,14 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
     }
 
     public void addItem(Data item) {
-        items.add(item);
+        items.add(new DataDetails(item));
         notifyItemInserted(items.size() - 1);
 
     }
 
 
     public void onItemDismiss(int position) {
-        Data removed = items.remove(position);
+        DataDetails removed = items.remove(position);
        // removed.delete();
         notifyItemRemoved(position);
         if (position < items.size()) {
@@ -85,12 +104,13 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
 
 
     public void onItemMove(int fromPosition, int toPosition) {
-        Data prev = items.remove(fromPosition);
+        DataDetails prev = items.remove(fromPosition);
         items.add(toPosition > fromPosition ? toPosition - 1 : toPosition, prev);
         notifyItemMoved(fromPosition, toPosition);
 
 
     }
+
 
 
     @Override
@@ -100,8 +120,11 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
 
     public void update(List<Data> itemsrec) {
         items.clear();
-        items.addAll(itemsrec);
+        for (Data item:itemsrec) {
+            items.add(new DataDetails(item));
+        }
         notifyDataSetChanged();
+        mExpandedPosition=-1;
 
     }
 
@@ -112,15 +135,31 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
     public void all() {
     }
 
+    public void updateData(DataDetails data) {
+        int indx=0;
+        for (DataDetails item:items) {
+            if (item.id==data.id){
+                items.set(indx,data);
+            }
+            indx++;
+        }
+        notifyDataSetChanged();
+
+    }
+
     public class ItemViewHolder extends RecyclerView.ViewHolder {
 
         TextView place;
         ImageView image;
+        LinearLayout details;
+        TextView description;
 
         public ItemViewHolder(View itemView) {
             super(itemView);
             place = (TextView) itemView.findViewById(R.id.place);
             image=(ImageView) itemView.findViewById(R.id.imageView);
+            details= (LinearLayout) itemView.findViewById(R.id.details);
+            description= (TextView) itemView.findViewById(R.id.description);
             /*itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

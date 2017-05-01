@@ -1,6 +1,7 @@
 package com.example.kata.onlab.ui.list;
 
 import com.example.kata.onlab.network.Data;
+import com.example.kata.onlab.network.DataDetails;
 
 import java.util.List;
 
@@ -14,4 +15,6 @@ public interface ListScreen {
     void postDataCallback(Data data);
 
     void updateDataCallback(List<Data> data);
+
+    void getDataDetailsCallback(DataDetails data);
 }

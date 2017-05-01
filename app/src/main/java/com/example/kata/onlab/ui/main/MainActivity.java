@@ -48,8 +48,10 @@ import com.example.kata.onlab.ui.map.ServiceLocation;
 import com.facebook.login.LoginManager;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.mikhaellopez.circularimageview.CircularImageView;
+import com.soundcloud.android.crop.Crop;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity implements AddPlaceFragment.IAddPlaceFragment, MainScreen, NavigationView.OnNavigationItemSelectedListener, SharedPreferences.OnSharedPreferenceChangeListener {
@@ -105,8 +107,11 @@ public class MainActivity extends AppCompatActivity implements AddPlaceFragment.
         fragment = new FriendsFragment();
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.content_frame, fragment);
-        fragmentTransaction.commit();
+        Fragment f = fragmentManager.findFragmentByTag("Fragment");
+        if (f == null) {
+            fragmentTransaction.replace(R.id.content_frame, fragment, "Fragment");
+            fragmentTransaction.commit();
+        }
 
 
         if (preferences.getBoolean(KEY_START_SERVICE, true)) {
@@ -248,9 +253,11 @@ public class MainActivity extends AppCompatActivity implements AddPlaceFragment.
                         new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                         101);
             } else {
-                Intent intent = new Intent(Intent.ACTION_PICK,
+                Crop.pickImage(this);
+
+               /* Intent intent = new Intent(Intent.ACTION_PICK,
                         android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(intent, 1);
+                startActivityForResult(intent, 1);*/
             }
 
         }/*  else if (id == R.id.nav_share) {
@@ -280,6 +287,33 @@ public class MainActivity extends AppCompatActivity implements AddPlaceFragment.
                     NetworkManager.getInstance().postImage(getRealPathFromURI(selectedImage));
                 }
                 break;
+            case Crop.REQUEST_PICK:
+                if(resultCode == RESULT_OK) {
+                    beginCrop(imageReturnedIntent.getData());
+                }
+            case  Crop.REQUEST_CROP :
+                if(resultCode == RESULT_OK) {
+                    handleCrop(resultCode, imageReturnedIntent);
+                    break;
+            }
+        }
+    }
+
+
+    private void beginCrop(Uri source) {
+        Uri destination = Uri.fromFile(new File(getCacheDir(), "cropped.jpg"));
+       /* Uri destination =FileProvider.getUriForFile(this,
+                BuildConfig.APPLICATION_ID + ".provider",new File(getCacheDir(), "cropped"));*/
+        Crop.of(source, destination).asSquare().start(this);
+    }
+
+    private void handleCrop(int resultCode, Intent result) {
+        if (resultCode == RESULT_OK) {
+            NetworkManager.getInstance().postImage(getRealPathFromURI(Crop.getOutput(result)));
+
+
+        } else if (resultCode == Crop.RESULT_ERROR) {
+            Toast.makeText(this, Crop.getError(result).getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -321,8 +355,7 @@ public class MainActivity extends AppCompatActivity implements AddPlaceFragment.
     @Override
     public void updateProfile(Friends data) {
         user.setText(data.name);
-        String url = NetApi.GETIMEAGE +data.image;
-        url = url.replace("\\", "/");
+        String url = NetApi.GETIMEAGE + data.image;
         Picasso.with(this).load(url).placeholder(R.mipmap.ic_launcher).into(image);
 
     }

@@ -40,6 +40,14 @@ public class FriendsFragment extends Fragment implements FriendsFScreen, OnMenuS
     Fragment fragment;
     RecyclerView reciew;
 
+    private static final int LIST = R.id.action_list;
+    private static final int MAP = R.id.action_map;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -61,7 +69,13 @@ public class FriendsFragment extends Fragment implements FriendsFScreen, OnMenuS
         LinearLayoutManager horizontalLayoutManagaer
                 = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
         reciew.setLayoutManager(horizontalLayoutManagaer);
-        onPlayerSelectionSet(R.id.action_list);
+        if (savedInstanceState != null) {
+            // Restore last state for checked position.
+            int frag = savedInstanceState.getInt("curChoice", LIST);
+            onPlayerSelectionSet(frag);
+        } else {
+            onPlayerSelectionSet(LIST);
+        }
         return view;
     }
 
@@ -100,17 +114,17 @@ public class FriendsFragment extends Fragment implements FriendsFScreen, OnMenuS
         FragmentManager fragmentManager = getChildFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         switch (id) {
-
             case R.id.action_map:
                 fragment = new MapFragment();
+                fragmentTransaction.replace(R.id.content_frame, fragment, "MAP");
                 break;
 
             case R.id.action_list:
                 fragment = new ListGetFragment();
+                fragmentTransaction.replace(R.id.content_frame, fragment, "LIST");
                 break;
 
         }
-        fragmentTransaction.replace(R.id.content_frame, fragment);
         fragmentTransaction.commit();
         try {
             FriendsRecAdapter.MyInterface callback = (FriendsRecAdapter.MyInterface) fragment;
@@ -122,6 +136,21 @@ public class FriendsFragment extends Fragment implements FriendsFScreen, OnMenuS
         friendsAdapter = new FriendsRecAdapter((FriendsRecAdapter.MyInterface) fragment);
         reciew.setAdapter(friendsAdapter);
         updateUserCallback(new ArrayList<Friends>(results));
+    }
+
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        ListGetFragment myFragmentlist = (ListGetFragment) getChildFragmentManager().findFragmentByTag("LIST");
+        if (myFragmentlist != null && myFragmentlist.isVisible()) {
+            outState.putInt("curChoice", LIST);
+        } else {
+            MapFragment myFragmentmap = (MapFragment) getChildFragmentManager().findFragmentByTag("MAP");
+            if (myFragmentmap != null && myFragmentmap.isVisible()) {
+                outState.putInt("curChoice", MAP);
+            }
+        }
 
     }
 

@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 
 import com.example.kata.onlab.R;
 import com.example.kata.onlab.network.Data;
+import com.example.kata.onlab.network.DataDetails;
 import com.example.kata.onlab.network.NetworkManager;
 import com.example.kata.onlab.ui.AddPlaceFragment;
 import com.example.kata.onlab.ui.friendsfragment.FriendsRecAdapter;
@@ -102,6 +103,7 @@ public class ListGetFragment extends Fragment implements ListScreen, FriendsRecA
     }
 
     public void updateDataCallback(List<Data> list) {
+
         realm.beginTransaction();
         realm.copyToRealmOrUpdate(items);
         realm.commitTransaction();
@@ -109,6 +111,10 @@ public class ListGetFragment extends Fragment implements ListScreen, FriendsRecA
         items=list;
         adapter.update(items);
         swipeRefresh.setRefreshing(false);
+    }
+
+    public void getDataDetailsCallback(DataDetails data){
+        adapter.updateData(data);
     }
 
     protected void initRecycleView() {
