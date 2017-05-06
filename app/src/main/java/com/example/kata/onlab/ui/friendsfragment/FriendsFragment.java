@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -63,7 +64,7 @@ public class FriendsFragment extends Fragment implements FriendsFScreen, OnMenuS
         realm = Realm.getInstance(realmConfiguration);
         results = realm.where(Friends.class).findAll();
         NetworkManager.getInstance().getfriends();
-
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Friends todos");
 
         reciew = (RecyclerView) view.findViewById(R.id.recyclerView);
         LinearLayoutManager horizontalLayoutManagaer

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,8 +49,10 @@ public class FriendsRecAdapter extends RecyclerView.Adapter<FriendsRecAdapter.It
         Picasso.with(holder.imageView.getContext()).cancelRequest(holder.imageView);
         if (position == 0) {
             holder.imageView.setImageDrawable(null);
-            holder.imageView.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_add_white_36dp));
-            holder.imageView.setBorderColor(R.color.blue_normal);
+            holder.imageView.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.all));
+            final TypedValue value = new TypedValue ();
+            mContext.getTheme().resolveAttribute (R.attr.colorPrimaryDark, value, true);
+            holder.imageView.setBorderColor(value.data);
             holder.imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -58,7 +61,7 @@ public class FriendsRecAdapter extends RecyclerView.Adapter<FriendsRecAdapter.It
             });
         } else {
             final Friends friend = friends.get(position - 1);
-            holder.imageView.setImageDrawable(ContextCompat.getDrawable(mContext, R.mipmap.ic_launcher));
+            holder.imageView.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.avatar));
             holder.imageView.setBorderColor(Color.parseColor("#EEEEEE"));
             holder.imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -69,7 +72,7 @@ public class FriendsRecAdapter extends RecyclerView.Adapter<FriendsRecAdapter.It
             if (friend.image != null) {
                 String url = NetApi.GETIMEAGE +friend.image;
                 url = url.replace("\\", "/");
-                Picasso.with(mContext).load(url).placeholder(R.mipmap.ic_launcher).into(holder.imageView);
+                Picasso.with(mContext).load(url).placeholder(R.drawable.avatar).into(holder.imageView);
 
             }
         }

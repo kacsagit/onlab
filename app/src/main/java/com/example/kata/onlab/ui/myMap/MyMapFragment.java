@@ -1,7 +1,8 @@
-package com.example.kata.onlab.ui.map;
+package com.example.kata.onlab.ui.myMap;
 
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -16,6 +17,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -26,11 +28,13 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.kata.onlab.R;
-import com.example.kata.onlab.network.Data;
+import com.example.kata.onlab.network.MyData;
 import com.example.kata.onlab.network.NetworkManager;
 import com.example.kata.onlab.ui.AddPlaceFragment;
 import com.example.kata.onlab.ui.friendsfragment.FriendsRecAdapter;
 import com.example.kata.onlab.ui.friendsfragment.OnMenuSelectionSetListener;
+import com.example.kata.onlab.ui.map.GeofenceTransitionsIntentService;
+import com.example.kata.onlab.ui.map.MyLocationManager;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
@@ -66,16 +70,16 @@ import io.realm.RealmResults;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MapFragment extends Fragment implements LocationListener, FriendsRecAdapter.MyInterface, OnMapReadyCallback, MyLocationManager.OnLocChanged, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, MapScreen {
+public class MyMapFragment extends Fragment implements LocationListener, FriendsRecAdapter.MyInterface, OnMapReadyCallback, MyLocationManager.OnLocChanged, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, MapScreen {
 
     private static final String TAG = "MyMapFragment";
     private MyLocationManager myLocationManager = null;
     Realm realm;
-    RealmResults<Data> results;
+    RealmResults<MyData> results;
     private Location prevLoc = null;
     private MapView mapView;
     private static GoogleMap googleMap;
-    List<Data> datalist;
+    List<MyData> datalist;
     private List<Geofence> mGeofenceList;
     LocationRequest mLocationRequest;
     GoogleApiClient mGoogleApiClient;
@@ -84,11 +88,11 @@ public class MapFragment extends Fragment implements LocationListener, FriendsRe
     Marker currLocationMarker;
     double currentLatitude = 8.5565795, currentLongitude = 76.8810227;
     List<Marker> markers = new ArrayList<>();
-    List<Data> markersData = new ArrayList<>();
+    List<MyData> markersData = new ArrayList<>();
     Location mLastLocation = null;
     Context context;
 
-    public MapFragment() {
+    public MyMapFragment() {
         // Required empty public constructor
     }
 
@@ -163,14 +167,15 @@ public class MapFragment extends Fragment implements LocationListener, FriendsRe
 
         View view = inflater.inflate(R.layout.fragment_map, container, false);
         getActivity().invalidateOptionsMenu();
-
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("My todos");
         mLocationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setInterval(10 * 1000)        // 10 seconds, in milliseconds
                 .setFastestInterval(1 * 1000); // 1 second, in milliseconds
 
-        onAttachToParentFragment(getParentFragment());
+        onAttachToParentFragment(getActivity());
         mapView = (MapView) view.findViewById(R.id.map);
+
         mapView.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -178,7 +183,7 @@ public class MapFragment extends Fragment implements LocationListener, FriendsRe
         RealmConfiguration realmConfiguration = new RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().name(email + "data").build();
         // Realm.deleteRealm(realmConfiguration);
         realm = Realm.getInstance(realmConfiguration);
-        results = realm.where(Data.class).findAll();
+        results = realm.where(MyData.class).findAll();
         markersData=new ArrayList<>(results);
         return view;
 
@@ -230,7 +235,7 @@ public class MapFragment extends Fragment implements LocationListener, FriendsRe
         buildGoogleApiClientEmpty();
         mGoogleApiClient.connect();
         updateDataCallback(markersData);
-        NetworkManager.getInstance().updateData();
+        NetworkManager.getInstance().updateDataMy();
 
 
     }
@@ -272,10 +277,10 @@ public class MapFragment extends Fragment implements LocationListener, FriendsRe
     }
 
 
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent MyData) {
         if (requestCode == 101) {
             if (resultCode == 200) {
-              /*  Place place = PlacePicker.getPlace(this, data);
+              /*  Place place = PlacePicker.getPlace(this, MyData);
                 String toastMsg = String.format("Place: %s", place.getName());
 
                 String distance = null;
@@ -337,7 +342,7 @@ public class MapFragment extends Fragment implements LocationListener, FriendsRe
     }
 
 
-    public void updateDataCallback(List<Data> list) {
+    public void updateDataCallback(List<MyData> list) {
         datalist = list;
         setUpMap(datalist);
         if (datalist.size() != 0) {
@@ -347,7 +352,7 @@ public class MapFragment extends Fragment implements LocationListener, FriendsRe
 
     }
 
-    public void postDataCallback(Data item) {
+    public void postDataCallback(MyData item) {
         datalist.add(item);
         addMarker(item);
     }
@@ -389,7 +394,7 @@ public class MapFragment extends Fragment implements LocationListener, FriendsRe
     }
 
     public void createGeofences() {
-        for (Data d : datalist) {
+        for (MyData d : datalist) {
             String id = UUID.randomUUID().toString();
             Geofence fence = new Geofence.Builder()
                     .setRequestId(id)
@@ -437,14 +442,14 @@ public class MapFragment extends Fragment implements LocationListener, FriendsRe
 
     }
 
-    public void setUpMap(List<Data> items) {
+    public void setUpMap(List<MyData> items) {
         markersData = new ArrayList<>(items);
         if (googleMap != null) {
             if (markers != null) {
                 markers.clear();
                 googleMap.clear();
             }
-            for (Data item : markersData) {
+            for (MyData item : markersData) {
                 addMarker(item);
             }
         }
@@ -452,7 +457,7 @@ public class MapFragment extends Fragment implements LocationListener, FriendsRe
 
     }
 
-    public void addMarker(Data item) {
+    public void addMarker(MyData item) {
         LatLng latLng1 = new LatLng(item.latitude, item.longitude);
 
         MarkerOptions markerOptions = new MarkerOptions()
@@ -536,8 +541,8 @@ public class MapFragment extends Fragment implements LocationListener, FriendsRe
 
     @Override
     public void sort(int id) {
-        List<Data> temp = new ArrayList<Data>();
-        for (Data d : datalist) {
+        List<MyData> temp = new ArrayList<MyData>();
+        for (MyData d : datalist) {
             if (d.ownerid == id)
                 temp.add(d);
         }
@@ -553,7 +558,7 @@ public class MapFragment extends Fragment implements LocationListener, FriendsRe
     OnMenuSelectionSetListener mOnPlayerSelectionSetListener;
 
 
-    public void onAttachToParentFragment(Fragment fragment)
+    public void onAttachToParentFragment(Activity fragment)
     {
         try
         {

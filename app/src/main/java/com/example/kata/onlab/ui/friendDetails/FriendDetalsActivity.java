@@ -92,7 +92,7 @@ public class FriendDetalsActivity extends AppCompatActivity implements FriendDet
         if (friend.image != null) {
             String url = NetApi.GETIMEAGE +friend.image;
             url = url.replace("\\", "/");
-            Picasso.with(this).load(url).placeholder(R.mipmap.ic_launcher).into(image);
+            Picasso.with(this).load(url).placeholder(R.drawable.avatar).into(image);
         }
 
         if (friend.isfriend == 1) {

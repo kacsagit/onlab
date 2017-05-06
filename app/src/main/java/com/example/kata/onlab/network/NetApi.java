@@ -43,7 +43,7 @@ public interface NetApi {
     Call<Friends> getMe(@Header("Authorization") String token);
 
     @GET("/api/getme")
-    Call<List<Data>> getDataSpecMy(@Header("Authorization") String token);
+    Call<List<MyData>> getDataSpecMy(@Header("Authorization") String token);
 
     @POST("/login")
     Call<String> logIn(@Body Login log);

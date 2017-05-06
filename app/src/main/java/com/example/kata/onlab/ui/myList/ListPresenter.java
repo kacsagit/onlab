@@ -1,9 +1,10 @@
-package com.example.kata.onlab.ui.list;
+package com.example.kata.onlab.ui.myList;
 
 import com.example.kata.onlab.event.ErrorEvent;
 import com.example.kata.onlab.event.GetDataDetailsEvent;
 import com.example.kata.onlab.event.GetDataEvent;
-import com.example.kata.onlab.network.Data;
+import com.example.kata.onlab.event.PostDataEvent;
+import com.example.kata.onlab.network.MyData;
 import com.example.kata.onlab.network.DataDetails;
 import com.example.kata.onlab.network.NetworkManager;
 import com.example.kata.onlab.ui.Presenter;
@@ -42,6 +43,10 @@ public class ListPresenter  extends Presenter<ListScreen> {
     }
 
 
+    public void newItemView(){
+        screen.newItemView();
+    }
+
 
     @Override
     public void attachScreen(ListScreen screen) {
@@ -59,7 +64,7 @@ public class ListPresenter  extends Presenter<ListScreen> {
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onGetData(GetDataEvent<List<Data>> event) {
+    public void onGetData(GetDataEvent<List<MyData>> event) {
         if (screen != null) {
             screen.updateDataCallback(event.getData());
         }
@@ -67,6 +72,13 @@ public class ListPresenter  extends Presenter<ListScreen> {
 
     }
 
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onPostData(PostDataEvent<MyData> event) {
+        if (screen != null) {
+            screen.postDataCallback(event.getData());
+        }
+    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onGetDataDetails(GetDataDetailsEvent<DataDetails> event) {

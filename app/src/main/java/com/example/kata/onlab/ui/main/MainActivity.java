@@ -40,11 +40,14 @@ import com.example.kata.onlab.network.Friends;
 import com.example.kata.onlab.network.NetApi;
 import com.example.kata.onlab.network.NetworkManager;
 import com.example.kata.onlab.ui.AddPlaceFragment;
-import com.example.kata.onlab.ui.MyPoints.MyPoints;
 import com.example.kata.onlab.ui.friends.FriendsActivity;
 import com.example.kata.onlab.ui.friendsfragment.FriendsFragment;
+import com.example.kata.onlab.ui.friendsfragment.OnMenuSelectionSetListener;
 import com.example.kata.onlab.ui.login.LoginActivity;
+import com.example.kata.onlab.ui.map.MapFragment;
 import com.example.kata.onlab.ui.map.ServiceLocation;
+import com.example.kata.onlab.ui.myList.MyListFragment;
+import com.example.kata.onlab.ui.myMap.MyMapFragment;
 import com.facebook.login.LoginManager;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.mikhaellopez.circularimageview.CircularImageView;
@@ -54,7 +57,8 @@ import com.squareup.picasso.Picasso;
 import java.io.File;
 import java.io.IOException;
 
-public class MainActivity extends AppCompatActivity implements AddPlaceFragment.IAddPlaceFragment, MainScreen, NavigationView.OnNavigationItemSelectedListener, SharedPreferences.OnSharedPreferenceChangeListener {
+
+public class MainActivity extends AppCompatActivity implements AddPlaceFragment.IAddPlaceFragment, MainScreen, NavigationView.OnNavigationItemSelectedListener, SharedPreferences.OnSharedPreferenceChangeListener,OnMenuSelectionSetListener {
 
 
     private static final String TAG = "MainActivity";
@@ -64,6 +68,9 @@ public class MainActivity extends AppCompatActivity implements AddPlaceFragment.
     Fragment fragment;
     TextView user;
     CircularImageView image;
+    private static final int LIST = R.id.action_list;
+    private static final int MAP = R.id.action_map;
+    private static final int FRIENDS = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +78,7 @@ public class MainActivity extends AppCompatActivity implements AddPlaceFragment.
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        setTitle("My todos");
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -103,15 +111,14 @@ public class MainActivity extends AppCompatActivity implements AddPlaceFragment.
                 editor.apply();
             }
         });
-
-        fragment = new FriendsFragment();
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        Fragment f = fragmentManager.findFragmentByTag("Fragment");
-        if (f == null) {
-            fragmentTransaction.replace(R.id.content_frame, fragment, "Fragment");
-            fragmentTransaction.commit();
+        if (savedInstanceState != null) {
+            // Restore last state for checked position.
+            int frag = savedInstanceState.getInt("curChoice", FRIENDS);
+            fragmentSelect(frag);
+        } else {
+            fragmentSelect(FRIENDS);
         }
+
 
 
         if (preferences.getBoolean(KEY_START_SERVICE, true)) {
@@ -231,8 +238,7 @@ public class MainActivity extends AppCompatActivity implements AddPlaceFragment.
             startActivity(intent);
             LoginManager.getInstance().logOut();
         } else if (id == R.id.nav_gallery) {
-            Intent intent = new Intent(this, MyPoints.class);
-            startActivity(intent);
+            fragmentSelect(LIST);
 
 
         } else if (id == R.id.nav_slideshow) {
@@ -356,7 +362,60 @@ public class MainActivity extends AppCompatActivity implements AddPlaceFragment.
     public void updateProfile(Friends data) {
         user.setText(data.name);
         String url = NetApi.GETIMEAGE + data.image;
-        Picasso.with(this).load(url).placeholder(R.mipmap.ic_launcher).into(image);
+        Picasso.with(this).load(url).placeholder(R.drawable.avatar).into(image);
 
+    }
+
+
+    public void fragmentSelect(int id) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        switch (id) {
+            case MAP:
+                fragment = new MyMapFragment();
+                fragmentTransaction.replace(R.id.content_frame, fragment, "MAP");
+                break;
+
+            case LIST:
+                fragment = new MyListFragment();
+                fragmentTransaction.replace(R.id.content_frame, fragment, "LIST");
+                break;
+            case FRIENDS:
+                fragment = new FriendsFragment();
+                Fragment f = fragmentManager.findFragmentByTag("FRIEND");
+                if (f == null) {
+                    fragmentTransaction.replace(R.id.content_frame, fragment, "FRIEND");
+                }
+                break;
+
+        }
+        fragmentTransaction.commit();
+
+    }
+
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        MyListFragment myFragmentlist = (MyListFragment) getSupportFragmentManager().findFragmentByTag("LIST");
+        if (myFragmentlist != null && myFragmentlist.isVisible()) {
+            outState.putInt("curChoice", LIST);
+        } else {
+            MapFragment myFragmentmap = (MapFragment) getSupportFragmentManager().findFragmentByTag("MAP");
+            if (myFragmentmap != null && myFragmentmap.isVisible()) {
+                outState.putInt("curChoice", MAP);
+            }else {
+                FriendsFragment myFragment = (FriendsFragment) getSupportFragmentManager().findFragmentByTag("LIST");
+                if (myFragment != null && myFragment.isVisible()) {
+                    outState.putInt("curChoice", FRIENDS);
+                }
+            }
+        }
+
+    }
+
+    @Override
+    public void onPlayerSelectionSet(int id) {
+        fragmentSelect(id);
     }
 }

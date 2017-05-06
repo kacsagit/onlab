@@ -1,4 +1,4 @@
-package com.example.kata.onlab.ui.list;
+package com.example.kata.onlab.ui.myList;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -12,7 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.kata.onlab.R;
-import com.example.kata.onlab.network.Data;
+import com.example.kata.onlab.network.MyData;
 import com.example.kata.onlab.network.DataDetails;
 import com.example.kata.onlab.network.NetApi;
 import com.example.kata.onlab.network.NetworkManager;
@@ -85,7 +85,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
 
     }
 
-    public void addItem(Data item) {
+    public void addItem(MyData item) {
         items.add(new DataDetails(item));
         notifyItemInserted(items.size() - 1);
 
@@ -122,9 +122,9 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
         return items.size();
     }
 
-    public void update(List<Data> itemsrec) {
+    public void update(List<MyData> itemsrec) {
         items.clear();
-        for (Data item : itemsrec) {
+        for (MyData item : itemsrec) {
             items.add(new DataDetails(item));
         }
         notifyDataSetChanged();

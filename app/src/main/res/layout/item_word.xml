@@ -33,18 +33,6 @@
             android:onClick="@{view -> listener.onExampleModelClicked(model)}"
             android:orientation="horizontal">
 
-            <!--com.mikhaellopez.circularimageview.CircularImageView
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/item"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@mipmap/ic_launcher"
-                app:civ_border_color="#EEEEEE"
-                app:civ_border_width="1dp"
-                app:civ_shadow="true"
-                app:civ_shadow_color="#AAAAAA"
-                app:civ_shadow_radius="2"
-                app:imageUrl="@{model.imageUrl}" /-->
 
             <ImageView
                 android:id="@+id/item"

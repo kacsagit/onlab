@@ -36,6 +36,15 @@ public class DataDetails extends RealmObject {
         image=d.image;
     }
 
+    public DataDetails(MyData d){
+        id=d.id;
+        place=d.place;
+        longitude=d.longitude;
+        latitude=d.latitude;
+        ownerid=d.ownerid;
+        image=d.image;
+    }
+
 
     public int isDone() {
         return done;

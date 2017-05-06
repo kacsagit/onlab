@@ -1,12 +1,12 @@
-package com.example.kata.onlab.ui.list;
+package com.example.kata.onlab.ui.myMap;
 
 import com.example.kata.onlab.event.ErrorEvent;
-import com.example.kata.onlab.event.GetDataDetailsEvent;
 import com.example.kata.onlab.event.GetDataEvent;
-import com.example.kata.onlab.network.Data;
-import com.example.kata.onlab.network.DataDetails;
+import com.example.kata.onlab.event.PostDataEvent;
+import com.example.kata.onlab.network.MyData;
 import com.example.kata.onlab.network.NetworkManager;
 import com.example.kata.onlab.ui.Presenter;
+import com.google.android.gms.maps.model.LatLng;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -18,16 +18,16 @@ import java.util.List;
  * Created by Kata on 2017. 02. 26..
  */
 
-public class ListPresenter  extends Presenter<ListScreen> {
+public class MapPresenter extends Presenter<MapScreen> {
 
-    private static ListPresenter instance = null;
+    private static MapPresenter instance = null;
 
-    private ListPresenter() {
+    private MapPresenter() {
     }
 
-    public static ListPresenter getInstance() {
+    public static MapPresenter getInstance() {
         if (instance == null) {
-            instance = new ListPresenter();
+            instance = new MapPresenter();
         }
         return instance;
     }
@@ -37,14 +37,13 @@ public class ListPresenter  extends Presenter<ListScreen> {
         NetworkManager.getInstance().updateData();
     }
 
-    public void updateDataMy(){
-        NetworkManager.getInstance().updateDataMy();
+
+    public void newItemView(LatLng point){
+        screen.newItemView(point);
     }
 
-
-
     @Override
-    public void attachScreen(ListScreen screen) {
+    public void attachScreen(MapScreen screen) {
         super.attachScreen(screen);
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
@@ -59,7 +58,7 @@ public class ListPresenter  extends Presenter<ListScreen> {
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onGetData(GetDataEvent<List<Data>> event) {
+    public void onGetData(GetDataEvent<List<MyData>> event) {
         if (screen != null) {
             screen.updateDataCallback(event.getData());
         }
@@ -69,9 +68,9 @@ public class ListPresenter  extends Presenter<ListScreen> {
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onGetDataDetails(GetDataDetailsEvent<DataDetails> event) {
+    public void onPostData(PostDataEvent<MyData> event) {
         if (screen != null) {
-            screen.getDataDetailsCallback(event.getData());
+            screen.postDataCallback(event.getData());
         }
     }
 
@@ -79,6 +78,5 @@ public class ListPresenter  extends Presenter<ListScreen> {
     public void onError(ErrorEvent event) {
         event.getE().printStackTrace();
     }
-
 
 }

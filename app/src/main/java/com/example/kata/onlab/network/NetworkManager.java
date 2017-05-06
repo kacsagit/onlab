@@ -236,13 +236,13 @@ public class NetworkManager {
 
     public void updateDataMy() {
         if (token != null) {
-            netApi.getDataSpecMy(token).enqueue(new Callback<List<Data>>() {
+            netApi.getDataSpecMy(token).enqueue(new Callback<List<MyData>>() {
                 @Override
-                public void onResponse(Call<List<Data>> call, Response<List<Data>> response) {
+                public void onResponse(Call<List<MyData>> call, Response<List<MyData>> response) {
                     if (response.isSuccessful()) {
                         Log.d(TAG, response.body().toString());
                         GetDataEvent getDataEvent = new GetDataEvent();
-                        List<Data> resp = response.body();
+                        List<MyData> resp = response.body();
                         getDataEvent.setData(resp);
                         EventBus.getDefault().post(getDataEvent);
                     } else {
@@ -253,7 +253,7 @@ public class NetworkManager {
                 }
 
                 @Override
-                public void onFailure(Call<List<Data>> call, Throwable t) {
+                public void onFailure(Call<List<MyData>> call, Throwable t) {
 
                 }
             });
@@ -442,8 +442,9 @@ public class NetworkManager {
         }
     }
 
-    public void pushNotif(int id) {
+    public void pushNotif(DataDetails item) {
         if (token != null) {
+            int id = item.getOwnerid();
             PushId d = new PushId(id);
             netApi.pushNotif(token, d).enqueue(new Callback<Void>() {
                 @Override
@@ -465,7 +466,7 @@ public class NetworkManager {
 
     public void getDataDetails(int dataid) {
         if (token != null) {
-            netApi.getDataDetail(token,dataid).enqueue(new Callback<DataDetails>() {
+            netApi.getDataDetail(token, dataid).enqueue(new Callback<DataDetails>() {
                 @Override
                 public void onResponse(Call<DataDetails> call, Response<DataDetails> response) {
                     if (response.isSuccessful()) {

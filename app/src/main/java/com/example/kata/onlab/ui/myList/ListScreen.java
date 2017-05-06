@@ -1,7 +1,7 @@
-package com.example.kata.onlab.ui.list;
+package com.example.kata.onlab.ui.myList;
 
-import com.example.kata.onlab.network.Data;
 import com.example.kata.onlab.network.DataDetails;
+import com.example.kata.onlab.network.MyData;
 
 import java.util.List;
 
@@ -10,8 +10,11 @@ import java.util.List;
  */
 
 public interface ListScreen {
+    void newItemView();
 
-    void updateDataCallback(List<Data> data);
+    void postDataCallback(MyData data);
+
+    void updateDataCallback(List<MyData> data);
 
     void getDataDetailsCallback(DataDetails data);
 }

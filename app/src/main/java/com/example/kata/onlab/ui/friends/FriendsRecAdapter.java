@@ -58,7 +58,7 @@ public class FriendsRecAdapter extends RecyclerView.Adapter<FriendsRecAdapter.It
             });
         } else {
             final Friends friend = friends.get(position - 1);
-            holder.imageView.setImageDrawable(ContextCompat.getDrawable(mContext, R.mipmap.ic_launcher));
+            holder.imageView.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.avatar));
             holder.name.setText(friend.name);
             holder.imageView.setBorderColor(Color.parseColor("#EEEEEE"));
             holder.imageView.setOnClickListener(new View.OnClickListener() {
@@ -73,7 +73,7 @@ public class FriendsRecAdapter extends RecyclerView.Adapter<FriendsRecAdapter.It
             if (friend.image != null) {
                 String url = NetApi.GETIMEAGE +friend.image;
                 url = url.replace("\\", "/");
-                Picasso.with(mContext).load(url).placeholder(R.mipmap.ic_launcher).into(holder.imageView);
+                Picasso.with(mContext).load(url).placeholder(R.drawable.avatar).into(holder.imageView);
 
             }
 

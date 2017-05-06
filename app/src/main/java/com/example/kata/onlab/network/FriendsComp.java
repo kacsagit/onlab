@@ -29,7 +29,7 @@ public class FriendsComp implements SortedListAdapter.ViewModel {
         Picasso.with(view.getContext()).cancelRequest(view);
         Picasso.with(view.getContext())
                 .load(NetApi.GETIMEAGE +imageUrl)
-                .placeholder(R.mipmap.ic_launcher)
+                .placeholder(R.drawable.avatar)
                 .into(view);
     }
 
