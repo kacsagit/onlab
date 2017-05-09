@@ -7,11 +7,9 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
 
 import com.example.kata.onlab.R;
 import com.example.kata.onlab.network.Data;
-import com.example.kata.onlab.ui.AddPlaceFragment;
 import com.example.kata.onlab.ui.list.ItemAdapter;
 
 import java.util.List;
@@ -35,18 +33,10 @@ public class MyPoints extends AppCompatActivity implements MyPointsScreen {
             }
         });
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                MyPointsPresenter.getInstance().newItemView();
 
-            }
-        });
     }
 
-    public void newItemView(){
-        new AddPlaceFragment().show(getSupportFragmentManager(), AddPlaceFragment.TAG);
-    }
+
 
 
     public void updateData() {

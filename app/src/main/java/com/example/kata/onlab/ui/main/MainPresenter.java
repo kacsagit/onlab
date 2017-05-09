@@ -1,13 +1,20 @@
 package com.example.kata.onlab.ui.main;
 
 
+import com.example.kata.onlab.event.GetDataEvent;
+import com.example.kata.onlab.event.GetDataMyEvent;
 import com.example.kata.onlab.event.GetMeEvent;
+import com.example.kata.onlab.event.PhotoUploadedEvent;
+import com.example.kata.onlab.network.Data;
 import com.example.kata.onlab.network.Friends;
+import com.example.kata.onlab.network.MyData;
 import com.example.kata.onlab.ui.Presenter;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.List;
 
 public class MainPresenter extends Presenter<MainScreen> {
 
@@ -40,9 +47,34 @@ public class MainPresenter extends Presenter<MainScreen> {
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onGetData(GetMeEvent<Friends> event) {
+    public void onGetData(GetDataEvent<List<Data>> event) {
+        if (screen != null) {
+            screen.updateDataCallback(event.getData());
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onGetDataMy(GetDataMyEvent<List<MyData>> event) {
+        if (screen != null) {
+            screen.updateDataCallbackMy(event.getData());
+        }
+
+
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onGetDataprofile(GetMeEvent<Friends> event) {
         if (screen != null) {
             screen.updateProfile(event.getData());
+        }
+
+
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onGetDataprofileupdate(PhotoUploadedEvent<String> event) {
+        if (screen != null) {
+            screen.photoUploaded(event.getData());
         }
 
 

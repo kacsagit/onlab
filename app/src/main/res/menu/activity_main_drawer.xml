@@ -3,32 +3,37 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <group android:checkableBehavior="single">
+
+
+
         <item
-            android:id="@+id/nav_camera"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="Log out" />
+            android:id="@+id/nav_friendtodo"
+            android:title="Friends' todos"
+            android:checked="true"
+            />
         <item
-            android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="My points" />
-        <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Friends" />
-        <item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="add" />
+            android:id="@+id/nav_mytodo"
+            android:title="My todos" />
+
 
 
     </group>
 
-    <item android:title="Communicate" >
+    <item android:title="Settings" >
         <menu>
-            <item android:id="@+id/nav_number"
+            <item
+                android:id="@+id/nav_friends"
+                android:title="Friends" />
+            <item
+                android:id="@+id/nav_manage"
+                android:title="Add image" />
+            <item android:id="@+id/loc_monitor"
                 android:title="Location monitoring"
                 app:actionLayout="@layout/item"/>
 
+            <item
+                android:id="@+id/nav_logout"
+                android:title="Log out" />
     <!--item
         android:id="@+id/nav_share"
         android:icon="@drawable/ic_menu_share"

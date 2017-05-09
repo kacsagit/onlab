@@ -23,8 +23,8 @@ public class DataDetails extends RealmObject {
     public float latitude;
     public int ownerid;
     public int done;
-    public String image;
     public String description;
+    public String image;
 
 
     public DataDetails(Data d){

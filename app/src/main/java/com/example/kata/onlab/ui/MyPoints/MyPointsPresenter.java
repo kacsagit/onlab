@@ -36,9 +36,6 @@ public class MyPointsPresenter extends Presenter<MyPointsScreen> {
     }
 
 
-    public void newItemView() {
-        screen.newItemView();
-    }
 
     @Override
     public void attachScreen(MyPointsScreen screen) {

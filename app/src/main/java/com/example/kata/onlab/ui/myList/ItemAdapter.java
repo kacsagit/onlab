@@ -50,7 +50,6 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
         final DataDetails item = items.get(position);
         if (item.image != null) {
             String url = NetApi.GETIMEAGE + item.image;
-            url = url.replace("\\", "/");
             Picasso.with(mContext).load(url).placeholder(R.drawable.avatar).into(holder.image);
 
         }

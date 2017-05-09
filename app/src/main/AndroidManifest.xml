@@ -76,7 +76,7 @@
         <activity android:name=".ui.friends.FriendsActivity" />
         <activity android:name=".ui.friendsearch.FriendSearchActivity" />
         <activity android:name=".ui.friendDetails.FriendDetalsActivity" />
-        <activity android:name=".ui.newPlace.PlacePickerActivity"></activity>
+        <activity android:windowSoftInputMode="adjustResize" android:name=".ui.newPlace.PlacePickerActivity"/>
     </application>
 
 </manifest>

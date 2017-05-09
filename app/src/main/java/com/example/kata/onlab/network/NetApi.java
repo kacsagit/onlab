@@ -4,7 +4,6 @@ import java.util.List;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -49,7 +48,7 @@ public interface NetApi {
     Call<String> logIn(@Body Login log);
 
     @POST("/api")
-    Call<Integer> postData(@Header("Authorization") String token,@Body Data dat);
+    Call<Integer> postData(@Header("Authorization") String token,@Body DataDetails dat);
 
     @POST("/api/addfirend")
     Call<Integer> postFriend(@Header("Authorization") String token,@Body Friend dat);
@@ -79,6 +78,6 @@ public interface NetApi {
 
     @Multipart
     @POST("/api/upload")
-    Call<ResponseBody> postImage(@Header("Authorization") String token,@Part MultipartBody.Part image, @Part("file") RequestBody name);
+    Call<String> postImage(@Header("Authorization") String token,@Part MultipartBody.Part image, @Part("file") RequestBody name);
 
 }

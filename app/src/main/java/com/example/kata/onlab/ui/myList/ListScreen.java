@@ -10,7 +10,6 @@ import java.util.List;
  */
 
 public interface ListScreen {
-    void newItemView();
 
     void postDataCallback(MyData data);
 

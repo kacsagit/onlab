@@ -27,7 +27,6 @@ import com.example.kata.onlab.R;
 import com.example.kata.onlab.network.DataDetails;
 import com.example.kata.onlab.network.MyData;
 import com.example.kata.onlab.network.NetworkManager;
-import com.example.kata.onlab.ui.AddPlaceFragment;
 import com.example.kata.onlab.ui.friendsfragment.OnMenuSelectionSetListener;
 import com.example.kata.onlab.ui.newPlace.PlacePickerActivity;
 
@@ -93,9 +92,6 @@ public class MyListFragment extends Fragment implements ListScreen {
 
     }
 
-    public void newItemView(){
-        new AddPlaceFragment().show(getActivity().getSupportFragmentManager(), AddPlaceFragment.TAG);
-    }
 
 
     public void updateData() {

@@ -91,7 +91,6 @@ public class FriendDetalsActivity extends AppCompatActivity implements FriendDet
         email.setText(friend.email);
         if (friend.image != null) {
             String url = NetApi.GETIMEAGE +friend.image;
-            url = url.replace("\\", "/");
             Picasso.with(this).load(url).placeholder(R.drawable.avatar).into(image);
         }
 

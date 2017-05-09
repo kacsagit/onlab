@@ -6,7 +6,6 @@ import com.example.kata.onlab.event.PostDataEvent;
 import com.example.kata.onlab.network.Data;
 import com.example.kata.onlab.network.NetworkManager;
 import com.example.kata.onlab.ui.Presenter;
-import com.google.android.gms.maps.model.LatLng;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -38,9 +37,7 @@ public class MapPresenter extends Presenter<MapScreen> {
     }
 
 
-    public void newItemView(LatLng point){
-        screen.newItemView(point);
-    }
+
 
     @Override
     public void attachScreen(MapScreen screen) {

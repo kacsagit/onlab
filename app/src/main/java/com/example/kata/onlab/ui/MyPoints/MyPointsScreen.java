@@ -9,7 +9,6 @@ import java.util.List;
  */
 
 public interface MyPointsScreen {
-        void newItemView();
 
     void updateDataCallback(List<Data> data);
 

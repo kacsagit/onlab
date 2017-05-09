@@ -6,11 +6,13 @@ import com.example.kata.onlab.event.DeleteFriendEvent;
 import com.example.kata.onlab.event.ErrorResponseEvent;
 import com.example.kata.onlab.event.GetDataDetailsEvent;
 import com.example.kata.onlab.event.GetDataEvent;
+import com.example.kata.onlab.event.GetDataMyEvent;
 import com.example.kata.onlab.event.GetFriendsEvent;
 import com.example.kata.onlab.event.GetMeEvent;
 import com.example.kata.onlab.event.GetUserEvent;
 import com.example.kata.onlab.event.GetUsersEvent;
 import com.example.kata.onlab.event.LoginDataEvent;
+import com.example.kata.onlab.event.PhotoUploadedEvent;
 import com.example.kata.onlab.event.PostDataEvent;
 import com.example.kata.onlab.event.PostFriendEvent;
 import com.example.kata.onlab.event.SignUpDataEvent;
@@ -24,7 +26,6 @@ import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -241,7 +242,7 @@ public class NetworkManager {
                 public void onResponse(Call<List<MyData>> call, Response<List<MyData>> response) {
                     if (response.isSuccessful()) {
                         Log.d(TAG, response.body().toString());
-                        GetDataEvent getDataEvent = new GetDataEvent();
+                        GetDataMyEvent getDataEvent = new GetDataMyEvent();
                         List<MyData> resp = response.body();
                         getDataEvent.setData(resp);
                         EventBus.getDefault().post(getDataEvent);
@@ -370,7 +371,7 @@ public class NetworkManager {
     }
 
 
-    public void postData(final Data d) {
+    public void postData(final DataDetails d) {
         if (token != null) {
             netApi.postData(token, d).enqueue(new Callback<Integer>() {
                 @Override
@@ -404,16 +405,19 @@ public class NetworkManager {
             RequestBody reqFile = RequestBody.create(MediaType.parse("image/*"), file);
             MultipartBody.Part body = MultipartBody.Part.createFormData("avatar", file.getName(), reqFile);
             RequestBody name = RequestBody.create(MediaType.parse("text/plain"), "avatar");
-            netApi.postImage(token, body, name).enqueue(new Callback<ResponseBody>() {
+            netApi.postImage(token, body, name).enqueue(new Callback<String>() {
                 @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                public void onResponse(Call<String> call, Response<String> response) {
                     if (response.isSuccessful()) {
-
+                        Log.d(TAG, response.body().toString());
+                        PhotoUploadedEvent getmeEvent = new PhotoUploadedEvent();
+                        getmeEvent.setData(response.body());
+                        EventBus.getDefault().post(getmeEvent);
                     }
                 }
 
                 @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                public void onFailure(Call<String> call, Throwable t) {
                     t.printStackTrace();
                 }
             });

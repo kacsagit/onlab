@@ -1,7 +1,6 @@
 package com.example.kata.onlab.ui.map;
 
 import com.example.kata.onlab.network.Data;
-import com.google.android.gms.maps.model.LatLng;
 
 import java.util.List;
 
@@ -10,7 +9,7 @@ import java.util.List;
  */
 
 public interface MapScreen {
-    void newItemView(LatLng point);
+
 
     void updateDataCallback(List<Data> data);
 

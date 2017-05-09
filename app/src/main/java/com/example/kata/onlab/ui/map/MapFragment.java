@@ -7,8 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -16,7 +14,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -28,15 +25,11 @@ import android.widget.Toast;
 import com.example.kata.onlab.R;
 import com.example.kata.onlab.network.Data;
 import com.example.kata.onlab.network.NetworkManager;
-import com.example.kata.onlab.ui.AddPlaceFragment;
 import com.example.kata.onlab.ui.friendsfragment.FriendsRecAdapter;
 import com.example.kata.onlab.ui.friendsfragment.OnMenuSelectionSetListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.Geofence;
-import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -50,13 +43,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.io.IOException;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-import java.util.UUID;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
@@ -94,56 +82,15 @@ public class MapFragment extends Fragment implements LocationListener, FriendsRe
 
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(this.getContext())
-                .addConnectionCallbacks(connectionAddListener)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-    }
-
-    protected synchronized void buildGoogleApiClientEmpty() {
-        mGoogleApiClient = new GoogleApiClient.Builder(this.getContext())
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
     }
 
-    private GoogleApiClient.ConnectionCallbacks connectionAddListener =
-            new GoogleApiClient.ConnectionCallbacks() {
-                @Override
-                public void onConnected(Bundle bundle) {
-                    try {
-                        LocationServices.GeofencingApi.addGeofences(
-                                mGoogleApiClient,
-                                getGeofencingRequest(),
-                                getGeofencePendingIntent()
-                        ).setResultCallback(new ResultCallback<Status>() {
 
-                            @Override
-                            public void onResult(Status status) {
-                                if (status.isSuccess()) {
-                                    Log.i(TAG, "Saving Geofence");
 
-                                } else {
-                                    Log.e(TAG, "Registering geofence failed: " + status.getStatusMessage() +
-                                            " : " + status.getStatusCode());
-                                }
-                            }
-                        });
 
-                    } catch (SecurityException securityException) {
-                        // Catch exception generated if the app does not use ACCESS_FINE_LOCATION permission.
-                        Log.e(TAG, "Error");
-                    }
-                }
-
-                @Override
-                public void onConnectionSuspended(int i) {
-
-                    Log.e(TAG, "onConnectionSuspended");
-
-                }
-            };
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -163,6 +110,7 @@ public class MapFragment extends Fragment implements LocationListener, FriendsRe
 
         View view = inflater.inflate(R.layout.fragment_map, container, false);
         getActivity().invalidateOptionsMenu();
+        buildGoogleApiClient();
 
         mLocationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
@@ -179,14 +127,14 @@ public class MapFragment extends Fragment implements LocationListener, FriendsRe
         // Realm.deleteRealm(realmConfiguration);
         realm = Realm.getInstance(realmConfiguration);
         results = realm.where(Data.class).findAll();
-        markersData=new ArrayList<>(results);
+        markersData = new ArrayList<>(results);
         return view;
 
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu,inflater);
+        super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
         inflater.inflate(R.menu.menu_map, menu);
     }
@@ -212,12 +160,6 @@ public class MapFragment extends Fragment implements LocationListener, FriendsRe
     @Override
     public void onMapReady(GoogleMap map) {
         googleMap = map;
-        googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
-            @Override
-            public void onMapLongClick(LatLng point) {
-                MapPresenter.getInstance().newItemView(point);
-            }
-        });
         setUpMap(markersData);
 
     }
@@ -227,47 +169,10 @@ public class MapFragment extends Fragment implements LocationListener, FriendsRe
         super.onResume();
         mapView.onResume();
         mapView.getMapAsync(this);
-        buildGoogleApiClientEmpty();
         mGoogleApiClient.connect();
         updateDataCallback(markersData);
         NetworkManager.getInstance().updateData();
 
-
-    }
-
-
-    private void geoCode() {
-       /* Geocoder geocoder = new Geocoder(this, Locale.ENGLISH);
-        String streetAddress = "Gázgyár utca 1, Budapest";
-        List<Address> locations = null;
-        try {
-            locations = geocoder.getFromLocationName(streetAddress, 3);
-
-            Toast.makeText(this, locations.get(0).getLongitude()+", "+locations.get(0).getLatitude(),
-                    Toast.LENGTH_SHORT).show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
-    }
-
-    private String revGeoCode(LatLng loc) {
-        double latitude = loc.latitude;
-        double longitude = loc.longitude;
-        Geocoder gc = new Geocoder(this.getContext(), Locale.getDefault());
-        List<Address> addrs = null;
-        try {
-            addrs = gc.getFromLocation(latitude, longitude, 10);
-            Toast.makeText(this.getContext(), addrs.get(0).getAddressLine(0) + "\n" +
-                            addrs.get(0).getAddressLine(1) + "\n" +
-                            addrs.get(0).getAddressLine(2),
-                    Toast.LENGTH_SHORT).show();
-            return addrs.get(0).getAddressLine(0) + " " +
-                    addrs.get(0).getAddressLine(1) + " " +
-                    addrs.get(0).getAddressLine(2);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return "";
 
     }
 
@@ -340,10 +245,6 @@ public class MapFragment extends Fragment implements LocationListener, FriendsRe
     public void updateDataCallback(List<Data> list) {
         datalist = list;
         setUpMap(datalist);
-        if (datalist.size() != 0) {
-            createGeofences();
-            buildGoogleApiClient();
-        }
 
     }
 
@@ -388,43 +289,6 @@ public class MapFragment extends Fragment implements LocationListener, FriendsRe
 
     }
 
-    public void createGeofences() {
-        for (Data d : datalist) {
-            String id = UUID.randomUUID().toString();
-            Geofence fence = new Geofence.Builder()
-                    .setRequestId(id)
-                    .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_EXIT)
-                    .setCircularRegion(d.getLatitude(), d.getLongitude(), 3000)
-                    .setExpirationDuration(Geofence.NEVER_EXPIRE)
-                    .build();
-            mGeofenceList.add(fence);
-        }
-    }
-
-    private GeofencingRequest getGeofencingRequest() {
-        GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
-        builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER);
-
-        builder.addGeofences(mGeofenceList);
-
-        return builder.build();
-
-
-    }
-
-    private PendingIntent getGeofencePendingIntent() {
-        // Reuse the PendingIntent if we already have it.
-        if (mGeofencePendingIntent != null) {
-            return mGeofencePendingIntent;
-        }
-        Intent intent = new Intent(this.getContext(), GeofenceTransitionsIntentService.class);
-
-
-        // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when
-        // calling addGeofences() and removeGeofences().
-        return PendingIntent.getService(this.getContext(), 0, intent, PendingIntent.
-                FLAG_UPDATE_CURRENT);
-    }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
@@ -468,21 +332,6 @@ public class MapFragment extends Fragment implements LocationListener, FriendsRe
 
     @Override
     public void onConnectionSuspended(int i) {
-    }
-
-
-    @Override
-    public void newItemView(LatLng point) {
-        AddPlaceFragment anf = new AddPlaceFragment();
-        Bundle bundle = new Bundle();
-        DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.ROOT);
-        otherSymbols.setGroupingSeparator('.');
-        DecimalFormat df = new DecimalFormat("#.0000", otherSymbols);
-        bundle.putString("place", revGeoCode(point));
-        bundle.putString("longitude", df.format(point.longitude));
-        bundle.putString("latitude", df.format(point.latitude));
-        anf.setArguments(bundle);
-        anf.show(getActivity().getSupportFragmentManager(), AddPlaceFragment.TAG);
     }
 
 
@@ -553,17 +402,15 @@ public class MapFragment extends Fragment implements LocationListener, FriendsRe
     OnMenuSelectionSetListener mOnPlayerSelectionSetListener;
 
 
-    public void onAttachToParentFragment(Fragment fragment)
-    {
-        try
-        {
-            mOnPlayerSelectionSetListener = (OnMenuSelectionSetListener)fragment;
+    public void onAttachToParentFragment(Fragment fragment) {
+        try {
+            mOnPlayerSelectionSetListener = (OnMenuSelectionSetListener) fragment;
 
-        }
-        catch (ClassCastException e)
-        {
+        } catch (ClassCastException e) {
             throw new ClassCastException(
                     fragment.toString() + " must implement OnMenuSelectionSetListener");
         }
     }
+
+
 }

@@ -72,7 +72,6 @@ public class FriendsRecAdapter extends RecyclerView.Adapter<FriendsRecAdapter.It
             });
             if (friend.image != null) {
                 String url = NetApi.GETIMEAGE +friend.image;
-                url = url.replace("\\", "/");
                 Picasso.with(mContext).load(url).placeholder(R.drawable.avatar).into(holder.imageView);
 
             }
