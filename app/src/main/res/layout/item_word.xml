@@ -9,7 +9,7 @@
 
         <variable
             name="model"
-            type="com.example.kata.onlab.network.FriendsComp" />
+            type="com.example.kata.onlab.db.FriendsComp" />
 
     </data>
 

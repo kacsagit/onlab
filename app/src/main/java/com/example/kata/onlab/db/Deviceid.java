@@ -7,7 +7,7 @@ package com.example.kata.onlab.db;
 public class Deviceid {
     public String tokenid;
 
-    Deviceid(String token){
+    public Deviceid(String token){
         tokenid=token;
     }
 }

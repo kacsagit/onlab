@@ -8,7 +8,7 @@ public class PushId {
     public int getId() {
         return id;
     }
-    PushId(int id){
+    public PushId(int id){
         this.id=id;
     }
 
