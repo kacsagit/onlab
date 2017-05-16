@@ -1,5 +1,18 @@
 package com.example.kata.onlab.network;
 
+import com.example.kata.onlab.db.Data;
+import com.example.kata.onlab.db.DataDetails;
+import com.example.kata.onlab.db.Deviceid;
+import com.example.kata.onlab.db.FB;
+import com.example.kata.onlab.db.Friend;
+import com.example.kata.onlab.db.FriendDetail;
+import com.example.kata.onlab.db.Friends;
+import com.example.kata.onlab.db.Google;
+import com.example.kata.onlab.db.Login;
+import com.example.kata.onlab.db.LoginData;
+import com.example.kata.onlab.db.MyData;
+import com.example.kata.onlab.db.PushId;
+
 import java.util.List;
 
 import okhttp3.MultipartBody;
@@ -58,7 +71,7 @@ public interface NetApi {
 
 
     @GET("/api/getDataDetail")
-    Call<DataDetails> getDataDetail(@Header("Authorization") String token,@Query("id") int id);
+    Call<DataDetails> getDataDetail(@Header("Authorization") String token, @Query("id") int id);
 
 
     @POST("/auth/facebook/token")

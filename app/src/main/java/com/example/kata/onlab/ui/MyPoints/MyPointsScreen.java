@@ -1,6 +1,6 @@
 package com.example.kata.onlab.ui.MyPoints;
 
-import com.example.kata.onlab.network.Data;
+import com.example.kata.onlab.db.Data;
 
 import java.util.List;
 

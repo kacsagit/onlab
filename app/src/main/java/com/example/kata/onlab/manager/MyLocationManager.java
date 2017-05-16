@@ -1,4 +1,4 @@
-package com.example.kata.onlab.ui.map;
+package com.example.kata.onlab.manager;
 
 /**
  * Created by Kata on 2017. 02. 18..
@@ -29,6 +29,7 @@ public class MyLocationManager implements LocationListener {
     private OnLocChanged onLocChanged;
     private Context context;
     private LocationManager locationManager = null;
+    private LocationListener listener;
 
     public MyLocationManager(OnLocChanged onLocChanged,
                              Context context) {

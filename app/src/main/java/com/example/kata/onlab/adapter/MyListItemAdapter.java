@@ -1,4 +1,4 @@
-package com.example.kata.onlab.ui.myList;
+package com.example.kata.onlab.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -12,8 +12,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.kata.onlab.R;
-import com.example.kata.onlab.network.MyData;
-import com.example.kata.onlab.network.DataDetails;
+import com.example.kata.onlab.db.MyData;
+import com.example.kata.onlab.db.DataDetails;
 import com.example.kata.onlab.network.NetApi;
 import com.example.kata.onlab.network.NetworkManager;
 import com.squareup.picasso.Picasso;
@@ -22,14 +22,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder> {
+public class MyListItemAdapter extends RecyclerView.Adapter<MyListItemAdapter.ItemViewHolder> {
 
     public final List<DataDetails> items;
     Context mContext;
     int mExpandedPosition = -1;
 
 
-    public ItemAdapter() {
+    public MyListItemAdapter() {
         items = new ArrayList<>();
     }
 

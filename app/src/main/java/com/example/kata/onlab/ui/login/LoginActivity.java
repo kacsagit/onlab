@@ -17,7 +17,7 @@ import android.widget.Toast;
 
 import com.dd.processbutton.iml.ActionProcessButton;
 import com.example.kata.onlab.R;
-import com.example.kata.onlab.network.LoginData;
+import com.example.kata.onlab.db.LoginData;
 import com.example.kata.onlab.network.NetworkManager;
 import com.example.kata.onlab.network.TokenInterceptor;
 import com.example.kata.onlab.ui.SignUp.SignUpActivity;

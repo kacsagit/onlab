@@ -1,4 +1,4 @@
-package com.example.kata.onlab.ui;
+package com.example.kata.onlab.service;
 
 import android.util.Log;
 

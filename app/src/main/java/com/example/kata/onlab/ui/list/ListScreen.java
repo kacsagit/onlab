@@ -1,7 +1,7 @@
 package com.example.kata.onlab.ui.list;
 
-import com.example.kata.onlab.network.Data;
-import com.example.kata.onlab.network.DataDetails;
+import com.example.kata.onlab.db.Data;
+import com.example.kata.onlab.db.DataDetails;
 
 import java.util.List;
 

@@ -24,8 +24,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.kata.onlab.R;
-import com.example.kata.onlab.network.DataDetails;
-import com.example.kata.onlab.network.MyData;
+import com.example.kata.onlab.adapter.MyListItemAdapter;
+import com.example.kata.onlab.db.DataDetails;
+import com.example.kata.onlab.db.MyData;
 import com.example.kata.onlab.network.NetworkManager;
 import com.example.kata.onlab.ui.friendsfragment.OnMenuSelectionSetListener;
 import com.example.kata.onlab.ui.newPlace.PlacePickerActivity;
@@ -45,7 +46,7 @@ public class MyListFragment extends Fragment implements ListScreen {
     Realm realm;
     RealmResults<MyData> results;
     protected RecyclerView recyclerView;
-    protected ItemAdapter adapter;
+    protected MyListItemAdapter adapter;
     protected SwipeRefreshLayout swipeRefresh;
     protected View view;
     protected Context context;
@@ -124,7 +125,7 @@ public class MyListFragment extends Fragment implements ListScreen {
 
     protected void initRecycleView() {
         recyclerView = (RecyclerView) view.findViewById(R.id.MainRecyclerView);
-        adapter = new ItemAdapter();
+        adapter = new MyListItemAdapter();
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         recyclerView.setAdapter(adapter);
 

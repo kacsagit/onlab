@@ -3,7 +3,7 @@ package com.example.kata.onlab.ui.map;
 import com.example.kata.onlab.event.ErrorEvent;
 import com.example.kata.onlab.event.GetDataEvent;
 import com.example.kata.onlab.event.PostDataEvent;
-import com.example.kata.onlab.network.Data;
+import com.example.kata.onlab.db.Data;
 import com.example.kata.onlab.network.NetworkManager;
 import com.example.kata.onlab.ui.Presenter;
 

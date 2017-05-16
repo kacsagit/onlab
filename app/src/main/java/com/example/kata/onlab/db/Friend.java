@@ -1,4 +1,4 @@
-package com.example.kata.onlab.network;
+package com.example.kata.onlab.db;
 
 /**
  * Created by Kata on 2017. 04. 17..

@@ -2,7 +2,7 @@ package com.example.kata.onlab.ui.login;
 
 import com.example.kata.onlab.event.ErrorResponseEvent;
 import com.example.kata.onlab.event.LoginDataEvent;
-import com.example.kata.onlab.network.LoginData;
+import com.example.kata.onlab.db.LoginData;
 import com.example.kata.onlab.ui.Presenter;
 
 import org.greenrobot.eventbus.EventBus;

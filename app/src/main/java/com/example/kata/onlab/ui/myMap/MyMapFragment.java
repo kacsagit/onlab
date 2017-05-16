@@ -24,11 +24,11 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.kata.onlab.R;
-import com.example.kata.onlab.network.MyData;
+import com.example.kata.onlab.db.MyData;
 import com.example.kata.onlab.network.NetworkManager;
-import com.example.kata.onlab.ui.friendsfragment.FriendsRecAdapter;
+import com.example.kata.onlab.adapter.FriendsFragmentAdapter;
 import com.example.kata.onlab.ui.friendsfragment.OnMenuSelectionSetListener;
-import com.example.kata.onlab.ui.map.MyLocationManager;
+import com.example.kata.onlab.manager.MyLocationManager;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -55,7 +55,7 @@ import io.realm.RealmResults;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MyMapFragment extends Fragment implements LocationListener, FriendsRecAdapter.MyInterface, OnMapReadyCallback, MyLocationManager.OnLocChanged, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, MapScreen {
+public class MyMapFragment extends Fragment implements LocationListener, FriendsFragmentAdapter.MyInterface, OnMapReadyCallback, MyLocationManager.OnLocChanged, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, MapScreen {
 
     private static final String TAG = "MyMapFragment";
     private MyLocationManager myLocationManager = null;

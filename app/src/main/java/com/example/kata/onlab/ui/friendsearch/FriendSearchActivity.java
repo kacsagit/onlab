@@ -19,9 +19,10 @@ import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 
 import com.example.kata.onlab.R;
+import com.example.kata.onlab.adapter.PeopleAdapter;
 import com.example.kata.onlab.databinding.ActivityFriendSearchBinding;
-import com.example.kata.onlab.network.Friends;
-import com.example.kata.onlab.network.FriendsComp;
+import com.example.kata.onlab.db.Friends;
+import com.example.kata.onlab.db.FriendsComp;
 import com.example.kata.onlab.network.NetworkManager;
 import com.example.kata.onlab.ui.friendDetails.FriendDetalsActivity;
 import com.github.wrdlbrnft.sortedlistadapter.SortedListAdapter;
@@ -46,7 +47,7 @@ public class FriendSearchActivity extends AppCompatActivity implements FriendSea
             })
             .build();
 
-    private ExampleAdapter mAdapter;
+    private PeopleAdapter mAdapter;
     private ActivityFriendSearchBinding mBinding;
     private Animator mAnimator;
     RealmResults<Friends> results;
@@ -78,7 +79,7 @@ public class FriendSearchActivity extends AppCompatActivity implements FriendSea
         });
         NetworkManager.getInstance().getusers();
 
-        mAdapter = new ExampleAdapter(this, COMPARATOR, new ExampleAdapter.Listener() {
+        mAdapter = new PeopleAdapter(this, COMPARATOR, new PeopleAdapter.Listener() {
             @Override
             public void onExampleModelClicked(FriendsComp model) {
                 //Snackbar.make(mBinding.getRoot(), Integer.toString(model.id), Snackbar.LENGTH_SHORT).show();

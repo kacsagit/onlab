@@ -1,7 +1,7 @@
 package com.example.kata.onlab.ui.friendsearch;
 
 import com.example.kata.onlab.event.GetUsersEvent;
-import com.example.kata.onlab.network.Friends;
+import com.example.kata.onlab.db.Friends;
 import com.example.kata.onlab.ui.Presenter;
 
 import org.greenrobot.eventbus.EventBus;

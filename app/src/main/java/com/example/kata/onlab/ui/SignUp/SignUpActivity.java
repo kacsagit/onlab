@@ -8,7 +8,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.kata.onlab.R;
-import com.example.kata.onlab.network.Login;
+import com.example.kata.onlab.db.Login;
 import com.example.kata.onlab.network.NetworkManager;
 
 public class SignUpActivity extends AppCompatActivity implements SignUpScreen{

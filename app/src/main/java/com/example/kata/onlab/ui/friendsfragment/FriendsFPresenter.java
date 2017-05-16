@@ -2,7 +2,7 @@ package com.example.kata.onlab.ui.friendsfragment;
 
 import com.example.kata.onlab.event.ErrorEvent;
 import com.example.kata.onlab.event.GetFriendsEvent;
-import com.example.kata.onlab.network.Friends;
+import com.example.kata.onlab.db.Friends;
 import com.example.kata.onlab.ui.Presenter;
 
 import org.greenrobot.eventbus.EventBus;

@@ -1,10 +1,11 @@
-package com.example.kata.onlab.network;
+package com.example.kata.onlab.db;
 
 import android.databinding.BindingAdapter;
 import android.support.annotation.NonNull;
 import android.widget.ImageView;
 
 import com.example.kata.onlab.R;
+import com.example.kata.onlab.network.NetApi;
 import com.github.wrdlbrnft.sortedlistadapter.SortedListAdapter;
 import com.squareup.picasso.Picasso;
 

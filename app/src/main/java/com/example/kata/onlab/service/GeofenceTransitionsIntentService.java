@@ -1,4 +1,4 @@
-package com.example.kata.onlab.ui.map;
+package com.example.kata.onlab.service;
 
 import android.app.IntentService;
 import android.app.Notification;

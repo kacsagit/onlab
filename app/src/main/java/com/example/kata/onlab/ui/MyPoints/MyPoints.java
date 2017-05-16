@@ -9,14 +9,14 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.example.kata.onlab.R;
-import com.example.kata.onlab.network.Data;
-import com.example.kata.onlab.ui.list.ItemAdapter;
+import com.example.kata.onlab.db.Data;
+import com.example.kata.onlab.adapter.ListItemAdapter;
 
 import java.util.List;
 
 public class MyPoints extends AppCompatActivity implements MyPointsScreen {
     private RecyclerView recyclerView;
-    ItemAdapter adapter;
+    ListItemAdapter adapter;
     SwipeRefreshLayout swipeRefresh;
     Context context;
     @Override
@@ -56,7 +56,7 @@ public class MyPoints extends AppCompatActivity implements MyPointsScreen {
 
     private void initRecycleView() {
         recyclerView = (RecyclerView) findViewById(R.id.MainRecyclerView);
-        adapter = new ItemAdapter();
+        adapter = new ListItemAdapter();
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 

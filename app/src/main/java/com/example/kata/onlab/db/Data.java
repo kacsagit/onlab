@@ -1,13 +1,12 @@
-package com.example.kata.onlab.network;
+package com.example.kata.onlab.db;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
 /**
- * Created by Kata on 2017. 05. 06..
+ * Created by Kata on 2017. 02. 11..
  */
-
-public class MyData extends RealmObject {
+public class Data extends RealmObject {
     public int getId() {
         return id;
     }
@@ -55,6 +54,6 @@ public class MyData extends RealmObject {
 
 
 
-    public MyData(){}
-    public MyData(String place){this.place=place;}
+    public Data(){}
+    public Data(String place){this.place=place;}
 }

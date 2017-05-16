@@ -3,7 +3,7 @@ package com.example.kata.onlab.ui.friendDetails;
 import com.example.kata.onlab.event.DeleteFriendEvent;
 import com.example.kata.onlab.event.GetUserEvent;
 import com.example.kata.onlab.event.PostFriendEvent;
-import com.example.kata.onlab.network.FriendDetail;
+import com.example.kata.onlab.db.FriendDetail;
 import com.example.kata.onlab.ui.Presenter;
 
 import org.greenrobot.eventbus.EventBus;

@@ -1,4 +1,4 @@
-package com.example.kata.onlab.ui.map;
+package com.example.kata.onlab.service;
 
 
 import android.app.Notification;
@@ -14,16 +14,17 @@ import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 
 import com.example.kata.onlab.R;
+import com.example.kata.onlab.manager.MyLocationManager;
 import com.example.kata.onlab.ui.main.MainActivity;
 
 
 
-public class ServiceLocation extends Service implements LocationListener {
+public class ServiceLocation extends Service implements LocationListener,MyLocationManager.OnLocChanged {
     public static final String BR_NEW_LOCATION = "BR_NEW_LOCATION";
     public static final String KEY_LOCATION = "KEY_LOCATION";
 
 
-    private LDLocationManager ldLocationManager = null;
+    private MyLocationManager ldLocationManager = null;
     private boolean locationMonitorRunning = false;
 
     private Location firstLocation = null;
@@ -56,12 +57,14 @@ public class ServiceLocation extends Service implements LocationListener {
 
         if (!locationMonitorRunning) {
             locationMonitorRunning = true;
-            ldLocationManager = new LDLocationManager(getApplicationContext(), this);
-            ldLocationManager.startLocationMonitoring();
+            ldLocationManager = new MyLocationManager(this, this);
+            ldLocationManager.startLocatoinMonitoring();
         }
 
         return START_STICKY;
     }
+
+
 
     @Override
     public void onDestroy() {
@@ -128,6 +131,10 @@ public class ServiceLocation extends Service implements LocationListener {
         notifMan.notify(NOTIF_FOREGROUND_ID, notification);
     }
 
+    @Override
+    public void locationChanged(Location location) {
+
+    }
 
 
     public class BinderServiceLocation extends Binder {

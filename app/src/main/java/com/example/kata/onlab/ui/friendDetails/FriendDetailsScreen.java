@@ -1,6 +1,6 @@
 package com.example.kata.onlab.ui.friendDetails;
 
-import com.example.kata.onlab.network.FriendDetail;
+import com.example.kata.onlab.db.FriendDetail;
 
 /**
  * Created by Kata on 2017. 02. 26..

@@ -12,9 +12,8 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 
 import com.example.kata.onlab.R;
-import com.example.kata.onlab.network.DataDetails;
+import com.example.kata.onlab.db.DataDetails;
 import com.example.kata.onlab.network.NetworkManager;
-import com.example.kata.onlab.ui.map.MapPresenter;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.places.Place;

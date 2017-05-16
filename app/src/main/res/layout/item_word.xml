@@ -4,7 +4,7 @@
 
         <variable
             name="listener"
-            type="com.example.kata.onlab.ui.friendsearch.ExampleAdapter.Listener" />
+            type="com.example.kata.onlab.adapter.PeopleAdapter.Listener" />
 
 
         <variable

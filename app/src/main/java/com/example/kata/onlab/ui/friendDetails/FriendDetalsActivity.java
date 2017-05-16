@@ -11,9 +11,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.kata.onlab.R;
-import com.example.kata.onlab.network.Data;
-import com.example.kata.onlab.network.FriendDetail;
-import com.example.kata.onlab.network.Friends;
+import com.example.kata.onlab.db.Data;
+import com.example.kata.onlab.db.FriendDetail;
+import com.example.kata.onlab.db.Friends;
 import com.example.kata.onlab.network.NetApi;
 import com.example.kata.onlab.network.NetworkManager;
 import com.squareup.picasso.Picasso;

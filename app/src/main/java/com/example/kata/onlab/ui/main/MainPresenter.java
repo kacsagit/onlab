@@ -5,9 +5,9 @@ import com.example.kata.onlab.event.GetDataEvent;
 import com.example.kata.onlab.event.GetDataMyEvent;
 import com.example.kata.onlab.event.GetMeEvent;
 import com.example.kata.onlab.event.PhotoUploadedEvent;
-import com.example.kata.onlab.network.Data;
-import com.example.kata.onlab.network.Friends;
-import com.example.kata.onlab.network.MyData;
+import com.example.kata.onlab.db.Data;
+import com.example.kata.onlab.db.Friends;
+import com.example.kata.onlab.db.MyData;
 import com.example.kata.onlab.ui.Presenter;
 
 import org.greenrobot.eventbus.EventBus;

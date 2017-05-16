@@ -30,15 +30,15 @@
         </provider>
 
         <service
-            android:name=".ui.map.GeofenceTransitionsIntentService"
+            android:name=".service.GeofenceTransitionsIntentService"
             android:exported="true" />
-        <service android:name=".ui.map.ServiceLocation" />
-        <service android:name=".ui.FirebaseService">
+        <service android:name=".service.ServiceLocation" />
+        <service android:name=".service.FirebaseService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
-        <service android:name=".ui.FirebaseMessService">
+        <service android:name=".service.FirebaseMessService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>

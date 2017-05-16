@@ -1,4 +1,4 @@
-package com.example.kata.onlab.ui.friendsearch;
+package com.example.kata.onlab.adapter;
 
 /**
  * Created by Kata on 2017. 04. 16..
@@ -10,12 +10,12 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import com.example.kata.onlab.databinding.ItemWordBinding;
-import com.example.kata.onlab.network.FriendsComp;
+import com.example.kata.onlab.db.FriendsComp;
 import com.github.wrdlbrnft.sortedlistadapter.SortedListAdapter;
 
 import java.util.Comparator;
 
-public class ExampleAdapter extends SortedListAdapter<FriendsComp> {
+public class PeopleAdapter extends SortedListAdapter<FriendsComp> {
 
     public interface Listener {
         void onExampleModelClicked(FriendsComp model);
@@ -23,7 +23,7 @@ public class ExampleAdapter extends SortedListAdapter<FriendsComp> {
 
     private final Listener mListener;
 
-    public ExampleAdapter(Context context, Comparator<FriendsComp> comparator, Listener listener) {
+    public PeopleAdapter(Context context, Comparator<FriendsComp> comparator, Listener listener) {
         super(context, FriendsComp.class, comparator);
         mListener = listener;
     }
@@ -32,7 +32,7 @@ public class ExampleAdapter extends SortedListAdapter<FriendsComp> {
     @Override
     protected ViewHolder<? extends FriendsComp> onCreateViewHolder(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent, int viewType) {
         final ItemWordBinding binding = ItemWordBinding.inflate(inflater, parent, false);
-        return new ExampleAdapter.WordViewHolder(binding, mListener);
+        return new PeopleAdapter.WordViewHolder(binding, mListener);
     }
 
 
@@ -41,7 +41,7 @@ public class ExampleAdapter extends SortedListAdapter<FriendsComp> {
 
         private final ItemWordBinding mBinding;
 
-        public WordViewHolder(ItemWordBinding binding, ExampleAdapter.Listener listener) {
+        public WordViewHolder(ItemWordBinding binding, PeopleAdapter.Listener listener) {
             super(binding.getRoot());
             binding.setListener(listener);
 

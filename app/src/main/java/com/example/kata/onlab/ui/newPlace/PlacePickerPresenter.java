@@ -1,7 +1,7 @@
 package com.example.kata.onlab.ui.newPlace;
 
 import com.example.kata.onlab.event.PostDataEvent;
-import com.example.kata.onlab.network.DataDetails;
+import com.example.kata.onlab.db.DataDetails;
 import com.example.kata.onlab.ui.Presenter;
 
 import org.greenrobot.eventbus.EventBus;

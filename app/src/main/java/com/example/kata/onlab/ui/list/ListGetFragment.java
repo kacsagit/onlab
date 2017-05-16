@@ -17,10 +17,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.kata.onlab.R;
-import com.example.kata.onlab.network.Data;
-import com.example.kata.onlab.network.DataDetails;
+import com.example.kata.onlab.adapter.ListItemAdapter;
+import com.example.kata.onlab.db.Data;
+import com.example.kata.onlab.db.DataDetails;
 import com.example.kata.onlab.network.NetworkManager;
-import com.example.kata.onlab.ui.friendsfragment.FriendsRecAdapter;
+import com.example.kata.onlab.adapter.FriendsFragmentAdapter;
 import com.example.kata.onlab.ui.friendsfragment.OnMenuSelectionSetListener;
 
 import java.util.ArrayList;
@@ -33,12 +34,12 @@ import io.realm.RealmResults;
 /**
  * Created by Kata on 2017. 02. 18..
  */
-public class ListGetFragment extends Fragment implements ListScreen, FriendsRecAdapter.MyInterface {
+public class ListGetFragment extends Fragment implements ListScreen, FriendsFragmentAdapter.MyInterface {
 
     Realm realm;
     RealmResults<Data> results;
     protected RecyclerView recyclerView;
-    protected ItemAdapter adapter;
+    protected ListItemAdapter adapter;
     protected SwipeRefreshLayout swipeRefresh;
     protected View view;
     protected Context context;
@@ -103,7 +104,7 @@ public class ListGetFragment extends Fragment implements ListScreen, FriendsRecA
 
     protected void initRecycleView() {
         recyclerView = (RecyclerView) view.findViewById(R.id.MainRecyclerView);
-        adapter = new ItemAdapter();
+        adapter = new ListItemAdapter();
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         recyclerView.setAdapter(adapter);
 

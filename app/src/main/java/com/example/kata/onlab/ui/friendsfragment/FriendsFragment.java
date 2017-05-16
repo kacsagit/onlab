@@ -15,7 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.kata.onlab.R;
-import com.example.kata.onlab.network.Friends;
+import com.example.kata.onlab.adapter.FriendsFragmentAdapter;
+import com.example.kata.onlab.db.Friends;
 import com.example.kata.onlab.network.NetworkManager;
 import com.example.kata.onlab.ui.list.ListGetFragment;
 import com.example.kata.onlab.ui.map.MapFragment;
@@ -37,7 +38,7 @@ public class FriendsFragment extends Fragment implements FriendsFScreen, OnMenuS
     protected View view;
     protected Context context;
     RealmResults<Friends> results;
-    FriendsRecAdapter friendsAdapter;
+    FriendsFragmentAdapter friendsAdapter;
     Fragment fragment;
     RecyclerView reciew;
 
@@ -128,13 +129,13 @@ public class FriendsFragment extends Fragment implements FriendsFScreen, OnMenuS
         }
         fragmentTransaction.commit();
         try {
-            FriendsRecAdapter.MyInterface callback = (FriendsRecAdapter.MyInterface) fragment;
+            FriendsFragmentAdapter.MyInterface callback = (FriendsFragmentAdapter.MyInterface) fragment;
 
         } catch (ClassCastException e) {
             throw new ClassCastException(
-                    fragment.toString() + " must implement FriendsRecAdapter.MyInterface");
+                    fragment.toString() + " must implement FriendsFragmentAdapter.MyInterface");
         }
-        friendsAdapter = new FriendsRecAdapter((FriendsRecAdapter.MyInterface) fragment);
+        friendsAdapter = new FriendsFragmentAdapter((FriendsFragmentAdapter.MyInterface) fragment);
         reciew.setAdapter(friendsAdapter);
         updateUserCallback(new ArrayList<Friends>(results));
     }

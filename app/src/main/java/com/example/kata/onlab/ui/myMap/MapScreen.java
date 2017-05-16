@@ -1,6 +1,6 @@
 package com.example.kata.onlab.ui.myMap;
 
-import com.example.kata.onlab.network.MyData;
+import com.example.kata.onlab.db.MyData;
 
 import java.util.List;
 

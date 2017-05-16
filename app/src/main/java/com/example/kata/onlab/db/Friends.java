@@ -1,4 +1,4 @@
-package com.example.kata.onlab.network;
+package com.example.kata.onlab.db;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;

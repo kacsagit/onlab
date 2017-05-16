@@ -4,8 +4,8 @@ import com.example.kata.onlab.event.ErrorEvent;
 import com.example.kata.onlab.event.GetDataDetailsEvent;
 import com.example.kata.onlab.event.GetDataMyEvent;
 import com.example.kata.onlab.event.PostDataEvent;
-import com.example.kata.onlab.network.DataDetails;
-import com.example.kata.onlab.network.MyData;
+import com.example.kata.onlab.db.DataDetails;
+import com.example.kata.onlab.db.MyData;
 import com.example.kata.onlab.network.NetworkManager;
 import com.example.kata.onlab.ui.Presenter;
 
